@@ -1,0 +1,298 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Cabeçalho da página -->
+<section class="content-header">
+    <h1>
+        Alunos
+        <small>Lista de alunos</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-graduation-cap"></i> Home</a></li>
+        <li class="active">Alunos</li>
+    </ol>
+</section>
+
+<!-- Conteúdo principal -->
+<section class="content">
+    <!-- Box padrão -->
+    <div class="box">
+        <div class="box">
+            <!-- Cabeçalho do box -->
+            <div class="box-header" style="padding-bottom: 0px;">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6" id="colAdd" style=" text-align: right; padding-right: 0;">
+                            <!-- Botão de adicionar -->
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalAdd" id="btnAdd" style="text-align: right">
+                                <i class="fa fa-plus"></i>
+                                Adicionar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box-body">
+                <!-- Tabela -->
+                <table id="tabelaAlunos" class="table table-bordered table-striped">
+                    <thead>
+                        <!-- Colunas da tabela -->
+                        <tr>
+                            <th>Nome</th>
+                            <th>Grupo</th>
+                            <th>Especialidade</th>
+                            <th>Sexo</th>
+                            <th>Data de nascimento</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Grupo</th>
+                            <th>Especialidade</th>
+                            <th>Sexo</th>
+                            <th>Data de nascimento</th>
+                            <th>Ações</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- modal para adição/edição -->
+    <div class="modal fade" id="modalAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" url="http://localhost:51485/api/crud/GetGrupoDtoGrid">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">
+                            &times;
+                        </span><span class="sr-only"></span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Adicionar aluno</h4>
+                </div>
+
+                <div class="box-body">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="inputLogin">Login</label>
+                            <input type="text" class="form-control" id="inputLogin" placeholder="Digite um login">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="inputPassword">Senha</label>
+                            <input type="password" class="form-control" id="inputPassword" placeholder="Digite uma senha"
+                                   readonly onmouseover=" this.removeAttribute('readonly')">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label for="inputNome">Nome</label>
+                            <input type="text" class="form-control" id="inputNome" placeholder="Digite o nome completo">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="comboSexo">Sexo</label>
+                            <select class="form-control" id="comboSexo" placeholder="Digite o nome completo">
+                                <option value="0">Escolha...</option>
+                                <option value="1">Masculino</option>
+                                <option value="2">Feminino</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="imputIdade">Idade</label>
+                            <input type="number" class="form-control" id="imputIdade" placeholder="Digite a idade">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="imputSemestre">Semestre</label>
+                            <input type="number" class="form-control" id="imputSemestre" placeholder="Digite o semestre">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="datepicker">Data de nascimento</label>
+                            <input type="text" class="form-control pull-right" id="datepicker" placeholder="Selecione a data">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="imputCPF">CPF</label>
+                            <input type="text" class="form-control" id="imputCPF" placeholder="Digite o CPF">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="imputTelefone">Telefone</label>
+                            <input type="text" class="form-control" id="imputTelefone" placeholder="Digite o telefone fixo">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="imputCelular">Celular</label>
+                            <input type="text" class="form-control" id="imputCelular" placeholder="Digite o celular">
+                        </div>
+                    </div>
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#grupos" data-toggle="tab">Grupos</a></li>
+                            <li><a href="#especialidades" data-toggle="tab">Especialidades</a></li>
+                        </ul>
+                    </div>
+                    <div class="tab-content">
+                        <div class="active tab-pane" id="grupos">
+                            <div class="box">
+                                <div class="box-header">
+
+                                </div>
+                                <!-- /.box-header -->
+                                <div class="box-body no-padding">
+                                    <table id="tabelaGrupos" class="table table-condensed">
+                                        <tr>
+                                            <th style="width: 10px">#</th>
+                                            <th>Task</th>
+                                            <th>Progress</th>
+                                            <th style="width: 40px">Label</th>
+                                        </tr>
+                                        <tr>
+                                            <td>1.</td>
+                                            <td>Numsei</td>
+                                            <td>QWE</td>
+                                            <td><span class="badge bg-green">90%</span></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <!-- /.box-body -->
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="especialidades">
+                            <div class="box">
+                                <div class="box-header">
+
+                                </div>
+                                <!-- /.box-header -->
+                                <div class="box-body no-padding">
+                                    <table id="tabelaEspecialidades" class="table table-condensed">
+                                        <tr>
+                                            <th style="width: 10px">#</th>
+                                            <th>Task</th>
+                                            <th>Progress</th>
+                                            <th style="width: 40px">Label</th>
+                                        </tr>
+                                        <tr>
+                                            <td>1.</td>
+                                            <td>SEila</td>
+                                            <td>asd</td>
+                                            <td><span class="badge bg-green">90%</span></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <!-- /.box-body -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-9">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Sair</button>
+                            <button type="button" id="btnConfirm" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    $(document).ready(function () {
+        $('#imputTelefone').inputmask({ "mask": "(99) 9999-9999" });
+        $('#imputCelular').inputmask({ "mask": "(99) 9 9999-9999" });
+        $('#datepicker').inputmask({ "alias": "dd/mm/yyyy" });
+        $('#imputCPF').inputmask({ "mask": "999.999.999-99" });
+        $('#datepicker').datepicker({
+            autoclose: true,
+            todayHighlight: true,
+            format: 'dd/mm/yyyy',
+            keyboardNavigation: true,
+            language: 'pt-BR',
+            endDate: new Date(),
+            clearBtn: true
+        });
+
+        $('#tabelaAlunos').dataTable({
+            "buttons": ['excel', 'pdf'],
+            "lengthChange": false,
+            "language": {
+                "search": "Pesquisar:",
+                "lengthMenu": "Mostrar _MENU_ registros por página",
+                "zeroRecords": "Nenhum resultado encontrado",
+                "info": "Mostrando _START_ até _END_ de _TOTAL_ registro(s)",
+                "infoEmpty": "Monstrando 0 até 0 de 0 registro(s)",
+                "infoFiltered": "",
+                "processing": "Carregando...",
+                "paginate": {
+                    "first": "Primeiro",
+                    "last": "Último",
+                    "next": "Próximo",
+                    "previous": "Anterior"
+                },
+            },
+            "bServerSide": true,
+            "processing": true,
+            "ajax": {
+                "url": "http://localhost:51485/api/crud/GetAlunoDtoGrid",
+                "data": function (d) {
+                    return {
+                        "draw": d.draw,
+                        "start": d.start,
+                        "length": d.length,
+                        "search": d.search.value,
+                        "order": $('th')[d.order[0].column].outerText,
+                        "dir": d.order[0].dir
+                    };
+                }
+            },
+            "columns": [
+                { "data": "Nome" },
+                { "data": "Grupo", "bSortable": false },
+                { "data": "Especialidade", "bSortable": false },
+                { "data": "DescricaoSexo", "bSortable": false },
+                { "data": "DescricaoDataNascimento" },
+                {
+                    "bSortable": false,
+                    "data": null,
+                    "defaultContent":
+                        '<button type="button" class="btn btn-primary" style="width:36px; padding-left: 11px; margin: 1px 2px 1px 2px;">' +
+                        '<i class= "fa fa-pencil-square-o" ></i>' +
+                        '</button>' +
+                        '<button type="button" class="btn btn-danger" style="width:36px; margin: 1px 2px 1px 2px;">' +
+                        '<i class="fa fa-trash"></i>' +
+                        '</button>'
+                },
+                { "data": "Id", "visible": false },
+            ]
+        });
+
+    });
+</script>

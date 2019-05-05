@@ -1,0 +1,16 @@
+﻿@media only screen and (max-width: 768px) {
+    #pesquisar {
+        width: 100%;
+        box-sizing: border-box;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+        background-color: white;
+        background-repeat: no-repeat;
+    }
+    #colAdd {
+        display: flex;
+        align-items: center; 
+        justify-content: center;
+    }
+}

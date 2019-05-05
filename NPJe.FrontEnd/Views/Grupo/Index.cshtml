@@ -1,0 +1,220 @@
+﻿
+@model NPJe.FrontEnd.Dtos.GenericInfoComboDto
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Cabeçalho da página -->
+<section class="content-header">
+    <h1>
+        Grupos
+        <small>Lista de grupos</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-group"></i> Home</a></li>
+        <li class="active">Grupos</li>
+    </ol>
+</section>
+
+<!-- Conteúdo principal -->
+<section class="content">
+    <!-- Box padrão -->
+    <div class="box">
+        <div class="box">
+            <!-- Cabeçalho do box -->
+            <div class="box-header" style="padding-bottom: 0px;">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6" id="colAdd" style=" text-align: right; padding-right: 0;">
+                            <!-- Botão de adicionar -->
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalAdd" id="btnAdd" style="text-align: right">
+                                <i class="fa fa-plus"></i>
+                                Adicionar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box-body">
+                <!-- Tabela -->
+                <table id="tabelaGrupos" class="table table-bordered table-striped">
+                    <thead>
+                        <!-- Colunas da tabela -->
+                        <tr>
+                            <th>Número</th>
+                            <th>Especialidade</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Número</th>
+                            <th>Especialidade</th>
+                            <th>Ações</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- modal para adição/edição -->
+    <div class="modal fade" id="modalAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" url="http://localhost:51485/api/crud/SaveGrupo">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">
+                            &times;
+                        </span><span class="sr-only"></span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Adicionar grupo</h4>
+                </div>
+
+                <div class="box-body">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <input type="hidden" id="IdEdit" name="Id" value="0">
+                            <label for="inputNumero">Número</label>
+                            <input type="number" name="Numero" class="form-control" id="inputNumero" required placeholder="Digite um número">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="comboEspecialidade">Especialidade</label>
+                            <select class="form-control" name="IdEspecialidade" id="comboEspecialidade" required placeholder="Escolha a especialidade">
+                                <option value="">Escolha...</option>
+                                @foreach (var item in ViewBag.Especialidades)
+                                {
+                                    <option value="@item.Id"> @item.Descricao </option>}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-9">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Sair</button>
+                            <button type="button" id="btnConfirm" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalRemove" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" url="http://localhost:51485/api/crud/RemoveGrupo">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">
+                            &times;
+                        </span><span class="sr-only"></span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Remover grupo</h4>
+                </div>
+
+                <div class="box-body">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>Deseja mesmo excluir este registro?</label>
+                            <input type="hidden" id="IdRemove" name="Id">
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-9">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Sair</button>
+                            <button type="button" id="btnConfirm" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<script>
+    $(document).ready(function () {
+        $('#tabelaGrupos').dataTable({
+            "buttons": ['excel', 'pdf'],
+            "lengthChange": false,
+            "drawCallback": function (settings) {
+                var json = settings.json;
+                $("[name='btnRemove']").click(function () {
+                    var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];
+                    $('#IdRemove').val(idSelecionado.Id);
+                    $('#modalRemove').modal('show');
+                });
+                $("[name='btnEdit']").click(function () {
+                    var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];
+
+                    $.get('http://localhost:51485/api/crud/GetGrupoDto', { id: idSelecionado.Id } ,function(data){
+                        $('#modalAdd :input').each(function () {
+                            var me = $(this);
+                            if (me && me.context.name) {
+                                me.val(data[me.context.name]);
+                            }
+                        });
+                        $('#modalAdd').modal('show');
+                    }); 
+                });
+            },
+            "language": {
+                "search": "Pesquisar:",
+                "lengthMenu": "Mostrar _MENU_ registros por página",
+                "zeroRecords": "Nenhum resultado encontrado",
+                "info": "Mostrando _START_ até _END_ de _TOTAL_ registro(s)",
+                "infoEmpty": "Monstrando 0 até 0 de 0 registro(s)",
+                "infoFiltered": "",
+                "processing": "Carregando...",
+                "paginate": {
+                    "first": "Primeiro",
+                    "last": "Último",
+                    "next": "Próximo",
+                    "previous": "Anterior"
+                },
+            },
+            "bServerSide": true,
+            "processing": true,
+            "ajax": {
+                "url": "http://localhost:51485/api/crud/GetGrupoDtoGrid",
+                "data": function (d) {
+                    return {
+                        "draw": d.draw,
+                        "start": d.start,
+                        "length": d.length,
+                        "search": d.search.value,
+                        "order": $('th')[d.order[0].column].outerText,
+                        "dir": d.order[0].dir
+                    };
+                }
+            },
+            "columns": [
+                { "data": "Numero" },
+                { "data": "Especialidade", "bSortable": false },
+                {
+                    "bSortable": false,
+                    "data": null,
+                    "defaultContent":
+                        '<button type="button" name="btnEdit" class="btn btn-primary" style="width:36px; padding-left: 11px; margin: 1px 2px 1px 2px;">' +
+                        '<i class= "fa fa-pencil-square-o" ></i>' +
+                        '</button>' +
+                        '<button type="button" name="btnRemove" class="btn btn-danger" style="width:36px; margin: 1px 2px 1px 2px;">' +
+                        '<i class="fa fa-trash"></i>' +
+                        '</button>'
+                },
+                { "data": "Id", "visible": false },
+                { "data": "IdEspecialidade", "visible": false },
+            ]
+        });
+
+    });
+</script>
