@@ -1,4 +1,6 @@
-﻿using System.Web.Mvc;
+﻿using NPJe.FrontEnd.Configs;
+using NPJe.FrontEnd.Enums;
+using System.Web.Mvc;
 
 namespace NPJe.FrontEnd.Controllers
 {
@@ -10,6 +12,8 @@ namespace NPJe.FrontEnd.Controllers
             if (Session["IdUsuario"] == null)
                 return RedirectToAction("Login", "Home");
 
+            ViewBag.Especialidades = EnumExtension.GetList<EspecialidadeEnum>();
+            ViewBag.DiaSemana = EnumExtension.GetList<DiaSemanaEnum>();
             return View("Index");
         }
 

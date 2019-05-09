@@ -1,8 +1,13 @@
-﻿@{
+﻿@model NPJe.FrontEnd.Dtos.GenericInfoComboDto
+@{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<style>
+    .modal {
+        overflow-y: auto !important;
+    }
+</style>
 <!-- Cabeçalho da página -->
 <section class="content-header">
     <h1>
@@ -64,8 +69,9 @@
             </div>
         </div>
     </div>
-    <!-- modal para adição/edição -->
-    <div class="modal fade" id="modalAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" url="http://localhost:51485/api/crud/GetGrupoDtoGrid">
+
+    @* Modal add Aluno *@
+    <div class="modal fade" id="modalAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" consultar="false" url="http://localhost:51485/api/crud/GetGrupoDtoGrid">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -80,8 +86,9 @@
                 <div class="box-body">
                     <div class="col-sm-6">
                         <div class="form-group">
+                            <input type="hidden" id="IdEdit" name="Id" value="0">
                             <label for="inputLogin">Login</label>
-                            <input type="text" class="form-control" id="inputLogin" placeholder="Digite um login">
+                            <input type="text" class="form-control" name="Usuario" id="inputLogin" placeholder="Digite um login">
                         </div>
                     </div>
 
@@ -96,15 +103,15 @@
                     <div class="col-sm-12">
                         <div class="form-group">
                             <label for="inputNome">Nome</label>
-                            <input type="text" class="form-control" id="inputNome" placeholder="Digite o nome completo">
+                            <input type="text" class="form-control" name="Nome" id="inputNome" placeholder="Digite o nome completo">
                         </div>
                     </div>
 
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="comboSexo">Sexo</label>
-                            <select class="form-control" id="comboSexo" placeholder="Digite o nome completo">
-                                <option value="0">Escolha...</option>
+                            <select class="form-control" id="comboSexo" name="Sexo" placeholder="Selecione o sexo">
+                                <option value="">Escolha...</option>
                                 <option value="1">Masculino</option>
                                 <option value="2">Feminino</option>
                             </select>
@@ -113,43 +120,43 @@
 
                     <div class="col-sm-3">
                         <div class="form-group">
-                            <label for="imputIdade">Idade</label>
-                            <input type="number" class="form-control" id="imputIdade" placeholder="Digite a idade">
+                            <label for="imputMatricula">Matrícula</label>
+                            <input type="number" class="form-control" name="Matricula" id="imputMatricula" placeholder="Digite a matrícula">
                         </div>
                     </div>
 
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="imputSemestre">Semestre</label>
-                            <input type="number" class="form-control" id="imputSemestre" placeholder="Digite o semestre">
+                            <input type="number" class="form-control" name="Semestre" id="imputSemestre" placeholder="Digite o semestre">
                         </div>
                     </div>
 
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="datepicker">Data de nascimento</label>
-                            <input type="text" class="form-control pull-right" id="datepicker" placeholder="Selecione a data">
+                            <input type="text" class="form-control pull-right" name="DataNascimento" id="datepicker" placeholder="Selecione a data">
                         </div>
                     </div>
 
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label for="imputCPF">CPF</label>
-                            <input type="text" class="form-control" id="imputCPF" placeholder="Digite o CPF">
+                            <input type="text" class="form-control" name="CPF" id="imputCPF" placeholder="Digite o CPF">
                         </div>
                     </div>
 
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="imputTelefone">Telefone</label>
-                            <input type="text" class="form-control" id="imputTelefone" placeholder="Digite o telefone fixo">
+                            <input type="text" class="form-control" name="Telefone" id="imputTelefone" placeholder="Digite o telefone fixo">
                         </div>
                     </div>
 
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="imputCelular">Celular</label>
-                            <input type="text" class="form-control" id="imputCelular" placeholder="Digite o celular">
+                            <input type="text" class="form-control" name="Celular" id="imputCelular" placeholder="Digite o celular">
                         </div>
                     </div>
                     <div class="nav-tabs-custom">
@@ -159,26 +166,32 @@
                         </ul>
                     </div>
                     <div class="tab-content">
-                        <div class="active tab-pane" id="grupos">
+                        <div class="tab-pane active" id="grupos">
                             <div class="box">
-                                <div class="box-header">
-
+                                <div class="box-header" style="background-color:#ecf0f5; border-bottom:2px solid #d2d6de !important; padding-bottom: 4px;padding-top: 4px;">
+                                    <div class="col-sm-6">
+                                        <label style="padding-top: 5px;">Grupos</label>
+                                    </div>
+                                    <div class="col-sm-6" id="colAdd" style=" text-align: right; padding-right: 0;">
+                                        <!-- Botão de adicionar -->
+                                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalAddGrupo" id="btnAddGrupo" style="text-align: right">
+                                            <i class="fa fa-plus"></i>
+                                            Adicionar
+                                        </button>
+                                    </div>
                                 </div>
                                 <!-- /.box-header -->
                                 <div class="box-body no-padding">
-                                    <table id="tabelaGrupos" class="table table-condensed">
-                                        <tr>
-                                            <th style="width: 10px">#</th>
-                                            <th>Task</th>
-                                            <th>Progress</th>
-                                            <th style="width: 40px">Label</th>
-                                        </tr>
-                                        <tr>
-                                            <td>1.</td>
-                                            <td>Numsei</td>
-                                            <td>QWE</td>
-                                            <td><span class="badge bg-green">90%</span></td>
-                                        </tr>
+                                    <table id="tabelaGruposAluno" name="AlunoGrupoGrid" class="table table-condensed">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Task</th>
+                                                <th>Progress</th>
+                                                <th>Label</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
                                     </table>
                                 </div>
                                 <!-- /.box-body -->
@@ -186,24 +199,28 @@
                         </div>
                         <div class="tab-pane" id="especialidades">
                             <div class="box">
-                                <div class="box-header">
-
+                                <div class="box-header" style="background-color:#ecf0f5; border-bottom:2px solid #d2d6de !important; padding-bottom: 4px;padding-top: 4px;">
+                                    <div class="col-sm-6">
+                                        <label style="padding-top: 5px;">Especialidades</label>
+                                    </div>
+                                    <div class="col-sm-6" id="colAdd" style=" text-align: right; padding-right: 0;">
+                                        <!-- Botão de adicionar -->
+                                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalAddEspecialidade" id="btnAddGrupo" style="text-align: right">
+                                            <i class="fa fa-plus"></i>
+                                            Adicionar
+                                        </button>
+                                    </div>
                                 </div>
                                 <!-- /.box-header -->
                                 <div class="box-body no-padding">
-                                    <table id="tabelaEspecialidades" class="table table-condensed">
-                                        <tr>
-                                            <th style="width: 10px">#</th>
-                                            <th>Task</th>
-                                            <th>Progress</th>
-                                            <th style="width: 40px">Label</th>
-                                        </tr>
-                                        <tr>
-                                            <td>1.</td>
-                                            <td>SEila</td>
-                                            <td>asd</td>
-                                            <td><span class="badge bg-green">90%</span></td>
-                                        </tr>
+                                    <table id="tabelaEspecialidadesAluno" name="AlunoEspecialidadeGrid" class="table table-condensed">
+                                        <thead>
+                                            <tr>
+                                                <th>Especialidade</th>
+                                                <th>Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
                                     </table>
                                 </div>
                                 <!-- /.box-body -->
@@ -222,6 +239,204 @@
             </div>
         </div>
     </div>
+
+    @* Modal add AlunoGrupo *@
+    <div class="modal fade" id="modalAddGrupo" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" grid="AlunoGrupoGrid">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">
+                            &times;
+                        </span><span class="sr-only"></span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Vincular aluno a um grupo</h4>
+                </div>
+
+                <div class="box-body">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <input type="hidden" id="IdGrupoEdit" name="Id" value="0">
+                            <input type="hidden" id="IdAlunoG" name="IdAluno" value="0">
+                            <label for="comboEspecialidade">Grupo</label>
+                            <select class="form-control" name="IdGrupo" id="comboGrupo" required placeholder="Escolha o grupo">
+                                <option value="">Escolha...</option>
+                                @foreach (var item in ViewBag.Especialidades)
+                                {
+                                    <option value="@item.Id"> @item.Descricao </option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                    </div>
+                    <div class="col-md-5">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Sair</button>
+                            <button type="button" id="btnConfirm1" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Modal add AlunoEspecialidade *@
+    <div class="modal fade" id="modalAddEspecialidade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" grid="AlunoEspecialidadeGrid" url="http://localhost:51485/api/crud/SaveDisponibilidade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">
+                            &times;
+                        </span><span class="sr-only"></span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Vincular aluno a uma especialidade</h4>
+                </div>
+
+                <div class="box-body" style="padding-top: 2px;">
+                    <div class="col-sm-6">
+                        <div class="form-group" style="padding-top: 8px;">
+                            <input type="hidden" id="IdAlunoEspecialidadeEdit" name="Id" value="0">
+                            <input type="hidden" id="IdAlunoE" name="IdAluno" value="0">
+                            <label for="comboEspecialidade">Especialidade</label>
+                            <select class="form-control" name="IdEspecialidade" id="comboEspecialidade" required placeholder="Escolha a especialidade" style="margin-top: 4px;">
+                                <option value="">Escolha...</option>
+                                @foreach (var item in ViewBag.Especialidades)
+                                {
+                                    <option value="@item.Id"> @item.Descricao </option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <div class="col-sm-6" style="padding-top: 8px;">
+                                <label>Disponibilidade</label>
+                            </div>
+                            <div class="col-sm-6" style="display: flex; justify-content: flex-end; padding-right: 2px;">
+                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalDataHora"
+                                        id="btnAddHorario" style="width: 36px; margin: 1px 2px 2px 0px; padding-left: 11px;">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modaRemovelDataHora"
+                                        id="btnAddHorario" style="margin: 1px 0px 2px 2px; width:36px;">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                            <select class="form-control select2 select2-hidden-accessible" id="HorariosGrid" name="DisponibilidadeGrid" multiple
+                                    data-placeholder="Nenhuma disponibilidade encontrada" style="width: 100%;" removeHtml="1"
+                                    tabindex="-1" aria-hidden="true">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                    </div>
+                    <div class="col-md-5">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Sair</button>
+                            <button type="button" id="btnConfirm1" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Modal add Disponibilidade *@
+    <div class="modal fade" id="modalDataHora" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" grid="DisponibilidadeGrid" option="1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">
+                            &times;
+                        </span><span class="sr-only"></span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Dia e horário</h4>
+                </div>
+                <div class="box-body">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <input type="hidden" id="IdDisponibilidadeEdit" name="Id" value="0">
+                            <input type="hidden" id="IdAlunoEspecialidade" name="IdAlunoEspecialidade" value="0">
+                            <label>Dia da semana</label>
+                            <select class="form-control" name="IdDiaSemana" id="comboDiaSemana" required placeholder="Escolha o dia da semana" rawValue="1">
+                                <option value="">Escolha...</option>
+                                @foreach (var item in ViewBag.DiaSemana)
+                                {
+                                    <option value="@item.Id"> @item.Descricao </option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <fieldset>
+                                <label>Horário</label>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="col-sm-5" style="padding-left: 0px; padding-right: 0px;">
+                                            <input type="text" id="timepicker1" name="HorarioInicio" required="" class="form-control timepicker" rawvalue="1">
+                                        </div>
+                                        <div class="col-sm-2" style="padding-right: 0px; padding-left: 10px; padding-top: 5px;">
+                                            <label>até</label>
+                                        </div>
+                                        <div class="col-sm-5" style="padding-left: 0px; padding-right: 0px;">
+                                            <input type="text" id="timepicker2" name="HorarioFim" required="" class="form-control timepicker" rawvalue="1">
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                    </div>
+                    <div class="col-md-5">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Sair</button>
+                            <button type="button" id="btnConfirm1" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Modal Remove Disponibilidade *@
+    <div class="modal fade" id="modaRemovelDataHora" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" grid="DisponibilidadeGrid" excluir="1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">
+                            &times;
+                        </span><span class="sr-only"></span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Remover Dia e horário</h4>
+                </div>
+
+                <div class="box-body">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>Deseja mesmo excluir este(s) registro(s)?</label>
+                            <input type="hidden" id="IdRemove" name="Id">
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-9">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Sair</button>
+                            <button type="button" id="btnConfirm1" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </section>
 
 <script>
@@ -230,6 +445,8 @@
         $('#imputCelular').inputmask({ "mask": "(99) 9 9999-9999" });
         $('#datepicker').inputmask({ "alias": "dd/mm/yyyy" });
         $('#imputCPF').inputmask({ "mask": "999.999.999-99" });
+        $("#timepicker1").inputmask({ "mask": "99:99" });
+        $("#timepicker2").inputmask({ "mask": "99:99" });
         $('#datepicker').datepicker({
             autoclose: true,
             todayHighlight: true,
@@ -238,10 +455,30 @@
             language: 'pt-BR',
             endDate: new Date(),
             clearBtn: true
-        });
+        }).on('hide', function(e) {
+            e.stopPropagation();
+          });;
 
         $('#tabelaAlunos').dataTable({
-            "buttons": ['excel', 'pdf'],
+            "dom": "Bfrtip",
+            "buttons": [{
+                extend: 'excel',
+                header: true,
+                title: 'Alunos',
+                fontSize: '15',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4]
+                }
+            },
+            {
+                extend: 'pdf',
+                header: true,
+                title: 'Aluno',
+                fontSize: '20',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4]
+                }
+            }],
             "lengthChange": false,
             "language": {
                 "search": "Pesquisar:",
@@ -294,5 +531,132 @@
             ]
         });
 
+        $('#tabelaGruposAluno').dataTable({
+            "paging": false,
+            "searching": false,
+            "scrollY": "100px",
+            "scrollCollapse": true,
+            "lengthChange": false,
+            "bServerSide": true,
+            "processing": true,
+            "language": {
+                "lengthMenu": "Mostrar _MENU_ registros por página",
+                "zeroRecords": "Nenhum resultado encontrado",
+                "info": "Mostrando _START_ até _END_ de _TOTAL_ registro(s)",
+                "infoEmpty": "Monstrando 0 até 0 de 0 registro(s)",
+                "infoFiltered": "",
+                "processing": "Carregando...",
+                "paginate": {
+                    "first": "Primeiro",
+                    "last": "Último",
+                    "next": "Próximo",
+                    "previous": "Anterior"
+                },
+            },
+            "ajax": {
+                "url": "http://localhost:51485/api/crud/GetGruposAlunoGrid",
+                "data": function (d) {
+                    return {
+                        "order": $('th')[d.order[0].column].outerText,
+                        "dir": d.order[0].dir,
+                        "consultar": $('#modalAdd')[0].getAttribute('consultar')
+                    };
+                }
+            },
+            "columns": [
+                { "data": "EspecialidadeDescricao" },
+                {
+                    "bSortable": false,
+                    "data": null,
+                    "defaultContent":
+                        '<button type="button" class="btn btn-primary" style="width:36px; padding-left: 11px; margin: 1px 2px 1px 2px;">' +
+                        '<i class= "fa fa-pencil-square-o" ></i>' +
+                        '</button>' +
+                        '<button type="button" class="btn btn-danger" style="width:36px; margin: 1px 2px 1px 2px;">' +
+                        '<i class="fa fa-trash"></i>' +
+                        '</button>'
+                },
+                { "data": "Id", "visible": false }
+            ]
+        });
+
+        $('#tabelaEspecialidadesAluno').dataTable({
+            "paging": false,
+            "searching": false,
+            "scrollY": "100px",
+            "scrollCollapse": true,
+            "lengthChange": false,
+            "bServerSide": true,
+            "processing": true,
+            "language": {
+                "lengthMenu": "Mostrar _MENU_ registros por página",
+                "zeroRecords": "Nenhum resultado encontrado",
+                "info": "Mostrando _START_ até _END_ de _TOTAL_ registro(s)",
+                "infoEmpty": "Monstrando 0 até 0 de 0 registro(s)",
+                "infoFiltered": "",
+                "processing": "Carregando...",
+                "paginate": {
+                    "first": "Primeiro",
+                    "last": "Último",
+                    "next": "Próximo",
+                    "previous": "Anterior"
+                },
+            },
+            "ajax": {
+                "url": "http://localhost:51485/api/crud/GetEspecialidadeAlunoGrid",
+                "data": function (d) {
+                    return {
+                        "order": $('th')[d.order[0].column].outerText,
+                        "dir": d.order[0].dir,
+                        "consultar": $('#modalAdd')[0].getAttribute('consultar')
+                    };
+                }
+            },
+            "columns": [
+                { "data": "EspecialidadeDescricao" },
+                {
+                    "bSortable": false,
+                    "data": null,
+                    "defaultContent":
+                        '<button type="button" name="btnEditEspecialidade" class="btn btn-primary" style="width:36px; padding-left: 11px; margin: 1px 2px 1px 2px;">' +
+                        '<i class= "fa fa-pencil-square-o" ></i>' +
+                        '</button>' +
+                        '<button type="button" name="btnRemoveEspecialidade" class="btn btn-danger" style="width:36px; margin: 1px 2px 1px 2px;">' +
+                        '<i class="fa fa-trash"></i>' +
+                        '</button>'
+                },
+                { "data": "Id", "visible": false }
+            ],
+            "drawCallback": function (settings) {
+                var json = settings.json;
+                $("[name='btnRemoveEspecialidade']").click(function () {
+                    var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];
+                    $('#IdRemove').val(idSelecionado.Id);
+                    $('#modalRemove').modal('show');
+                });
+                $("[name='btnEditEspecialidade']").click(function () {
+                    var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];
+                    
+                        $('#modalAddEspecialidade :input').each(function () {
+                            var me = $(this);
+                            if (me && me.context.name) {
+                                var value = idSelecionado[me.context.name];
+                                if (value && value.length && value.length > 0) {
+                                    value.forEach(x => {
+                                        var grid = $('#HorariosGrid')[0];
+                                        var stringValue = JSON.stringify(x).replace(/"/g, "'");
+                                        grid.innerHTML = grid.innerHTML + '<option value="' + stringValue + '"> ' +
+                                            x.DiaSemanaDescricao + ' - ' + x.HorarioInicio.substr(0, 5) + ' até ' + x.HorarioFim.substr(0, 5) + ' </option>';
+                                    });
+                                }
+                                else if(value)
+                                    me.val(value);
+                            }
+                        });
+                        $('#modalAddEspecialidade').modal('show');
+                    }); 
+            }
+        });
+        
     });
 </script>

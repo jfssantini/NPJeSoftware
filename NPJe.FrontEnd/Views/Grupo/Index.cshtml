@@ -89,7 +89,8 @@
                                 <option value="">Escolha...</option>
                                 @foreach (var item in ViewBag.Especialidades)
                                 {
-                                    <option value="@item.Id"> @item.Descricao </option>}
+                                    <option value="@item.Id"> @item.Descricao </option>
+                                }
                             </select>
                         </div>
                     </div>
@@ -144,7 +145,27 @@
 <script>
     $(document).ready(function () {
         $('#tabelaGrupos').dataTable({
-            "buttons": ['excel', 'pdf'],
+            "dom": "Bfrtip",
+            "buttons": [
+                {
+                    extend: 'excel',
+                    header: true,
+                    title: 'Grupos',
+                    fontSize: '15',
+                    exportOptions: {
+                        columns: [ 0, 1 ]
+                    }
+                },
+                {
+                    extend: 'pdf',
+                    header: true,
+                    title: 'Grupos',
+                    fontSize: '20',
+                    exportOptions: {
+                        columns: [ 0, 1 ]
+                    }
+                }
+            ],
             "lengthChange": false,
             "drawCallback": function (settings) {
                 var json = settings.json;

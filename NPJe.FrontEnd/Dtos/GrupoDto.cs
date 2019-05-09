@@ -9,7 +9,7 @@ namespace NPJe.FrontEnd.Dtos
 
         public EspecialidadeEnum IdEspecialidade { get; set; }
 
-        public string Numero { get; set; }
+        public int Numero { get; set; }
 
         public string Especialidade { get { return IdEspecialidade.GetDescription(); } set { } }
     }

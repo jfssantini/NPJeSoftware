@@ -12,12 +12,16 @@ namespace NPJe.FrontEnd.Models
 
         public long Id { get; set; }
 
-        public long IdAluno { get; set; }
+        public long? IdAluno { get; set; }
 
         public Aluno Aluno { get; set; }
 
         public EspecialidadeEnum IdEspecialidade { get; set; }
 
         public List<Disponibilidade> Disponibilidades { get; set; }
+
+        public long IdUsuario { get; set; }
+
+        public Usuario Usuario { get; set; }
     }
 }

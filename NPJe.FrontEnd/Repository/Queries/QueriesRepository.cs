@@ -7,6 +7,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Linq.Dynamic;
 using System;
+using System.Data.Entity;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace NPJe.FrontEnd.Repository.Queries
 {
@@ -18,14 +21,14 @@ namespace NPJe.FrontEnd.Repository.Queries
             Contexto = new Contexto();
         }
 
-        public object GetAlunoDtoGrid(int draw, int start, int length, string search, string order, string dir)
+        public RetornoDto GetAlunoDtoGrid(int draw, int start, int length, string search, string order, string dir)
         {
             var data = (from a in Contexto.Aluno
                         where a.Nome.Contains(search)
                         select new AlunoGridDto() {
                             Id = a.Id,
                             Nome = a.Nome,
-                            Grupos = a.Grupos.Select(x => x.Grupo.Numero).ToList(),
+                            Grupos = a.Grupos.Select(x => x.Grupo.Numero + "").ToList(),
                             Especialidades = a.Especialidades.Select(x => x.IdEspecialidade).ToList(),
                             Sexo = a.Sexo,
                             DataNascimento = a.Datanascimento,
@@ -34,11 +37,7 @@ namespace NPJe.FrontEnd.Repository.Queries
                         .OrderBy(order.RemoveAccents() + " " + dir)
                         .Skip(start).Take(length);
 
-            return new Teste
-            {
-                recordsFiltered = 0,
-                data = data.ToList()
-            };
+            return CreateDataResult(Contexto.Aluno, data);
         }
 
         public bool EditGrupo(GrupoDto dto)
@@ -55,7 +54,7 @@ namespace NPJe.FrontEnd.Repository.Queries
             return true;
         }
 
-        public object GetGrupoDto(long id)
+        public GrupoDto GetGrupoDto(long id)
         {
             return (from g in Contexto.Grupo
                             where g.Id == id
@@ -67,28 +66,48 @@ namespace NPJe.FrontEnd.Repository.Queries
                             }).FirstOrDefault();
         }
 
-        public object GetGrupoDtoGrid(int draw, int start, int length, string search, string order, string dir)
+        public RetornoDto GetEspecialidadeAlunoGrid(string order, string dir, long? idAluno)
+        {
+            var data = (from e in Contexto.AlunoEspecialidade
+                            where e.IdAluno == idAluno && 
+                            e.IdUsuario == SessionUser.IdUsuario
+                            select new EspecialidadeDto() {
+                                Id = e.Id,
+                                IdAluno = e.IdAluno,
+                                IdEspecialidade = e.IdEspecialidade,
+                                IdUsuario = e.IdUsuario,
+                                DisponibilidadeGrid = e.Disponibilidades.Select(x => new HorarioDto() {
+                                    Id = x.Id,
+                                    IdAlunoEspecialidade = x.IdAlunoEspecialidade,
+                                    IdDiaSemana = x.IdDiaSemana,
+                                    HorarioInicio = x.HorarioInicio,
+                                    HorarioFim = x.HorarioFim
+                                }).ToList()
+                            }).ToList();
+
+            return CreateDataResult(data.Count, data);
+        }
+
+        public RetornoDto GetGrupoDtoGrid(int draw, int start, int length, string search, string order, string dir)
         {
             var consulta = (from g in Contexto.Grupo
                             select g);
 
-            if (!search.IsNullOrEmpty())
-                consulta = consulta.Where(x => x.Numero == search);
+            if (!search.IsNullOrEmpty() && int.TryParse(search, out int result))
+                consulta = consulta.Where(x => x.Numero == result);
 
             var data = (from g in consulta
-                    select new GrupoDto() {
-                        Id = g.Id,
-                        IdEspecialidade = g.IdEspecialidade,
-                        Numero = g.Numero
-                    })
+                        select new GrupoDto()
+                        {
+                            Id = g.Id,
+                            IdEspecialidade = g.IdEspecialidade,
+                            Numero = g.Numero
+                        })
                     .OrderBy(order.RemoveAccents() + " " + dir)
-                    .Skip(start).Take(length);
+                    .Skip(start).Take(length)
+                    .ToList();
 
-            return new Teste
-            {
-                recordsFiltered = 0,
-                data = data.ToList()
-            };
+            return CreateDataResult(Contexto.Grupo, data);
         }
 
         public bool SaveGrupo(GrupoDto dto)
@@ -103,7 +122,37 @@ namespace NPJe.FrontEnd.Repository.Queries
             return true;
         }
 
-        
+        public bool SaveDisponibilidade(EspecialidadeDto dto)
+        {
+            var entity = new AlunoEspecialidade()
+            {
+                IdAluno = dto.IdAluno == 0 ? null : dto.IdAluno,
+                IdEspecialidade = dto.IdEspecialidade,
+                IdUsuario = SessionUser.IdUsuario,
+                Disponibilidades = new List<Disponibilidade>()
+            };
+
+            dto.DisponibilidadeGrid.ForEach(x => {
+                entity.Disponibilidades.Add(new Disponibilidade()
+                {
+                     IdAlunoEspecialidade = x.IdAlunoEspecialidade,
+                     HorarioInicio = x.HorarioInicio,
+                     HorarioFim = x.HorarioFim,
+                     IdDiaSemana = x.IdDiaSemana
+                });
+            });
+
+            var retorno = Contexto.AlunoEspecialidade.Add(entity);
+            Contexto.SaveChanges();
+            return true;
+        }
+
+        public bool EditDisponibilidade(EspecialidadeDto dto)
+        {
+            throw new NotImplementedException();
+        }
+
+
 
         public bool RemoveGrupo(long id)
         {
@@ -138,7 +187,25 @@ namespace NPJe.FrontEnd.Repository.Queries
             return strBuilder.ToString();
         }
 
-        public class Teste
+        private RetornoDto CreateDataResult<T>(DbSet<T> dbSet, object data) where T : class{
+
+            return new RetornoDto
+            {
+                recordsFiltered = dbSet.Count(),
+                data = data
+            };
+        } 
+
+        private RetornoDto CreateDataResult(int count, object data)
+        {
+            return new RetornoDto
+            {
+                recordsFiltered = count,
+                data = data
+            };
+        }
+
+        public class RetornoDto
         {
             public int recordsFiltered { get; set; }
             public object data { get; set; }

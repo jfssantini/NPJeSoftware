@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NPJe.FrontEnd.Enums;
+using System;
 
 namespace NPJe.FrontEnd.Models
 {
@@ -10,6 +11,10 @@ namespace NPJe.FrontEnd.Models
 
         public AlunoEspecialidade AlunoEspecialidade { get; set; }
 
-        public DateTime DataHora { get; set; }
+        public DiaSemanaEnum IdDiaSemana { get; set; }
+
+        public string HorarioInicio { get; set; }
+
+        public string HorarioFim { get; set; }
     }
 }

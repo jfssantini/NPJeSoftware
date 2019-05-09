@@ -195,6 +195,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Configs\EnumExtension.cs" />
+    <Compile Include="Configs\SessionUser.cs" />
     <Compile Include="Configs\StringExtension.cs" />
     <Compile Include="Controllers\AlunoController.cs" />
     <Compile Include="Controllers\CRUDController.cs" />
@@ -202,8 +203,11 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Dtos\AlunoGridDto.cs" />
+    <Compile Include="Dtos\EspecialidadeDto.cs" />
     <Compile Include="Dtos\GenericInfoComboDto.cs" />
     <Compile Include="Dtos\GrupoDto.cs" />
+    <Compile Include="Dtos\HorarioDto.cs" />
+    <Compile Include="Enums\DiaSemanaEnum.cs" />
     <Compile Include="Enums\EspecialidadeEnum.cs" />
     <Compile Include="Enums\EtapaAtendimentoEnum.cs" />
     <Compile Include="Enums\PapelUsuarioEnum.cs" />

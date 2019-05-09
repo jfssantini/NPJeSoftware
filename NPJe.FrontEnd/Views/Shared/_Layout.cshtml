@@ -11,14 +11,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NPJe</title>
     @Styles.Render("~/Css")
-    <link href="~/Content/dist/css/extras.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.5.6/css/buttons.dataTables.min.css" />
     @Styles.Render("~/PluginsDatePickerCss")
-
+    <link href="~/Content/dist/css/extras.css" rel="stylesheet" />
 </head>
 <body class="hold-transition skin-blue sidebar-mini ">
     @Scripts.Render("~/Js")
@@ -407,6 +406,44 @@
 
     <script>
         $(document).ready(function () {
+
+            var Especialidades = [{
+                id: -1,
+                descricao: "SAJ - SERVIÇO DE ASSIST. JURÍDICA"
+            }, {
+                id: -2,
+                descricao: "CONCILIARE"
+            }, {
+                id: -3,
+                descricao: "LIBERTARE"
+            }, {
+                id: -4,
+                descricao: "CONSEMMA"
+            }];
+            var DiasSemana = [{
+                id: -1,
+                descricao: "Segunda-feira"
+            }, {
+                id: -2,
+                descricao: "Terça-feira"
+            }, {
+                id: -3,
+                descricao: "Quarta-feira"
+            }, {
+                id: -4,
+                descricao: "Quinta-feira"
+            }, {
+                id: -5,
+                descricao: "Sexta-feira"
+            }, {
+                id: -6,
+                descricao: "Sábado"
+            }, {
+                id: -7,
+                descricao: "Domingo"
+            }];
+
+            //Comportamento de ssalvar registros no banco
             $('button[id=btnConfirm]').on('click', function () {
                 var formValid = true;
                 var result = '{ ';
@@ -438,15 +475,123 @@
                 }
             });
 
-            $('#modalAdd').on('hide.bs.modal', function () {
-                $("#modalAdd input").val("");
-                $("#comboEspecialidade").val("");
-                $("#comboSexo").val("");
-                $('#modalAdd :input').each(function () {
+            //Comportamento de salvar registros na tela
+            $('button[id=btnConfirm1]').on('click', function () {
+                debugger;
+                var formValid = true;
+                var result = '{ ';
+                var rawValue = "";
+                var option = false;
+                $('#' + $(this).parents().toArray().filter(x => x.className.includes("modal fade"))[0].id + ' :input').each(function () {
                     var me = $(this);
-                    if (me && me.context.style.borderColor == "red")
-                        me.context.style.borderColor = "#ccc";
+                    if (me && me.context.name) {
+                        me.on('click', x => x.delegateTarget.style.borderColor = "#ccc");
+                        if (me.context.validity.valueMissing && me.context.required) {
+                             me.context.style.borderColor = "red";
+                            formValid = false;
+                        }
+                        else {
+                            var thisModal = $(this).parents().toArray().filter(x => x.className.includes("modal fade"))[0];
+                            if (me.context.name.includes("Id") && me.context.value.length == 0)
+                                me.context.value = "0";
+                            me.context.style.borderColor = "#ccc";
+
+                            result = result + "'" + me.context.name + "': '" + me.context.value + "',";
+
+                            if (thisModal && thisModal.getAttribute('option') == 1) {
+                                option = true;
+                                if (me.context.getAttribute('rawValue')) {
+                                    if (me[0] && me[0].selectedIndex) {
+                                        rawValue = rawValue + me[0].options[me[0].selectedIndex].label + " - ";
+                                    }
+                                    else
+                                        if (me[0].value)
+                                            rawValue = rawValue + me[0].value + " - ";
+                                }
+                            }
+                            else {
+                                
+                                if (me.context.options && me.context.multiple) {
+                                    
+                                    var value = "'" + me.context.name + "': ["
+                                    
+                                    for (var i = 0; i < me.context.options.length; i++) {
+                                        if (me.context.options[i].value.length > 0) {
+                                            value = value + me.context.options[i].value + ", ";
+                                        }
+                                    }
+                                    value = value.substr(0, value.length-2) + "]";
+                                    result = result + value + ',';
+                                }
+                                else {
+                                    result = result + "'" + me.context.name + "': '" + me.context.value + "',";
+                                }
+                            }
+                        }
+                    }
                 });
+                if (formValid) {
+                    result = result.substr(0, result.length - 1) + ' }';
+
+                    rawValue = rawValue.substr(0, rawValue.length-3);
+                    var modal = $(this).parents().toArray().filter(x => x.className.includes("modal fade"))[0];
+                    var grid = $('[name=' + modal.getAttribute('grid') + ']')[0];
+
+                    if (option || ($('#' + $(this).parents().toArray().filter(x => x.className.includes("modal fade"))[0].id)[0].getAttribute('excluir'))) {
+                        if (modal.getAttribute('excluir')) {
+                            while (grid.options.selectedIndex != -1) {
+                                grid.options[grid.options.selectedIndex].remove();
+                            }
+                        } else {
+                            rawValue = rawValue.substr(0, rawValue.lastIndexOf('-')) + 'até ' + rawValue.substring(rawValue.lastIndexOf('-') + 2);
+                            grid.innerHTML = grid.innerHTML + '<option value="' + result + '"> ' + rawValue + ' </option>';
+                        }
+                    }
+                    else {
+                        var url = modal.getAttribute('url');
+
+                        $.get(url, { values: result }, function (data) {
+                        $('table').DataTable().ajax.reload();
+                        $('#' + $(this).parents().toArray().filter(x => x.className.includes("modal fade"))[0].id)[0].modal('hide');
+                    });
+                    }
+                    
+                    $('#'+modal.id).modal('hide');
+                }
+            });
+
+            $('.modal').on('show.bs.modal', function () {
+                var me = $(this);
+                me.context.setAttribute('consultar', true);
+            });
+
+            $('.modal').on('hide.bs.modal', function () {
+                var me = $(this);
+                me.context.setAttribute('consultar', false);
+                $("#" + me.context.id +" input").val("");
+                $("#" + me.context.id + " select").val("");
+                
+                $("#" + me.context.id + " select").toArray()
+                    .filter(x => x.getAttribute('removeHtml'))
+                    .forEach(x => {
+                        x.innerHTML = "";
+                    });
+
+                $("#" + me.context.id +" input").each(function () {
+                var input = $(this);
+                if (input && input.context.style.borderColor == "red")
+                    input.context.style.borderColor = "#ccc";
+                });
+            });
+
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                $($.fn.dataTable.tables( true ) ).css('width', '100%');
+                $($.fn.dataTable.tables( true ) ).DataTable().columns.adjust().draw();
+            });
+
+            $('#modalAdd').on('shown.bs.modal', function () {
+                $($.fn.dataTable.tables( true ) ).css('width', '100%');
+                $($.fn.dataTable.tables( true ) ).DataTable().columns.adjust().draw();
             });
 
         });

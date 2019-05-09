@@ -61,11 +61,16 @@ namespace NPJe.FrontEnd.Controllers
             if (user != null)
             {
                 Session["IdUsuario"] = user.Id;
+                SessionUser.IdUsuario = user.Id;
                 Session["Usuario"] = user.UsuarioLogin;
+                SessionUser.Usuario = user.UsuarioLogin;
                 Session["IdPapel"] = user.IdPapelUsuario;
-                Session["Papel"] = user.IdPapelUsuario.GetDescription().ToLower();
+                SessionUser.IdPapel = user.IdPapelUsuario;
                 Session["IdStatus"] = StatusUsuarioEnum.Online;
+                SessionUser.IdStatus = StatusUsuarioEnum.Online;
+
                 Session["Status"] = StatusUsuarioEnum.Online.GetDescription().ToLower();
+                Session["Papel"] = user.IdPapelUsuario.GetDescription().ToLower();
             }
             else
             {
