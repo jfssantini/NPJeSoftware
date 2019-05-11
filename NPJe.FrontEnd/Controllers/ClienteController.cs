@@ -1,21 +1,19 @@
-﻿using NPJe.FrontEnd.Configs;
-using NPJe.FrontEnd.Enums;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 
 namespace NPJe.FrontEnd.Controllers
 {
-    public class GrupoController : Controller
+    public class ClienteController : Controller
     {
-        // GET: Grupo
+        // GET: Cliente
         public ActionResult Index()
         {
             DefineViewDatas();
             if (Session["IdUsuario"] == null)
                 return RedirectToAction("Login", "Home");
 
-            ViewBag.Especialidades = EnumExtension.GetList<EspecialidadeEnum>();
-            return View();
+            return View("Index");
         }
+
         public void DefineViewDatas()
         {
             ViewData["Usuario"] = Session?["Usuario"] ?? "usuario";

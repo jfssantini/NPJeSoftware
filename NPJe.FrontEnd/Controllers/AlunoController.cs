@@ -1,5 +1,6 @@
 ﻿using NPJe.FrontEnd.Configs;
 using NPJe.FrontEnd.Enums;
+using NPJe.FrontEnd.Repository.Queries;
 using System.Web.Mvc;
 
 namespace NPJe.FrontEnd.Controllers
@@ -9,6 +10,8 @@ namespace NPJe.FrontEnd.Controllers
         public ActionResult Index()
         {
             DefineViewDatas();
+            new AlunoRepository().ExcluirRegistrosInconsistentes();
+
             if (Session["IdUsuario"] == null)
                 return RedirectToAction("Login", "Home");
 

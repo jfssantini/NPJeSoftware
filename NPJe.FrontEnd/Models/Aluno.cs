@@ -17,7 +17,7 @@ namespace NPJe.FrontEnd.Models
 
         public int Sexo { get; set; }
 
-        public DateTime Datanascimento { get; set; }
+        public DateTime DataNascimento { get; set; }
 
         public string Telefone { get; set; }
 

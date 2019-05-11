@@ -1,11 +1,19 @@
 ﻿using NPJe.FrontEnd.Enums;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
 
-namespace NPJe.FrontEnd.Models
+namespace NPJe.FrontEnd.Dtos
 {
-    public class Responsavel
+    public class ResponsavelDto
     {
+
         public long Id { get; set; }
+
+        public string Usuario { get; set; }
+
+        public string Senha { get; set; }
 
         public string Nome { get; set; }
 
@@ -13,19 +21,17 @@ namespace NPJe.FrontEnd.Models
 
         public DateTime DataNascimento { get; set; }
 
+        public string DescricaoDataNascimento { get; set; }
+
+        public string CPF { get; set; }
+
         public string Telefone { get; set; }
 
         public string Celular { get; set; }
 
         public string Email { get; set; }
 
-        public string RG { get; set; }
-
-        public string CPF { get; set; }
-
         public long IdUsuario { get; set; }
-
-        public Usuario Usuario { get; set; }
 
         public TipoResponsavelEnum IdTipoResponsavel { get; set; }
 

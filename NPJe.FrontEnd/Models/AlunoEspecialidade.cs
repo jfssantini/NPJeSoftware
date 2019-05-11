@@ -18,10 +18,16 @@ namespace NPJe.FrontEnd.Models
 
         public EspecialidadeEnum IdEspecialidade { get; set; }
 
-        public List<Disponibilidade> Disponibilidades { get; set; }
-
         public long IdUsuario { get; set; }
 
         public Usuario Usuario { get; set; }
+  
+        public bool Temporario { get; set; }
+
+        public bool Esconder { get; set; }
+
+        public bool Excluir { get; set; }
+
+        public List<Disponibilidade> Disponibilidades { get; set; }
     }
 }

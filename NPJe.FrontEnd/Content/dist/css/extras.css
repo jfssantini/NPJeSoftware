@@ -13,4 +13,8 @@
         align-items: center; 
         justify-content: center;
     }
+
+    div.dataTables_length {
+        display: none;
+    }
 }

@@ -71,7 +71,7 @@
     </div>
 
     @* Modal add Aluno *@
-    <div class="modal fade" id="modalAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" consultar="false" url="http://localhost:51485/api/crud/GetGrupoDtoGrid">
+    <div class="modal fade" id="modalAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" consultar="false" url="http://localhost:51485/api/alunoCrud/SaveAluno" reload="tabelaAlunos">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -88,29 +88,29 @@
                         <div class="form-group">
                             <input type="hidden" id="IdEdit" name="Id" value="0">
                             <label for="inputLogin">Login</label>
-                            <input type="text" class="form-control" name="Usuario" id="inputLogin" placeholder="Digite um login">
+                            <input type="text" class="form-control" name="Usuario" required id="inputLogin" placeholder="Digite um login">
                         </div>
                     </div>
 
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label for="inputPassword">Senha</label>
-                            <input type="password" class="form-control" id="inputPassword" placeholder="Digite uma senha"
-                                   readonly onmouseover=" this.removeAttribute('readonly')">
+                            <input type="password" class="form-control" name="Senha" id="inputPassword" placeholder="Digite uma senha"
+                                   readonly onmouseover=" this.removeAttribute('readonly')" onfocus="this.removeAttribute('readonly')">
                         </div>
                     </div>
 
                     <div class="col-sm-12">
                         <div class="form-group">
                             <label for="inputNome">Nome</label>
-                            <input type="text" class="form-control" name="Nome" id="inputNome" placeholder="Digite o nome completo">
+                            <input type="text" class="form-control" required name="Nome" id="inputNome" placeholder="Digite o nome completo">
                         </div>
                     </div>
 
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="comboSexo">Sexo</label>
-                            <select class="form-control" id="comboSexo" name="Sexo" placeholder="Selecione o sexo">
+                            <select class="form-control" id="comboSexo" required name="Sexo" placeholder="Selecione o sexo">
                                 <option value="">Escolha...</option>
                                 <option value="1">Masculino</option>
                                 <option value="2">Feminino</option>
@@ -121,21 +121,21 @@
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="imputMatricula">Matrícula</label>
-                            <input type="number" class="form-control" name="Matricula" id="imputMatricula" placeholder="Digite a matrícula">
+                            <input type="number" class="form-control" required name="Matricula" id="imputMatricula" placeholder="Digite a matrícula">
                         </div>
                     </div>
 
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="imputSemestre">Semestre</label>
-                            <input type="number" class="form-control" name="Semestre" id="imputSemestre" placeholder="Digite o semestre">
+                            <input type="number" class="form-control" required name="Semestre" id="imputSemestre" placeholder="Digite o semestre">
                         </div>
                     </div>
 
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="datepicker">Data de nascimento</label>
-                            <input type="text" class="form-control pull-right" name="DataNascimento" id="datepicker" placeholder="Selecione a data">
+                            <input type="text" class="form-control pull-right" name="DescricaoDataNascimento" id="datepicker" placeholder="Selecione a data">
                         </div>
                     </div>
 
@@ -159,6 +159,7 @@
                             <input type="text" class="form-control" name="Celular" id="imputCelular" placeholder="Digite o celular">
                         </div>
                     </div>
+
                     <div class="nav-tabs-custom">
                         <ul class="nav nav-tabs">
                             <li class="active"><a href="#grupos" data-toggle="tab">Grupos</a></li>
@@ -185,10 +186,8 @@
                                     <table id="tabelaGruposAluno" name="AlunoGrupoGrid" class="table table-condensed">
                                         <thead>
                                             <tr>
-                                                <th>#</th>
-                                                <th>Task</th>
-                                                <th>Progress</th>
-                                                <th>Label</th>
+                                                <th>Grupo</th>
+                                                <th>Ações</th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
@@ -241,7 +240,7 @@
     </div>
 
     @* Modal add AlunoGrupo *@
-    <div class="modal fade" id="modalAddGrupo" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" grid="AlunoGrupoGrid">
+    <div class="modal fade" id="modalAddGrupo" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" grid="AlunoGrupoGrid" url="http://localhost:51485/api/alunoCrud/SaveAlunoGrupo" reload="tabelaGruposAluno">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -254,18 +253,13 @@
                 </div>
 
                 <div class="box-body">
-                    <div class="col-sm-6">
+                    <div class="col-sm-7">
                         <div class="form-group">
                             <input type="hidden" id="IdGrupoEdit" name="Id" value="0">
                             <input type="hidden" id="IdAlunoG" name="IdAluno" value="0">
                             <label for="comboEspecialidade">Grupo</label>
-                            <select class="form-control" name="IdGrupo" id="comboGrupo" required placeholder="Escolha o grupo">
-                                <option value="">Escolha...</option>
-                                @foreach (var item in ViewBag.Especialidades)
-                                {
-                                    <option value="@item.Id"> @item.Descricao </option>
-                                }
-                            </select>
+                            <br />
+                            <select class="form-control" name="IdGrupo" id="comboGrupo" required placeholder="Escolha o grupo" style="width:100%"></select>
                         </div>
                     </div>
                     <div class="col-md-7">
@@ -281,8 +275,42 @@
         </div>
     </div>
 
+    @* Modal Remove AlunoGrupo *@
+    <div class="modal fade" id="modalRemoveAlunoGrupo" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" grid="AlunoGrupoGrid" url="http://localhost:51485/api/alunoCrud/RemoveAlunoGrupo" reload="tabelaGruposAluno">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">
+                            &times;
+                        </span><span class="sr-only"></span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Remover vínculo de aluno com grupo</h4>
+                </div>
+
+                <div class="box-body">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>Deseja mesmo excluir este registro?</label>
+                            <input type="hidden" id="IdRemoveAlunoGrupo" name="Id">
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-9">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Sair</button>
+                            <button type="button" id="btnConfirm1" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @* Modal add AlunoEspecialidade *@
-    <div class="modal fade" id="modalAddEspecialidade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" grid="AlunoEspecialidadeGrid" url="http://localhost:51485/api/crud/SaveDisponibilidade">
+    <div class="modal fade" id="modalAddEspecialidade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" grid="AlunoEspecialidadeGrid" url="http://localhost:51485/api/alunoCrud/SaveAlunoEspecialidade" reload="tabelaEspecialidadesAluno">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -304,7 +332,7 @@
                                 <option value="">Escolha...</option>
                                 @foreach (var item in ViewBag.Especialidades)
                                 {
-                                    <option value="@item.Id"> @item.Descricao </option>
+                                    <option value="@item.id"> @item.text </option>
                                 }
                             </select>
                         </div>
@@ -324,10 +352,9 @@
                                     <i class="fa fa-trash"></i>
                                 </button>
                             </div>
-                            <select class="form-control select2 select2-hidden-accessible" id="HorariosGrid" name="DisponibilidadeGrid" multiple
+                            <select class="form-control" id="HorariosGrid" name="DisponibilidadeGrid" multiple
                                     data-placeholder="Nenhuma disponibilidade encontrada" style="width: 100%;" removeHtml="1"
-                                    tabindex="-1" aria-hidden="true">
-                            </select>
+                                    tabindex="-1" aria-hidden="true"></select>
                         </div>
                     </div>
                     <div class="col-md-7">
@@ -343,7 +370,41 @@
         </div>
     </div>
 
-    @* Modal add Disponibilidade *@
+    @* Modal Remove AlunoEspecialidade *@
+    <div class="modal fade" id="modalRemovelAlunoEspecialidade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" grid="AlunoEspecialidadeGrid" url="http://localhost:51485/api/alunoCrud/RemoveAlunoEspecialidade" reload="tabelaEspecialidadesAluno">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">
+                            &times;
+                        </span><span class="sr-only"></span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Remover vínculo de aluno com especialidade</h4>
+                </div>
+
+                <div class="box-body">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>Deseja mesmo excluir este registro?</label>
+                            <input type="hidden" id="IdRemoveAlunoEspecialidade" name="Id">
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-9">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Sair</button>
+                            <button type="button" id="btnConfirm1" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Modal add DataHora *@
     <div class="modal fade" id="modalDataHora" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" grid="DisponibilidadeGrid" option="1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -365,7 +426,7 @@
                                 <option value="">Escolha...</option>
                                 @foreach (var item in ViewBag.DiaSemana)
                                 {
-                                    <option value="@item.Id"> @item.Descricao </option>
+                                    <option value="@item.id"> @item.text </option>
                                 }
                             </select>
                         </div>
@@ -403,7 +464,7 @@
         </div>
     </div>
 
-    @* Modal Remove Disponibilidade *@
+    @* Modal Remove DataHora *@
     <div class="modal fade" id="modaRemovelDataHora" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" grid="DisponibilidadeGrid" excluir="1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -420,7 +481,7 @@
                     <div class="col-sm-12">
                         <div class="form-group">
                             <label>Deseja mesmo excluir este(s) registro(s)?</label>
-                            <input type="hidden" id="IdRemove" name="Id">
+                            <input type="hidden" id="IdRemoveDataHora" name="Id">
                         </div>
                     </div>
 
@@ -455,9 +516,29 @@
             language: 'pt-BR',
             endDate: new Date(),
             clearBtn: true
-        }).on('hide', function(e) {
-            e.stopPropagation();
-          });;
+        }).on('hide', function (e) { e.stopPropagation(); });
+        $('#comboGrupo').select2({
+            "placeholder": "Pesquise o grupo",
+            "dropdownParent": $("#modalAddGrupo"),
+            "allowClear": true,
+            "dataType": 'json',
+            "type": 'GET',
+            "ajax": {
+                "url": "http://localhost:51485/api/alunoCrud/GetGrupoComboDto",
+                "dataType": 'json',
+                "data": function (params) {
+                    return {
+                        search: params.term // search term
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                    results: response.results
+                    };
+                },
+                cache: true
+            },
+        });
 
         $('#tabelaAlunos').dataTable({
             "dom": "Bfrtip",
@@ -478,8 +559,32 @@
                 exportOptions: {
                     columns: [0, 1, 2, 3, 4]
                 }
-            }],
-            "lengthChange": false,
+                }],
+            "drawCallback": function (settings) {
+                var json = settings.json;
+                $("[name='btnRemoveAluno']").click(function () {
+                    var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];
+                    $('#IdRemoveAluno').val(idSelecionado.Id);
+                    $('#modalRemoveAluno').modal('show');
+                });
+                $("[name='btnEditAluno']").click(function () {
+                    var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];
+
+                    $.get('http://localhost:51485/api/alunoCrud/GetAlunoDto', { id: idSelecionado.Id } ,function(data){
+                        $('#modalAdd :input').each(function () {
+                            var me = $(this);
+                            if (me && me.context.name) {
+                                me.val(data[me.context.name]);
+                            }
+                        });
+                        $('#modalAdd').modal('show');
+                    }); 
+                }); 
+            },
+            "lengthChange": true,
+            "responsive": {
+                "details": false
+            },
             "language": {
                 "search": "Pesquisar:",
                 "lengthMenu": "Mostrar _MENU_ registros por página",
@@ -498,7 +603,7 @@
             "bServerSide": true,
             "processing": true,
             "ajax": {
-                "url": "http://localhost:51485/api/crud/GetAlunoDtoGrid",
+                "url": "http://localhost:51485/api/alunoCrud/GetAlunoDtoGrid",
                 "data": function (d) {
                     return {
                         "draw": d.draw,
@@ -511,19 +616,20 @@
                 }
             },
             "columns": [
-                { "data": "Nome" },
+                { "data": "Nome", "width": "20%" },
                 { "data": "Grupo", "bSortable": false },
                 { "data": "Especialidade", "bSortable": false },
-                { "data": "DescricaoSexo", "bSortable": false },
-                { "data": "DescricaoDataNascimento" },
+                { "data": "DescricaoSexo", "bSortable": false, "width": 70 },
+                { "data": "DescricaoDataNascimento", "width": 70 },
                 {
                     "bSortable": false,
                     "data": null,
+                    "width": 90,
                     "defaultContent":
-                        '<button type="button" class="btn btn-primary" style="width:36px; padding-left: 11px; margin: 1px 2px 1px 2px;">' +
+                        '<button type="button" name="btnEditAluno" class="btn btn-primary" style="width:36px; padding-left: 11px; margin: 1px 2px 1px 2px;">' +
                         '<i class= "fa fa-pencil-square-o" ></i>' +
                         '</button>' +
-                        '<button type="button" class="btn btn-danger" style="width:36px; margin: 1px 2px 1px 2px;">' +
+                        '<button type="button" name="btnRemoveAluno" class="btn btn-danger" style="width:36px; margin: 1px 2px 1px 2px;">' +
                         '<i class="fa fa-trash"></i>' +
                         '</button>'
                 },
@@ -554,30 +660,55 @@
                 },
             },
             "ajax": {
-                "url": "http://localhost:51485/api/crud/GetGruposAlunoGrid",
+                "url": "http://localhost:51485/api/alunoCrud/GetAlunoGrupoGrid",
                 "data": function (d) {
                     return {
                         "order": $('th')[d.order[0].column].outerText,
                         "dir": d.order[0].dir,
-                        "consultar": $('#modalAdd')[0].getAttribute('consultar')
+                        "consultar": $('#modalAdd')[0].getAttribute('consultar'),
+                        "idAluno": $('#modalAdd [name=Id]')[0].value
                     };
                 }
             },
             "columns": [
-                { "data": "EspecialidadeDescricao" },
+                { "data": "DescricaoGrupo" },
                 {
                     "bSortable": false,
                     "data": null,
+                    "width": 80,
                     "defaultContent":
-                        '<button type="button" class="btn btn-primary" style="width:36px; padding-left: 11px; margin: 1px 2px 1px 2px;">' +
+                        '<button type="button" name="btnEditGrupo" class="btn btn-primary" style="width:36px; padding-left: 11px; margin: 1px 2px 1px 2px;">' +
                         '<i class= "fa fa-pencil-square-o" ></i>' +
                         '</button>' +
-                        '<button type="button" class="btn btn-danger" style="width:36px; margin: 1px 2px 1px 2px;">' +
+                        '<button type="button" name="btnRemoveGrupo" class="btn btn-danger" style="width:36px; margin: 1px 2px 1px 2px;">' +
                         '<i class="fa fa-trash"></i>' +
                         '</button>'
                 },
                 { "data": "Id", "visible": false }
-            ]
+            ],
+            "drawCallback": function (settings) {
+                var json = settings.json;
+                $("[name='btnRemoveGrupo']").click(function () {
+                    var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];
+                    $('#IdRemoveAlunoGrupo').val(idSelecionado.Id);
+                    $('#modalRemoveAlunoGrupo').modal('show');
+                });
+                $("[name='btnEditGrupo']").click(function () {
+                    var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];
+                    
+                    $('#modalAddGrupo :input').each(function () {
+                        var me = $(this);
+                        if (me && me.context.name) {                            
+                            me.val(idSelecionado[me.context.name]);
+                            if (me.context.id == "comboGrupo") {
+                                var $newOption = $("<option selected='selected'></option>").val(idSelecionado.IdGrupo).text(idSelecionado.DescricaoGrupo)
+                                me.append($newOption).trigger('change');
+                            }
+                        }
+                    });
+                    $('#modalAddGrupo').modal('show');
+                }); 
+            }
         });
 
         $('#tabelaEspecialidadesAluno').dataTable({
@@ -603,20 +734,22 @@
                 },
             },
             "ajax": {
-                "url": "http://localhost:51485/api/crud/GetEspecialidadeAlunoGrid",
+                "url": "http://localhost:51485/api/alunoCrud/GetAlunoEspecialidadeGrid",
                 "data": function (d) {
                     return {
                         "order": $('th')[d.order[0].column].outerText,
                         "dir": d.order[0].dir,
-                        "consultar": $('#modalAdd')[0].getAttribute('consultar')
+                        "consultar": $('#modalAdd')[0].getAttribute('consultar'),
+                        "idAluno": $('#modalAdd [name=Id]')[0].value
                     };
                 }
             },
             "columns": [
-                { "data": "EspecialidadeDescricao" },
+                { "data": "DescricaoEspecialidade" },
                 {
                     "bSortable": false,
                     "data": null,
+                    "width": 80,
                     "defaultContent":
                         '<button type="button" name="btnEditEspecialidade" class="btn btn-primary" style="width:36px; padding-left: 11px; margin: 1px 2px 1px 2px;">' +
                         '<i class= "fa fa-pencil-square-o" ></i>' +
@@ -631,30 +764,30 @@
                 var json = settings.json;
                 $("[name='btnRemoveEspecialidade']").click(function () {
                     var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];
-                    $('#IdRemove').val(idSelecionado.Id);
-                    $('#modalRemove').modal('show');
+                    $('#IdRemoveAlunoEspecialidade').val(idSelecionado.Id);
+                    $('#modalRemovelAlunoEspecialidade').modal('show');
                 });
                 $("[name='btnEditEspecialidade']").click(function () {
                     var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];
                     
-                        $('#modalAddEspecialidade :input').each(function () {
-                            var me = $(this);
-                            if (me && me.context.name) {
-                                var value = idSelecionado[me.context.name];
-                                if (value && value.length && value.length > 0) {
-                                    value.forEach(x => {
-                                        var grid = $('#HorariosGrid')[0];
-                                        var stringValue = JSON.stringify(x).replace(/"/g, "'");
-                                        grid.innerHTML = grid.innerHTML + '<option value="' + stringValue + '"> ' +
-                                            x.DiaSemanaDescricao + ' - ' + x.HorarioInicio.substr(0, 5) + ' até ' + x.HorarioFim.substr(0, 5) + ' </option>';
-                                    });
-                                }
-                                else if(value)
-                                    me.val(value);
+                    $('#modalAddEspecialidade :input').each(function () {
+                        var me = $(this);
+                        if (me && me.context.name) {
+                            var value = idSelecionado[me.context.name];
+                            if (value && value.length && value.length > 0) {
+                                value.forEach(x => {
+                                    var grid = $('#HorariosGrid')[0];
+                                    var stringValue = JSON.stringify(x).replace(/"/g, "'");
+                                    grid.innerHTML = grid.innerHTML + '<option value="' + stringValue + '"> ' +
+                                        x.DescricaoDiaSemana + ' - ' + x.HorarioInicio.substr(0, 5) + ' até ' + x.HorarioFim.substr(0, 5) + ' </option>';
+                                });
                             }
-                        });
-                        $('#modalAddEspecialidade').modal('show');
-                    }); 
+                            else if(value)
+                                me.val(value);
+                        }
+                    });
+                    $('#modalAddEspecialidade').modal('show');
+                }); 
             }
         });
         

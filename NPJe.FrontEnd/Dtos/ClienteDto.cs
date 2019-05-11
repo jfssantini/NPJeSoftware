@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace NPJe.FrontEnd.Models
+namespace NPJe.FrontEnd.Dtos
 {
-    public class Cliente
+    public class ClienteDto
     {
         public long Id { get; set; }
 
@@ -11,6 +11,8 @@ namespace NPJe.FrontEnd.Models
         public int Sexo { get; set; }
 
         public DateTime DataNascimento { get; set; }
+
+        public string DescricaoDataNascimento { get; set; }
 
         public string CPFCNPJ { get; set; }
 
@@ -22,7 +24,13 @@ namespace NPJe.FrontEnd.Models
 
         public long? IdEndereco { get; set; }
 
-        public Endereco Endereco { get; set; }
+        public string CEP { get; set; }
+
+        public string Cidade { get; set; }
+
+        public string Bairro { get; set; }
+
+        public string InfoEndereco { get; set; }
 
         public int Numero { get; set; }
 

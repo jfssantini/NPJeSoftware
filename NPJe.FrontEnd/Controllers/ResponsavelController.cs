@@ -4,18 +4,19 @@ using System.Web.Mvc;
 
 namespace NPJe.FrontEnd.Controllers
 {
-    public class GrupoController : Controller
+    public class ResponsavelController : Controller
     {
-        // GET: Grupo
+        // GET: Responsavel
         public ActionResult Index()
         {
             DefineViewDatas();
             if (Session["IdUsuario"] == null)
                 return RedirectToAction("Login", "Home");
 
-            ViewBag.Especialidades = EnumExtension.GetList<EspecialidadeEnum>();
-            return View();
+            ViewBag.TipoResponsavel = EnumExtension.GetList<TipoResponsavelEnum>();
+            return View("Index");
         }
+
         public void DefineViewDatas()
         {
             ViewData["Usuario"] = Session?["Usuario"] ?? "usuario";

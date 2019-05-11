@@ -8,12 +8,12 @@
 <!-- Cabeçalho da página -->
 <section class="content-header">
     <h1>
-        Grupos
-        <small>Lista de grupos</small>
+        Responsáveis
+        <small>Lista de responsáveis</small>
     </h1>
     <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-group"></i> Home</a></li>
-        <li class="active">Grupos</li>
+        <li><a href="#"><i class="fa fa-binoculars"></i> Home</a></li>
+        <li class="active">Responsáveis</li>
     </ol>
 </section>
 
@@ -39,20 +39,24 @@
             </div>
             <div class="box-body">
                 <!-- Tabela -->
-                <table id="tabelaGrupos" class="table table-bordered table-striped">
+                <table id="tabelaResponsaveis" class="table table-bordered table-striped">
                     <thead>
                         <!-- Colunas da tabela -->
                         <tr>
-                            <th>Número</th>
-                            <th>Especialidade</th>
+                            <th>Nome</th>
+                            <th>Sexo</th>
+                            <th>Data de nascimento</th>
+                            <th>Tipo</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
                     <tfoot>
                         <tr>
-                            <th>Número</th>
-                            <th>Especialidade</th>
+                            <th>Nome</th>
+                            <th>Sexo</th>
+                            <th>Data de nascimento</th>
+                            <th>Tipo</th>
                             <th>Ações</th>
                         </tr>
                     </tfoot>
@@ -61,7 +65,7 @@
         </div>
     </div>
     <!-- modal para adição/edição -->
-    <div class="modal fade" id="modalAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" url="http://localhost:51485/api/grupoCrud/SaveGrupo" reload="tabelaGrupos">
+    <div class="modal fade" id="modalAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" url="http://localhost:51485/api/responsavelCrud/SaveResponsavel" reload="tabelaResponsaveis">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -70,30 +74,85 @@
                             &times;
                         </span><span class="sr-only"></span>
                     </button>
-                    <h4 class="modal-title" id="myModalLabel">Adicionar grupo</h4>
+                    <h4 class="modal-title" id="myModalLabel">Adicionar responsáveis</h4>
                 </div>
 
                 <div class="box-body">
                     <div class="col-sm-6">
                         <div class="form-group">
                             <input type="hidden" id="IdEdit" name="Id" value="0">
-                            <label for="inputNumero">Número</label>
-                            <input type="number" name="Numero" class="form-control" id="inputNumero" required placeholder="Digite um número">
+                            <label for="inputLogin">Login</label>
+                            <input type="text" class="form-control" name="Usuario" required id="inputLogin" placeholder="Digite um login">
                         </div>
                     </div>
 
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label for="comboEspecialidade">Especialidade</label>
-                            <select class="form-control" name="IdEspecialidade" id="comboEspecialidade" required placeholder="Escolha a especialidade">
+                            <label for="inputPassword">Senha</label>
+                            <input type="password" class="form-control" name="Senha" id="inputPassword" placeholder="Digite uma senha"
+                                   readonly onmouseover=" this.removeAttribute('readonly')" onfocus="this.removeAttribute('readonly')">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label for="inputNome">Nome</label>
+                            <input type="text" class="form-control" required name="Nome" id="inputNome" placeholder="Digite o nome completo">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="comboSexo">Sexo</label>
+                            <select class="form-control" id="comboSexo" required name="Sexo" placeholder="Selecione o sexo">
                                 <option value="">Escolha...</option>
-                                @foreach (var item in ViewBag.Especialidades)
+                                <option value="1">Masculino</option>
+                                <option value="2">Feminino</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="datepicker">Data de nascimento</label>
+                            <input type="text" class="form-control pull-right" name="DescricaoDataNascimento" id="datepicker" placeholder="Selecione a data">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="imputCPF">CPF</label>
+                            <input type="text" class="form-control" name="CPF" id="imputCPF" placeholder="Digite o CPF">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="imputTelefone">Telefone</label>
+                            <input type="text" class="form-control" name="Telefone" id="imputTelefone" placeholder="Digite o telefone fixo">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="imputCelular">Celular</label>
+                            <input type="text" class="form-control" name="Celular" id="imputCelular" placeholder="Digite o celular">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="comboTipoResponsavel">Tipo</label>
+                            <select class="form-control" name="IdTipoResponsavel" id="comboTipoResponsavel" required placeholder="Escolha um tipo">
+                                <option value="">Escolha...</option>
+                                @foreach (var item in ViewBag.TipoResponsavel)
                                 {
                                     <option value="@item.id"> @item.text </option>
                                 }
                             </select>
                         </div>
                     </div>
+
                     <div class="col-md-3">
                     </div>
                     <div class="col-md-9">
@@ -107,7 +166,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modalRemove" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" url="http://localhost:51485/api/grupoCrud/RemoveGrupo" reload="tabelaGrupos">
+    <div class="modal fade" id="modalRemove" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" url="http://localhost:51485/api/responsavelCrud/RemoveResponsavel" reload="tabelaResponsaveis">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -116,7 +175,7 @@
                             &times;
                         </span><span class="sr-only"></span>
                     </button>
-                    <h4 class="modal-title" id="myModalLabel">Remover grupo</h4>
+                    <h4 class="modal-title" id="myModalLabel">Remover responsável</h4>
                 </div>
 
                 <div class="box-body">
@@ -144,13 +203,27 @@
 
 <script>
     $(document).ready(function () {
-        $('#tabelaGrupos').dataTable({
+        $('#imputTelefone').inputmask({ "mask": "(99) 9999-9999" });
+        $('#imputCelular').inputmask({ "mask": "(99) 9 9999-9999" });
+        $('#datepicker').inputmask({ "alias": "dd/mm/yyyy" });
+        $('#imputCPF').inputmask({ "mask": "999.999.999-99" });
+        $('#datepicker').datepicker({
+            autoclose: true,
+            todayHighlight: true,
+            format: 'dd/mm/yyyy',
+            keyboardNavigation: true,
+            language: 'pt-BR',
+            endDate: new Date(),
+            clearBtn: true
+        }).on('hide', function (e) { e.stopPropagation(); });
+
+        $('#tabelaResponsaveis').dataTable({
             "dom": "Bfrtip",
             "buttons": [
                 {
                     extend: 'excel',
                     header: true,
-                    title: 'Grupos',
+                    title: 'Responsaveis',
                     fontSize: '15',
                     exportOptions: {
                         columns: [ 0, 1 ]
@@ -159,7 +232,7 @@
                 {
                     extend: 'pdf',
                     header: true,
-                    title: 'Grupos',
+                    title: 'Responsaveis',
                     fontSize: '20',
                     exportOptions: {
                         columns: [ 0, 1 ]
@@ -177,7 +250,7 @@
                 $("[name='btnEdit']").click(function () {
                     var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];
 
-                    $.get('http://localhost:51485/api/grupoCrud/GetGrupoDto', { id: idSelecionado.Id } ,function(data){
+                    $.get('http://localhost:51485/api/responsavelCrud/GetResponsavelDto', { id: idSelecionado.Id } ,function(data){
                         $('#modalAdd :input').each(function () {
                             var me = $(this);
                             if (me && me.context.name) {
@@ -185,7 +258,7 @@
                             }
                         });
                         $('#modalAdd').modal('show');
-                    }); 
+                    });
                 });
             },
             "language": {
@@ -206,7 +279,7 @@
             "bServerSide": true,
             "processing": true,
             "ajax": {
-                "url": "http://localhost:51485/api/grupoCrud/GetGrupoDtoGrid",
+                "url": "http://localhost:51485/api/responsavelCrud/GetResponsavelDtoGrid",
                 "data": function (d) {
                     return {
                         "draw": d.draw,
@@ -219,8 +292,10 @@
                 }
             },
             "columns": [
-                { "data": "Numero" },
-                { "data": "Especialidade", "bSortable": false },
+                { "data": "Nome"},
+                { "data": "DescricaoSexo", "bSortable": false, "width": 70 },
+                { "data": "DescricaoDataNascimento", "width": 70 },
+                { "data": "DescricaoTipoResponsavel", "width": 120 },
                 {
                     "bSortable": false,
                     "data": null,
@@ -234,9 +309,8 @@
                         '</button>'
                 },
                 { "data": "Id", "visible": false },
-                { "data": "IdEspecialidade", "visible": false },
+                { "data": "IdTipoResponsavel", "visible": false },
             ]
         });
-
     });
 </script>

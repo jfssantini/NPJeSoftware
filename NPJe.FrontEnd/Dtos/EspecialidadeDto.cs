@@ -19,7 +19,7 @@ namespace NPJe.FrontEnd.Dtos
 
         public EspecialidadeEnum IdEspecialidade { get; set; }
 
-        public string EspecialidadeDescricao { get { return IdEspecialidade.GetDescription(); } set { } }
+        public string DescricaoEspecialidade { get { return IdEspecialidade.GetDescription(); } set { } }
 
         public List<HorarioDto> DisponibilidadeGrid { get; set; }
 

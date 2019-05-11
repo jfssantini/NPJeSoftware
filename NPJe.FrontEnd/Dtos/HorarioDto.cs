@@ -15,7 +15,7 @@ namespace NPJe.FrontEnd.Dtos
 
         public DiaSemanaEnum IdDiaSemana { get; set; }
 
-        public string DiaSemanaDescricao { get { return IdDiaSemana.GetDescription(); } set { } }
+        public string DescricaoDiaSemana { get { return IdDiaSemana.GetDescription(); } set { } }
 
         public string HorarioInicio { get; set; }
 

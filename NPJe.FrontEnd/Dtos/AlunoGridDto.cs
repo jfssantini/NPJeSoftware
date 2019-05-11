@@ -3,13 +3,22 @@ using NPJe.FrontEnd.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace NPJe.FrontEnd.Dtos
 {
     public class AlunoGridDto
     {
+
+        public AlunoGridDto()
+        {
+            Grupos = new List<string>();
+            Especialidades = new List<EspecialidadeEnum>();
+            DescricaoEspecialidades = new List<string>();
+        }
+
         public long Id { get; set; }
+
+        public string Login { get; set; }
 
         public string Nome { get; set; }
 

@@ -7,14 +7,19 @@ namespace NPJe.FrontEnd.Dtos
 {
     public class GenericInfoComboDto
     {
-        public GenericInfoComboDto(int id, string descricao)
+        public GenericInfoComboDto()
         {
-            Id = id;
-            Descricao = descricao;
+
         }
 
-        public int Id {  get; set; }
+        public GenericInfoComboDto(long id, string descricao)
+        {
+            this.id = id;
+            text = descricao;
+        }
 
-        public string Descricao { get; set; }
+        public long id {  get; set; }
+
+        public string text { get; set; }
     }
 }

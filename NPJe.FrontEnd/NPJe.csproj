@@ -195,18 +195,31 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Configs\EnumExtension.cs" />
+    <Compile Include="Configs\RetornoComboDto.cs" />
+    <Compile Include="Configs\RetornoDto.cs" />
     <Compile Include="Configs\SessionUser.cs" />
     <Compile Include="Configs\StringExtension.cs" />
     <Compile Include="Controllers\AlunoController.cs" />
-    <Compile Include="Controllers\CRUDController.cs" />
+    <Compile Include="Controllers\ClienteController.cs" />
+    <Compile Include="Controllers\CRUDs\AlunoCrudController.cs" />
+    <Compile Include="Controllers\CRUDs\ClienteCrudController.cs" />
+    <Compile Include="Controllers\CRUDs\GrupoCrudController.cs" />
+    <Compile Include="Controllers\CRUDs\ResponsavelCrudController.cs" />
     <Compile Include="Controllers\GrupoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ResponsavelController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="Dtos\AlunoDto.cs" />
     <Compile Include="Dtos\AlunoGridDto.cs" />
+    <Compile Include="Dtos\AlunoGrupoDto.cs" />
+    <Compile Include="Dtos\ClienteDto.cs" />
+    <Compile Include="Dtos\ClienteGridDto.cs" />
     <Compile Include="Dtos\EspecialidadeDto.cs" />
     <Compile Include="Dtos\GenericInfoComboDto.cs" />
     <Compile Include="Dtos\GrupoDto.cs" />
     <Compile Include="Dtos\HorarioDto.cs" />
+    <Compile Include="Dtos\ResponsavelDto.cs" />
+    <Compile Include="Dtos\ResponsavelGridDto.cs" />
     <Compile Include="Enums\DiaSemanaEnum.cs" />
     <Compile Include="Enums\EspecialidadeEnum.cs" />
     <Compile Include="Enums\EtapaAtendimentoEnum.cs" />
@@ -244,7 +257,11 @@
     <Compile Include="Repository\Mapping\ResponsavelMap.cs" />
     <Compile Include="Repository\Mapping\TipoAtendimentoMap.cs" />
     <Compile Include="Repository\Mapping\UsuarioMap.cs" />
+    <Compile Include="Repository\Queries\AlunoRepository.cs" />
+    <Compile Include="Repository\Queries\ClienteRepository.cs" />
+    <Compile Include="Repository\Queries\GrupoRepository.cs" />
     <Compile Include="Repository\Queries\QueriesRepository.cs" />
+    <Compile Include="Repository\Queries\ResponsavelRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
@@ -4245,6 +4262,8 @@
     <None Include="packages.config" />
     <Content Include="Views\Home\Login.cshtml" />
     <Content Include="Views\Grupo\Index.cshtml" />
+    <Content Include="Views\Responsavel\Index.cshtml" />
+    <Content Include="Views\Cliente\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />

@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.5.6/css/buttons.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css">
     @Styles.Render("~/PluginsDatePickerCss")
     <link href="~/Content/dist/css/extras.css" rel="stylesheet" />
 </head>
@@ -27,6 +28,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
     @Scripts.Render("~/PluginsMask")
     @Scripts.Render("~/PluginsDatePicker")
     <!-- Site wrapper -->
@@ -191,14 +193,26 @@
                             <span>Relatórios</span>
                         </a>
                         @*<ul class="treeview-menu">
-                                <li><a href="#"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
-                                <li><a href="../../index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
-                            </ul>*@
+                            <li><a href="#"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
+                            <li><a href="../../index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
+                        </ul>*@
+                    </li>
+                    <li class="treeview">
+                        <a href="@Url.Action("Index", "Cliente")">
+                            <i class="fa fa-user"></i>
+                            <span>Clientes</span>
+                        </a>
                     </li>
                     <li class="treeview">
                         <a href="@Url.Action("Index", "Aluno")">
                             <i class="fa fa-graduation-cap"></i>
                             <span>Alunos</span>
+                        </a>
+                    </li>
+                    <li class="treeview">
+                        <a href="@Url.Action("Index", "Responsavel")">
+                            <i class="fa fa-binoculars"></i>
+                            <span>Responsáveis</span>
                         </a>
                     </li>
                     <li class="treeview">
@@ -407,6 +421,9 @@
     <script>
         $(document).ready(function () {
 
+            $($.fn.dataTable.tables(true)).css('width', '100%');
+            $($.fn.dataTable.tables(true)).DataTable().columns.adjust().draw();
+
             var Especialidades = [{
                 id: -1,
                 descricao: "SAJ - SERVIÇO DE ASSIST. JURÍDICA"
@@ -447,7 +464,7 @@
             $('button[id=btnConfirm]').on('click', function () {
                 var formValid = true;
                 var result = '{ ';
-                $('#'+$(this).parents()[5].id+ ' :input').each(function () {
+                $('#' + $(this).parents().toArray().filter(x => x.className.includes("modal fade"))[0].id + ' :input').each(function () {
                     var me = $(this);
                     if (me && me.context.name) {
                         me.on('click', x => x.delegateTarget.style.borderColor = "#ccc");
@@ -464,20 +481,30 @@
                     }
                 });
                 if (formValid) {
-                    var modal = $('#' + $(this).parents()[5].id)[0],
+                    var modal = $('#' + $(this).parents().toArray().filter(x => x.className.includes("modal fade"))[0].id)[0],
                         url = modal.getAttribute('url');
-                    result = result.substr(0, result.length-1) + ' }';
 
-                    $.get(url, { values: result } ,function(data){
-                        $('table').DataTable().ajax.reload();
-                        $('.modal').modal('hide');
+                    var pass = $('#' + $(this).parents().toArray().filter(x => x.className.includes("modal fade"))[0].id + ' :password')[0];
+
+                    if (pass && pass.name && pass.value)
+                        result = result + '"' + pass.name + '": "' + pass.value + '",';
+
+                    result = result.substr(0, result.length - 1) + ' }';
+
+                    $.get(url, { values: result }, function (data) {
+
+                        var reload = $('#' + modal.getAttribute('reload'));
+
+                        if (reload)
+                            reload.DataTable().ajax.reload();
+
+                        $('#' + modal.id).modal('hide');
                     });
                 }
             });
 
             //Comportamento de salvar registros na tela
             $('button[id=btnConfirm1]').on('click', function () {
-                debugger;
                 var formValid = true;
                 var result = '{ ';
                 var rawValue = "";
@@ -487,7 +514,7 @@
                     if (me && me.context.name) {
                         me.on('click', x => x.delegateTarget.style.borderColor = "#ccc");
                         if (me.context.validity.valueMissing && me.context.required) {
-                             me.context.style.borderColor = "red";
+                            me.context.style.borderColor = "red";
                             formValid = false;
                         }
                         else {
@@ -510,17 +537,17 @@
                                 }
                             }
                             else {
-                                
+
                                 if (me.context.options && me.context.multiple) {
-                                    
+
                                     var value = "'" + me.context.name + "': ["
-                                    
+
                                     for (var i = 0; i < me.context.options.length; i++) {
                                         if (me.context.options[i].value.length > 0) {
                                             value = value + me.context.options[i].value + ", ";
                                         }
                                     }
-                                    value = value.substr(0, value.length-2) + "]";
+                                    value = value.substr(0, value.length - 2) + "]";
                                     result = result + value + ',';
                                 }
                                 else {
@@ -533,7 +560,7 @@
                 if (formValid) {
                     result = result.substr(0, result.length - 1) + ' }';
 
-                    rawValue = rawValue.substr(0, rawValue.length-3);
+                    rawValue = rawValue.substr(0, rawValue.length - 3);
                     var modal = $(this).parents().toArray().filter(x => x.className.includes("modal fade"))[0];
                     var grid = $('[name=' + modal.getAttribute('grid') + ']')[0];
 
@@ -546,17 +573,20 @@
                             rawValue = rawValue.substr(0, rawValue.lastIndexOf('-')) + 'até ' + rawValue.substring(rawValue.lastIndexOf('-') + 2);
                             grid.innerHTML = grid.innerHTML + '<option value="' + result + '"> ' + rawValue + ' </option>';
                         }
+                        $('#' + modal.id).modal('hide');
                     }
                     else {
                         var url = modal.getAttribute('url');
 
                         $.get(url, { values: result }, function (data) {
-                        $('table').DataTable().ajax.reload();
-                        $('#' + $(this).parents().toArray().filter(x => x.className.includes("modal fade"))[0].id)[0].modal('hide');
-                    });
+                            var reload = $('#' + modal.getAttribute('reload'));
+
+                            if (reload)
+                                reload.DataTable().ajax.reload();
+
+                            $('#' + modal.id).modal('hide');
+                        });
                     }
-                    
-                    $('#'+modal.id).modal('hide');
                 }
             });
 
@@ -568,33 +598,37 @@
             $('.modal').on('hide.bs.modal', function () {
                 var me = $(this);
                 me.context.setAttribute('consultar', false);
-                $("#" + me.context.id +" input").val("");
+                $("#" + me.context.id + " input").val("");
                 $("#" + me.context.id + " select").val("");
-                
+
                 $("#" + me.context.id + " select").toArray()
                     .filter(x => x.getAttribute('removeHtml'))
                     .forEach(x => {
                         x.innerHTML = "";
                     });
 
-                $("#" + me.context.id +" input").each(function () {
-                var input = $(this);
-                if (input && input.context.style.borderColor == "red")
-                    input.context.style.borderColor = "#ccc";
+                $("#" + me.context.id + " input").each(function () {
+                    var input = $(this);
+                    if (input && input.context.style.borderColor == "red")
+                        input.context.style.borderColor = "#ccc";
                 });
+
+                if (me.context.id == "modalAdd")
+                    $.get('http://localhost:51485/api/alunoCrud/ExcluirRegistrosInconsistentes', {}, function (data) { });
+
             });
 
             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-                $($.fn.dataTable.tables( true ) ).css('width', '100%');
-                $($.fn.dataTable.tables( true ) ).DataTable().columns.adjust().draw();
+                $($.fn.dataTable.tables(true)).css('width', '100%');
+                $($.fn.dataTable.tables(true)).DataTable().columns.adjust().draw();
             });
 
             $('#modalAdd').on('shown.bs.modal', function () {
-                $($.fn.dataTable.tables( true ) ).css('width', '100%');
-                $($.fn.dataTable.tables( true ) ).DataTable().columns.adjust().draw();
+                $($.fn.dataTable.tables(true)).css('width', '100%');
+                $($.fn.dataTable.tables(true)).DataTable().columns.adjust().draw();
             });
 
         });
     </script>
-</body >
+</body>
 </html >

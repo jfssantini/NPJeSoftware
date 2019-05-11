@@ -9,13 +9,17 @@ namespace NPJe.FrontEnd.Repository.Mapping
         {
             ToTable("alunogrupo");
 
-            HasRequired(x => x.Aluno)
+            HasOptional(x => x.Aluno)
                     .WithMany(x => x.Grupos)
                     .HasForeignKey(x => x.IdAluno);
 
             HasRequired(x => x.Grupo)
                     .WithMany(x => x.Alunos)
                     .HasForeignKey(x => x.IdGrupo);
+
+            HasRequired(x => x.Usuario)
+                    .WithMany()
+                    .HasForeignKey(x => x.IdUsuario);
         }
     }
 }
