@@ -1,44 +1,54 @@
 ﻿using NPJe.FrontEnd.Enums;
 using System;
-using System.Collections.Generic;
 
 namespace NPJe.FrontEnd.Models
 {
     public class Atendimento
     {
-        public Atendimento()
-        {
-            EtapasAtendimento = new List<RegistroEtapaAtendimento>();
-        }
-
         public long Id { get; set; }
 
-        public long IdCliente { get; set; }
+        public long? IdPasta { get; set; }
 
-        public Cliente Cliente { get; set; }
+        public Pasta Pasta { get; set; }
 
-        public long IdGrupo { get; set; }
+        public string Titulo { get; set; }
 
-        public Grupo Grupo { get; set; }
+        public string Descricao { get; set; }
 
-        public long IdUsuarioCriacao { get; set; }
+        public SituacaoNpjEnum? IdSituacaoNpj { get; set; }
 
-        public Usuario UsuarioCriacao { get; set; }
+        public SituacaoProjudiEnum? IdSituacaoProjudi { get; set; }
 
-        public DateTime DataHoraCriacao { get; set; }
+        public SituacaoAtendimentoEnum? IdSituacaoAtendimento { get; set; }
 
-        public long IdUsuarioResponsavel { get; set; }
+        public long? IdProcesso { get; set; }
 
-        public Usuario UsuarioResponsavel { get; set; }
+        public Processo Processo { get; set; }
 
-        public List<RegistroEtapaAtendimento> EtapasAtendimento { get; set; }
+        public long IdUsuarioRegistro { get; set; }
 
-        public EtapaAtendimentoEnum IdEtapaAtendimentoAtual { get; set; }
+        public Usuario UsuarioRegistro { get; set; }
 
-        public long? IdTipoAtendimento { get; set; }
+        public DateTime DataHoraRegistro { get; set; }
 
-        public TipoAtendimento TipoAtendimento { get; set; }
+        public DateTime DataHoraAlteracao { get; set; }
 
-        public bool Concluido { get; set; }
+        public long? IdUsuarioExclusao { get; set; }
+
+        public Usuario UsuarioExclusao { get; set; }
+
+        public DateTime? DataHoraExclusao { get; set; }
+
+
+        /*****Para Controle do sistema*****/
+        public bool Temporario { get; set; }
+
+        public bool Esconder { get; set; }
+
+        public bool Excluir { get; set; }
+
+        public long IdUsuario { get; set; }
+
+        public Usuario Usuario { get; set; }
     }
 }

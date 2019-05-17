@@ -46,6 +46,14 @@ namespace NPJe.FrontEnd
                 "~/Content/plugins/datepicker/datepicker3.css"));
             #endregion
 
+            bundles.Add(new ScriptBundle("~/Extras").Include(
+                "~/Content/plugins/jquery-maskmoney-master/dist/jquery.maskMoney.js",
+                "~/Content/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"));
+
+            bundles.Add(new StyleBundle("~/ExtrasCss").Include(
+                "~/Content/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css"));
+
+
             BundleTable.EnableOptimizations = true;
         }
     }

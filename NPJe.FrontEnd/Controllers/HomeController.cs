@@ -64,7 +64,7 @@ namespace NPJe.FrontEnd.Controllers
                 SessionUser.IdUsuario = user.Id;
                 Session["Usuario"] = user.UsuarioLogin;
                 SessionUser.Usuario = user.UsuarioLogin;
-                Session["IdPapel"] = user.IdPapelUsuario;
+                Session["IdPapel"] = (int) user.IdPapelUsuario;
                 SessionUser.IdPapel = user.IdPapelUsuario;
                 Session["IdStatus"] = StatusUsuarioEnum.Online;
                 SessionUser.IdStatus = StatusUsuarioEnum.Online;
@@ -87,6 +87,7 @@ namespace NPJe.FrontEnd.Controllers
         {
             ViewData["Usuario"] = Session?["Usuario"] ?? "usuario";
             ViewData["Papel"] = Session?["Papel"] ?? "papel";
+            ViewData["IdPapel"] = Session["IdPapel"] ?? 0;
             ViewData["Status"] = Session?["Status"] ?? "offline";
         }
 

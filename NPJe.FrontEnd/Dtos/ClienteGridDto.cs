@@ -10,7 +10,7 @@ namespace NPJe.FrontEnd.Dtos
 
         public int Sexo { get; set; }
 
-        public string DescricaoSexo { get { return Sexo == 1 ? "Masculino" : "Feminino"; } set { } }
+        public string DescricaoSexo { get { return Sexo == 1 ? "Masculino" : Sexo == 2 ? "Feminino" : "Não informado"; } set { } }
 
         public DateTime DataNascimento { get; set; }
 

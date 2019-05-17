@@ -1,0 +1,718 @@
+﻿@model NPJe.FrontEnd.Dtos.GenericInfoComboDto
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .modal {
+        overflow-y: auto !important;
+    }
+</style>
+<!-- Cabeçalho da página -->
+<section class="content-header">
+    <h1>
+        Pastas
+        <small>Lista de Pastas</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-folder-open"></i> Home</a></li>
+        <li class="active">Pastas</li>
+    </ol>
+</section>
+
+<!-- Conteúdo principal -->
+<section class="content">
+    <!-- Box padrão -->
+    <div class="box">
+        <div class="box">
+            <!-- Cabeçalho do box -->
+            <div class="box-header" style="padding-bottom: 0px;">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6" id="colAdd" style=" text-align: right; padding-right: 0;">
+                            <!-- Botão de adicionar -->
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalAdd" id="btnAdd" style="text-align: right">
+                                <i class="fa fa-plus"></i>
+                                Adicionar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box-body">
+                <!-- Tabela -->
+                <table id="tabelaPasta" class="table table-bordered table-striped">
+                    <thead>
+                        <!-- Colunas da tabela -->
+                        <tr>
+                            <th>Id</th>
+                            <th>Assunto</th>
+                            <th>Cliente</th>
+                            <th>Grupo</th>
+                            <th>Status atual</th>
+                            <th>Ult. alteração</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Id</th>
+                            <th>Assunto</th>
+                            <th>Cliente</th>
+                            <th>Grupo</th>
+                            <th>Status atual</th>
+                            <th>Ult. alteração</th>
+                            <th>Ações</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    @* Modal add Pasta *@
+    <div class="modal fade" id="modalAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" 
+         consultar="false" url="http://localhost:51485/api/pastaCrud/SavePasta" reload="tabelaPasta"
+         registrosInconsistentes="http://localhost:51485/api/pastaCrud/ExcluirRegistrosInconsistentes">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">
+                            &times;
+                        </span><span class="sr-only"></span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Adicionar registro</h4>
+                </div>
+
+                <div class="box-body">
+
+                    <div class="col-sm-11" style=" width: 825px; padding-right: 5px;">
+                        <div class="form-group">
+                            <input type="hidden" id="IdEdit" name="Id" value="0">
+                            <label for="comboBoxAssunto">Assunto</label>
+                            <br />
+                            <select class="form-control" name="IdAssunto" id="comboBoxAssunto" required placeholder="Escolha o assunto" style="width:100%"></select>
+                        </div>
+                    </div>
+                    <div class="col-sm-1" style="margin-top: 0px;padding-top: 24px;padding-left: 0px;padding-right: 0px;width: 45px;">
+                        <div class="form-group">
+                            <button type="button" name="btnAddAssunto" class="btn btn-success" data-toggle="modal" data-target="#modalAddAssunto" style="width:36px; margin: 1px 2px 1px 2px;">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="comboBoxGrupo">Grupo</label>
+                            <select class="form-control" name="IdGrupo" id="comboBoxGrupo" required placeholder="Escolha o grupo" style="height: 32px; width:100%"></select>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="comboBoxUsuarioResponsavel">Responsável</label>
+                            <select class="form-control" name="IdUsuarioResponsavel" id="comboBoxUsuarioResponsavel" style="height: 32px; width:100%"></select>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label for="comboBoxCliente">Cliente</label>
+                            <select class="form-control" name="IdCliente" id="comboBoxCliente" required placeholder="Escolha o cliente" style="width:100%"></select>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <div class="col-sm-6" style="padding-left: 0px;">
+                            <div class="form-group">
+                                <label for="comboSituacaoAtendimentoAtual" style="margin-bottom: 1px;">Status atual</label>
+                                <select class="form-control" name="IdSituacaoAtendimentoAtual" id="comboSituacaoAtendimentoAtual" disabled placeholder="" style="margin-top: 4px;">
+                                    <option value=""></option>
+                                    @foreach (var item in ViewBag.SituacaoAtendimento)
+                                    {
+                                        <option value="@item.id"> @item.text </option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#Atendimento" data-toggle="tab">Atendimentos</a></li>
+                            @*<li><a href="#registroStatusAtendimento" data-toggle="tab">Status</a></li>*@
+                        </ul>
+                    </div>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="Atendimento">
+                            <div class="box">
+                                <div class="box-header" style="background-color:#ecf0f5; border-bottom:2px solid #d2d6de !important; padding-bottom: 4px;padding-top: 4px;">
+                                    <div class="col-sm-6">
+                                        <label style="padding-top: 5px;">Atendimentos</label>
+                                    </div>
+                                    <div class="col-sm-6" id="colAdd" style=" text-align: right; padding-right: 0;">
+                                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalAddAtendimento" id="btnAddAtendimento" style="text-align: right">
+                                            <i class="fa fa-plus"></i>
+                                            Adicionar
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="box-body no-padding">
+                                    <table id="tabelaAtendimento" name="AtendimentoGrid" class="table table-condensed">
+                                        <thead>
+                                            <tr>
+                                                <th>Título</th>
+                                                <th>Status</th>
+                                                <th>Usuário</th>
+                                                <th>Data/Hora</th>
+                                                <th>Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-9">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Sair</button>
+                            <button type="button" id="btnConfirm" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Modal add Assunto *@
+    <div class="modal fade" id="modalAddAssunto" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" grid="comboBoxAssunto" url="http://localhost:51485/api/pastaCrud/SaveAssunto" reload="comboBoxAssunto">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">
+                            &times;
+                        </span><span class="sr-only"></span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Vincular assunto à pasta</h4>
+                </div>
+
+                <div class="box-body">
+                    
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="inputDescricao">Descrição</label>
+                                <input type="text" class="form-control" required name="Descricao" id="inputDescricao" placeholder="Digite a descrição">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-7">
+                    </div>
+                    <div class="col-md-5">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Sair</button>
+                            <button type="button" id="btnConfirm" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Modal add Atendimento *@
+    <div class="modal fade" id="modalAddAtendimento" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" grid="AtendimentoGrid" url="http://localhost:51485/api/pastaCrud/SaveAtendimento" reload="tabelaAtendimento">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">
+                            &times;
+                        </span><span class="sr-only"></span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Vincular novo atendimento</h4>
+                </div>
+
+                <div class="box-body">
+
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <input type="hidden" id="IdEditAtendimento" name="Id" value="0">
+                            <input type="hidden" id="IdPastaA" name="IdPasta" value="0">
+                            <label for="inputTitulo">Título</label>
+                            <input type="text" class="form-control" required name="Titulo" id="inputTitulo" placeholder="Digite o título">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="comboSituacaoAtendimento" style="margin-bottom: 0px;">Status</label>
+                            <select class="form-control" name="IdSituacaoAtendimento" id="comboSituacaoAtendimento" required placeholder="" style="margin-top: 4px;">
+                                <option value=""></option>
+                                @foreach (var item in ViewBag.SituacaoAtendimento)
+                                {
+                                    <option value="@item.id"> @item.text </option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="box box-default">
+                            <div class="box-header">
+                                <h3 class="box-title">
+                                    Descrição
+                                    <small>Detalhamento do atendimento</small>
+                                </h3>
+                                <div class="pull-right box-tools">
+                                    <button type="button" class="btn btn-default btn-sm" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="box-body pad">
+                                <form>
+                                    <textarea id="Descricao" name="Descricao" rows="10" cols="80" style="min-width: 100%" cod="1"> </textarea>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="box box-default collapsed-box">
+                            <div class="box-header">
+                                <h3 class="box-title">
+                                    Registro
+                                    <small>Informações do registro</small>
+                                </h3>
+                                <div class="pull-right box-tools">
+                                    <button type="button" class="btn btn-default btn-sm" data-widget="collapse" data-toggle="tooltip" title="Collapse" collapse="1" ignore="1">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="box-body pad">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="inputUsuarioAlteracaoT" style="margin-bottom: 4px;">Usuario da ultima alteração</label>
+                                        <input type="text" class="form-control" disabled name="UsuarioAlteracao" id="inputUsuarioAlteracaoT" placeholder="" ignore="1">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="inputDataHoraAlteracaoT" style="margin-bottom: 4px;">Data/Hora da ultima alteração</label>
+                                        <input type="text" class="form-control" disabled name="DescricaoDataHoraAlteracao" id="inputDataHoraAlteracaoT" placeholder="" ignore="1">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="inputUsuarioRegistroT" style="margin-bottom: 4px;">Criado por</label>
+                                        <input type="text" class="form-control" disabled name="UsuarioRegistro" id="inputUsuarioRegistroT" placeholder="" ignore="1">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="inputDataHoraRegistroT" style="margin-bottom: 4px;">Data/Hora da criação</label>
+                                        <input type="text" class="form-control" disabled name="DescricaoDataHoraRegistro" id="inputDataHoraRegistroT" placeholder="" ignore="1">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="inputUsuarioExclusaoT" style="margin-bottom: 4px;" admin="1">Excluido por</label>
+                                        <input type="text" class="form-control" disabled name="UsuarioExclusao" id="inputUsuarioExclusaoT" placeholder="" admin="1" ignore="1">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="inputDataHoraExclusaoT" style="margin-bottom: 4px;" admin="1">Data/Hora da exclusão</label>
+                                        <input type="text" class="form-control" disabled name="DescricaoDataHoraExclusao" id="inputDataHoraExclusaoT" placeholder="" admin="1" ignore="1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-7">
+                    </div>
+                    <div class="col-md-5">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Sair</button>
+                            <button type="button" id="btnConfirm" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Modal Remove Atendimento *@
+    <div class="modal fade" id="modalRemoveAtendimento" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" grid="AtendimentoGrid" url="http://localhost:51485/api/pastaCrud/RemoveAtendimento" reload="tabelaAtendimento">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">
+                            &times;
+                        </span><span class="sr-only"></span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Remover atendimento</h4>
+                </div>
+
+                <div class="box-body">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>Deseja mesmo excluir este registro?</label>
+                            <input type="hidden" id="IdRemoveAtendimento" name="Id">
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-9">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Sair</button>
+                            <button type="button" id="btnConfirm1" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<script>
+    $(document).ready(function () {
+        $('#imputCelular').inputmask({ "mask": "(99) 9 9999-9999" });
+        $('#datepicker').inputmask({ "alias": "dd/mm/yyyy" });
+        $('#imputCPF').inputmask({ "mask": "999.999.999-99" });
+        $('#datepicker').datepicker({
+            autoclose: true,
+            todayHighlight: true,
+            format: 'dd/mm/yyyy',
+            keyboardNavigation: true,
+            language: 'pt-BR',
+            endDate: new Date(),
+            clearBtn: true
+        }).on('hide', function (e) { e.stopPropagation(); });
+        $('#comboBoxGrupo').select2({
+            "placeholder": "Pesquise o grupo",
+            "dropdownParent": $("#modalAdd"),
+            "allowClear": true,
+            "dataType": 'json',
+            "type": 'GET',
+            "ajax": {
+                "url": "http://localhost:51485/api/pastaCrud/GetGrupoComboDto",
+                "dataType": 'json',
+                "data": function (params) {
+                    return {
+                        search: params.term // search term
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                    results: response.results
+                    };
+                },
+                cache: true
+            },
+        }).data('select2').$selection.css('height', '34px');
+        $('#comboBoxCliente').select2({
+            "placeholder": "Pesquise o cliente",
+            "dropdownParent": $("#modalAdd"),
+            "allowClear": true,
+            "dataType": 'json',
+            "type": 'GET',
+            "ajax": {
+                "url": "http://localhost:51485/api/pastaCrud/GetClienteComboDto",
+                "dataType": 'json',
+                "data": function (params) {
+                    return {
+                        search: params.term // search term
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                    results: response.results
+                    };
+                },
+                cache: true
+            },
+        }).data('select2').$selection.css('height', '34px');
+        $('#comboBoxUsuarioResponsavel').select2({
+            "placeholder": "Pesquise o usuário",
+            "dropdownParent": $("#modalAdd"),
+            "allowClear": true,
+            "dataType": 'json',
+            "type": 'GET',
+            "ajax": {
+                "url": "http://localhost:51485/api/pastaCrud/GetUsuarioResponsavelComboDto",
+                "dataType": 'json',
+                "data": function (params) {
+                    return {
+                        search: params.term // search term
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                    results: response.results
+                    };
+                },
+                cache: true
+            },
+        }).data('select2').$selection.css('height', '34px');
+        $('#comboBoxAssunto').select2({
+            "placeholder": "Pesquise o usuário",
+            "dropdownParent": $("#modalAdd"),
+            "allowClear": true,
+            "dataType": 'json',
+            "type": 'GET',
+            "ajax": {
+                "url": "http://localhost:51485/api/pastaCrud/GetAssuntoComboDto",
+                "dataType": 'json',
+                "data": function (params) {
+                    return {
+                        search: params.term // search term
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                    results: response.results
+                    };
+                },
+                cache: true
+            },
+        }).data('select2').$selection.css('height', '34px');
+
+        CKEDITOR.replace('Descricao', {
+            toolbar:
+                [
+                    { name: 'clipboard', items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo'] },
+                    '/',
+                    { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'] },
+                    { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl'] },
+                    { name: 'tools', items: ['Maximize', 'ShowBlocks'] }
+
+                ]
+        });
+        $(".textarea").wysihtml5();
+
+        $('#tabelaPasta').dataTable({
+            "dom": "Bfrtip",
+            "buttons": [{
+                extend: 'excel',
+                header: true,
+                title: 'Pasta',
+                fontSize: '15',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4]
+                }
+            },
+            {
+                extend: 'pdf',
+                header: true,
+                title: 'Pasta',
+                fontSize: '20',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4]
+                }
+                }],
+            "drawCallback": function (settings) {
+                var json = settings.json;               
+                    
+                $("[name='btnRemovePasta']").click(function () {
+                    var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];
+                    $('#IdRemovePasta').val(idSelecionado.Id);
+                    $('#modalRemovePasta').modal('show');
+                });
+                $("[name='btnEditPasta']").click(function () {
+                    var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];
+
+                    $.get('http://localhost:51485/api/pastaCrud/GetPastaDto', { id: idSelecionado.Id } ,function(data){
+                        $('#modalAdd :input').each(function () {
+                            var me = $(this);
+                            if (me && me.context.name) {
+                                if (me.context.id.includes("comboBox")) {
+                                    var $newOption = $("<option selected='selected'></option>").val(data[me.context.name]).text(data[me.context.name.substring(2)]);
+                                    me.append($newOption).trigger('change');
+                                }
+                                else 
+                                    me.val(data[me.context.name]);                             
+                            }
+                        });
+                        $('#modalAdd').modal('show');
+                    });
+                });
+            },
+            "lengthChange": true,
+            "responsive": {
+                "details": false
+            },
+            "language": {
+                "search": "Pesquisar:",
+                "lengthMenu": "Mostrar _MENU_ registros por página",
+                "zeroRecords": "Nenhum resultado encontrado",
+                "info": "Mostrando _START_ até _END_ de _TOTAL_ registro(s)",
+                "infoEmpty": "Monstrando 0 até 0 de 0 registro(s)",
+                "infoFiltered": "",
+                "processing": "Carregando...",
+                "paginate": {
+                    "first": "Primeiro",
+                    "last": "Último",
+                    "next": "Próximo",
+                    "previous": "Anterior"
+                },
+            },
+            "bServerSide": true,
+            "processing": true,
+            "ajax": {
+                "url": "http://localhost:51485/api/pastaCrud/GetPastaDtoGrid",
+                "data": function (d) {
+                    return {
+                        "draw": d.draw,
+                        "start": d.start,
+                        "length": d.length,
+                        "search": d.search.value,
+                        "order": $('th')[d.order[0].column].outerText,
+                        "dir": d.order[0].dir
+                    };
+                }
+            },
+            "columns": [
+                { "data": "Id", "width": "5%" },
+                { "data": "Assunto", "width": "20%" },
+                { "data": "Cliente", "width": "20%" },
+                { "data": "Grupo", "width": "12%" },
+                { "data": "DescricaoSituacaoAtendimentoAtual", "width": "12%" },
+                { "data": "DescricaoDataHoraUltimaTarefa", "width": "10%" },
+                {
+                    "bSortable": false,
+                    "data": null,
+                    "width": "8%",
+                    "defaultContent":
+                        '<button type="button" name="btnEditPasta" class="btn btn-primary" style="width:36px; padding-left: 11px; margin: 1px 2px 1px 2px;">' +
+                        '<i class= "fa fa-pencil-square-o" ></i>' +
+                        '</button>' +
+                        '<button type="button" name="btnRemovePasta" class="btn btn-danger" style="width:36px; margin: 1px 2px 1px 2px;">' +
+                        '<i class="fa fa-trash"></i>' +
+                        '</button>'
+                },
+            ]
+        });
+
+        $('#tabelaAtendimento').dataTable({
+            "paging": false,
+            "searching": false,
+            "scrollY": "200px",
+            "scrollCollapse": true,
+            "lengthChange": false,
+            "bServerSide": true,
+            "processing": true,
+            "language": {
+                "lengthMenu": "Mostrar _MENU_ registros por página",
+                "zeroRecords": "Nenhum resultado encontrado",
+                "info": "Mostrando _START_ até _END_ de _TOTAL_ registro(s)",
+                "infoEmpty": "Monstrando 0 até 0 de 0 registro(s)",
+                "infoFiltered": "",
+                "processing": "Carregando...",
+                "paginate": {
+                    "first": "Primeiro",
+                    "last": "Último",
+                    "next": "Próximo",
+                    "previous": "Anterior"
+                },
+            },
+            "ajax": {
+                "url": "http://localhost:51485/api/pastaCrud/GetAtendimentoGrid",
+                "data": function (d) {
+                    return {
+                        "order": $('th')[d.order[0].column].outerText,
+                        "dir": d.order[0].dir,
+                        "consultar": $('#modalAdd')[0].getAttribute('consultar'),
+                        "idPasta": $('#modalAdd [name=Id]')[0].value
+                    };
+                }
+            },
+            "columns": [
+                { "data": "Titulo", "bSortable": false, "width": "25%" },
+                { "data": "DescricaoSituacaoAtendimento", "bSortable": false, "width": "15%" },
+                { "data": "UsuarioAlteracao", "bSortable": false, "width": "10%" },
+                { "data": "DescricaoDataHoraAlteracao", "bSortable": false, "width": "10%" },    
+                {
+                    "bSortable": false,
+                    "data": null,
+                    "width": "5%",
+                    "defaultContent":
+                        '<button type="button" name="btnEditAtendimento" class="btn btn-primary" style="width:36px; padding-left: 11px; margin: 1px 2px 1px 2px;">' +
+                        '<i class= "fa fa-pencil-square-o" ></i>' +
+                        '</button>' +
+                        '<button type="button" name="btnRemoveAtendimento" class="btn btn-danger" style="width:36px; margin: 1px 2px 1px 2px;">' +
+                        '<i class="fa fa-trash"></i>' +
+                        '</button>'
+                },
+                { "data": "Id", "visible": false },
+                { "data": "IdPasta", "visible": false },
+                { "data": "Descricao", "visible": false },
+                { "data": "IdSituacaoAtendimento", "visible": false },
+                { "data": "IdProcesso", "visible": false },
+                { "data": "IdUsuarioRegistro", "visible": false },
+                { "data": "UsuarioRegistro", "visible": false },
+                { "data": "DataHoraRegistro", "visible": false },
+                { "data": "DescricaoDataHoraRegistro", "visible": false },
+                { "data": "DataHoraExclusao", "visible": false },
+                { "data": "DescricaoDataHoraExclusao", "visible": false },
+            ],
+            "drawCallback": function (settings) {
+                var json = settings.json;
+
+                if (json.data.length > 0 && json.data[0].IdUsuarioExclusao == null)
+                    $('#comboSituacaoAtendimentoAtual').val(json.data[0].IdSituacaoAtendimento);                
+                else
+                    $('#comboSituacaoAtendimentoAtual').val("");
+
+                $("[name='btnRemoveAtendimento']").click(function () {
+                    var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];
+                    if (idSelecionado.IdUsuarioExclusao == null) {
+                        $('#IdRemoveAtendimento').val(idSelecionado.Id);
+                        $('#modalRemoveAtendimento').modal('show');
+                    }
+                    else
+                        alert('Não é permitido alterar informações e um registro excluido.');
+                });
+                $("[name='btnEditAtendimento']").click(function () {
+                    var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];
+                        $('#modalAddAtendimento :input').each(function () {
+                            var me = $(this);
+                            if (me && me.context.name) {
+                                if (me.context.getAttribute('cod') && idSelecionado[me.context.name]) {
+                                    CKEDITOR.instances.Descricao.setData(idSelecionado[me.context.name].split("<br />").join("\n"));
+                                }
+                                else
+                                    me.val(idSelecionado[me.context.name]);
+                            }
+                    });
+                    if (idSelecionado.IdUsuarioExclusao == null)
+                        $('#modalAddAtendimento #btnConfirm').show();
+                    else
+                        $('#modalAddAtendimento #btnConfirm').hide();
+
+                    $('#modalAddAtendimento').modal('show');
+                });
+            }
+        });
+
+    });
+</script>

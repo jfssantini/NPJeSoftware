@@ -12,11 +12,7 @@ namespace NPJe.FrontEnd.Repository.Queries
 {
     public class AlunoRepository : QueriesRepository
     {
-        private Contexto Contexto { get; set; }
-        public AlunoRepository()
-        {
-            Contexto = new Contexto();
-        }
+        public AlunoRepository() : base() { }
 
         #region Aluno
         public RetornoDto GetAlunoDtoGrid(int draw, int start, int length, string search, string order, string dir)
@@ -227,8 +223,7 @@ namespace NPJe.FrontEnd.Repository.Queries
             if (idAluno.HasValue)
             {
                 consulta = from e in consulta
-                           where (e.IdAluno == idAluno || (e.Temporario && !e.IdAluno.HasValue)) &&
-                            e.IdUsuario == SessionUser.IdUsuario
+                           where (e.IdAluno == idAluno || (e.Temporario && !e.IdAluno.HasValue && e.IdUsuario == SessionUser.IdUsuario))
                            select e;
             }
             else
@@ -297,8 +292,7 @@ namespace NPJe.FrontEnd.Repository.Queries
             if (idAluno.HasValue)
             {
                 consulta = from e in consulta
-                           where (e.IdAluno == idAluno || (e.Temporario && !e.IdAluno.HasValue)) &&
-                            e.IdUsuario == SessionUser.IdUsuario
+                           where (e.IdAluno == idAluno || (e.Temporario && !e.IdAluno.HasValue && e.IdUsuario == SessionUser.IdUsuario))
                            select e;
             }
             else
@@ -317,7 +311,7 @@ namespace NPJe.FrontEnd.Repository.Queries
                             IdAluno = e.IdAluno,
                             IdEspecialidade = e.IdEspecialidade,
                             IdUsuario = e.IdUsuario,
-                            DisponibilidadeGrid = e.Disponibilidades.Select(x => new HorarioDto()
+                            DisponibilidadeGrid = e.Disponibilidades.Select(x => new DisponibilidadeDto()
                             {
                                 Id = x.Id,
                                 IdAlunoEspecialidade = x.IdAlunoEspecialidade,

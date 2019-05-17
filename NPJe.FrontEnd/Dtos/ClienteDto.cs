@@ -14,7 +14,9 @@ namespace NPJe.FrontEnd.Dtos
 
         public string DescricaoDataNascimento { get; set; }
 
-        public string CPFCNPJ { get; set; }
+        public string CPF { get; set; }
+
+        public string CNPJ { get; set; }
 
         public string Telefone { get; set; }
 
@@ -35,5 +37,7 @@ namespace NPJe.FrontEnd.Dtos
         public int Numero { get; set; }
 
         public string Complemento { get; set; }
+
+        public string Observacao { get; set; }
     }
 }

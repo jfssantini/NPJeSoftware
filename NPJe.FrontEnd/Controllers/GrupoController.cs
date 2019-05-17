@@ -20,6 +20,7 @@ namespace NPJe.FrontEnd.Controllers
         {
             ViewData["Usuario"] = Session?["Usuario"] ?? "usuario";
             ViewData["Papel"] = Session?["Papel"] ?? "papel";
+            ViewData["IdPapel"] = Session["IdPapel"] ?? 0;
             ViewData["Status"] = Session?["Status"] ?? "offline";
         }
     }

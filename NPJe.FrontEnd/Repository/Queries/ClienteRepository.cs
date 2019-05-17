@@ -3,6 +3,7 @@ using NPJe.FrontEnd.Dtos;
 using NPJe.FrontEnd.Models;
 using NPJe.FrontEnd.Repository.Context;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic;
 
@@ -10,11 +11,7 @@ namespace NPJe.FrontEnd.Repository.Queries
 {
     public class ClienteRepository : QueriesRepository
     {
-        private Contexto Contexto { get; set; }
-        public ClienteRepository()
-        {
-            Contexto = new Contexto();
-        }
+        public ClienteRepository() : base() { }
 
         #region Cliente
         public RetornoDto GetClienteDtoGrid(int draw, int start, int length, string search, string order, string dir)
@@ -48,13 +45,15 @@ namespace NPJe.FrontEnd.Repository.Queries
                                Email = c.Email,
                                Telefone = c.Telefone,
                                IdEndereco = c.IdEndereco,
-                               CPFCNPJ = c.CPFCNPJ,
+                               CPF = c.CPF,
+                               CNPJ = c.CNPJ,
                                CEP = c.Endereco.CEP,
                                InfoEndereco = c.Endereco.InfoEndereco,
                                Bairro = c.Endereco.Bairro,
                                Cidade = c.Endereco.Cidade,
-                               Complemento = c.Complemento,
-                               Numero = c.Numero
+                               Complemento = c.Endereco.Complemento,
+                               Numero = c.Endereco.Numero,
+                               Observacao = c.Endereco.Observacao
                            }).FirstOrDefault();
 
             retorno.DescricaoDataNascimento = retorno.DataNascimento.ToString("dd/MM/yyyy");
@@ -72,21 +71,52 @@ namespace NPJe.FrontEnd.Repository.Queries
                 Telefone = dto.Telefone,
                 Celular = dto.Celular,
                 Email = dto.Email,
-                CPFCNPJ = dto.CPFCNPJ,
-                Complemento = dto.Complemento,
-                Numero = dto.Numero,
+                CPF = dto.CPF,
+                CNPJ = dto.CNPJ,
                 Endereco = new Endereco()
                 {
                     CEP = dto.CEP,
                     Bairro = dto.Bairro,
                     Cidade = dto.Cidade,
-                    InfoEndereco = dto.InfoEndereco
+                    InfoEndereco = dto.InfoEndereco,
+                    Complemento = dto.Complemento,
+                    Numero = dto.Numero,
+                    Observacao = dto.Observacao
                 }
             });
 
             Contexto.SaveChanges();
 
             return true;
+        }
+
+        public RetornoComboDto GetClienteComboDto(long? id, string search)
+        {
+            var consulta = (from c in Contexto.Cliente
+                            select c);
+
+            if (id.HasValue)
+                consulta = consulta.Where(x => x.Id == id);
+            else if (!search.IsNullOrEmpty())
+                consulta = consulta.Where(x => x.Nome.Contains(search));
+
+            var grupo = (from c in consulta
+                         orderby c.Nome
+                         select c).ToList();
+
+            var data = new List<GenericInfoComboDto>();
+
+
+            grupo.ForEach(x =>
+            {
+                data.Add(new GenericInfoComboDto()
+                {
+                    id = x.Id,
+                    text = x.Nome
+                });
+            });
+
+            return CreateDataComboResult(data.Count(), data);
         }
 
         public bool EditCliente(ClienteDto dto)
@@ -105,14 +135,16 @@ namespace NPJe.FrontEnd.Repository.Queries
             cliente.Telefone = dto.Telefone;
             cliente.Celular = dto.Celular;
             cliente.Email = dto.Email;
-            cliente.CPFCNPJ = dto.CPFCNPJ;
-            cliente.Complemento = dto.Complemento;
-            cliente.Numero = dto.Numero;
+            cliente.CPF = dto.CPF;
+            cliente.CNPJ = dto.CNPJ;
 
             cliente.Endereco.CEP = dto.CEP;
             cliente.Endereco.Bairro = dto.Bairro;
             cliente.Endereco.Cidade = dto.Cidade;
             cliente.Endereco.InfoEndereco = dto.InfoEndereco;
+            cliente.Endereco.Complemento = dto.Complemento;
+            cliente.Endereco.Numero = dto.Numero;
+            cliente.Endereco.Observacao = dto.Observacao;
 
             Contexto.SaveChanges();
 
@@ -142,11 +174,11 @@ namespace NPJe.FrontEnd.Repository.Queries
             var retorno = "";
             switch (order)
             {
-                case "Data de nascimento":
+                case "Data de nascimento/Início":
                     retorno = "DataNascimento";
                     break;
-                case "Nome":
-                    retorno = order;
+                case "Nome/Razão Social":
+                    retorno = "Nome";
                     break;
                 default:
                     break;

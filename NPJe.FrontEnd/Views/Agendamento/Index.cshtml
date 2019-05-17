@@ -1,0 +1,352 @@
+﻿
+@model NPJe.FrontEnd.Dtos.GenericInfoComboDto
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Cabeçalho da página -->
+<section class="content-header">
+    <h1>
+        Agendamentos
+        <small>Lista de agendamentos</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-calendar"></i> Home</a></li>
+        <li class="active">Agendamentos</li>
+    </ol>
+</section>
+
+<!-- Conteúdo principal -->
+<section class="content">
+    <!-- Box padrão -->
+    <div class="box">
+        <div class="box">
+            <!-- Cabeçalho do box -->
+            <div class="box-header" style="padding-bottom: 0px;">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6" id="colAdd" style=" text-align: right; padding-right: 0;">
+                            <!-- Botão de adicionar -->
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalAdd" id="btnAdd" style="text-align: right">
+                                <i class="fa fa-plus"></i>
+                                Adicionar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box-body">
+                <!-- Tabela -->
+                <table id="tabelaAgendamentos" class="table table-bordered table-striped">
+                    <thead>
+                        <!-- Colunas da tabela -->
+                        <tr>
+                            <th>Título</th>
+                            <th>Data</th>
+                            <th>Horário</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Título</th>
+                            <th>Data</th>
+                            <th>Horário</th>
+                            <th>Ações</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- modal para adição/edição -->
+    <div class="modal fade" id="modalAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" url="http://localhost:51485/api/agendamentoCrud/SaveAgendamento" reload="tabelaAgendamentos">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">
+                            &times;
+                        </span><span class="sr-only"></span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Adicionar agendamento</h4>
+                </div>
+
+                <div class="box-body">
+
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <input type="hidden" id="IdEdit" name="Id" value="0">
+                            <label for="inputTitulo">Título</label>
+                            <input type="text" class="form-control" required name="Titulo" id="inputTitulo" placeholder="Digite o título">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="box box-default box-solid collapsed-box">
+                            <div class="box-header with-border">
+                                <label class="box-title" style="font-size: 15px;">Referente a</label>
+
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse" collapse="1" ignore="1">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="box-body" style="">
+
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label for="comboBoxPasta">Pasta</label>
+                                        <select class="form-control" name="IdPasta" id="comboBoxPasta" required placeholder="Escolha o registro da pasta" style="height: 32px; width:100%"></select>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label for="comboBoxProcesso">Processo</label>
+                                        <select class="form-control" name="IdProcesso" id="comboBoxProcesso" disabled placeholder="Escolha o registro do processo" style="height: 32px; width:100%"></select>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="datepicker">Data</label>
+                            <input type="text" class="form-control pull-right" required name="DescricaoDataAgendamento" id="datepicker" placeholder="Selecione uma data">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="datepicker">Horário</label>
+                            <input type="text" id="timepicker" name="Horario" required class="form-control timepicker">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label for="inputDescricao">Descrição</label>
+                            <textarea class="form-control" rows="3" name="Descricao" id="inputDescricao" placeholder="Digite a descrição"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-9">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Sair</button>
+                            <button type="button" id="btnConfirm" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalRemove" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" url="http://localhost:51485/api/agendamentoCrud/RemoveAgendamento" reload="tabelaAgendamentos">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">
+                            &times;
+                        </span><span class="sr-only"></span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Remover agendamento</h4>
+                </div>
+
+                <div class="box-body">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>Deseja mesmo excluir este registro?</label>
+                            <input type="hidden" id="IdRemove" name="Id">
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-9">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Sair</button>
+                            <button type="button" id="btnConfirm" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<script>
+    $(document).ready(function () {
+        $("#timepicker").inputmask({ "mask": "99:99" });
+        $('#datepicker').inputmask({ "alias": "dd/mm/yyyy" });
+        $('#datepicker').datepicker({
+            autoclose: true,
+            todayHighlight: true,
+            format: 'dd/mm/yyyy',
+            keyboardNavigation: true,
+            language: 'pt-BR',
+            startDate: new Date(),
+            clearBtn: true
+        }).on('hide', function (e) { e.stopPropagation(); });
+        $('#comboBoxPasta').select2({
+            "placeholder": "Pesquise o registro da pasta",
+            "dropdownParent": $("#modalAdd"),
+            "allowClear": true,
+            "dataType": 'json',
+            "type": 'GET',
+            "ajax": {
+                "url": "http://localhost:51485/api/agendamentoCrud/GetPastaComboDto",
+                "dataType": 'json',
+                "data": function (params) {
+                    return {
+                        search: params.term // search term
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                    results: response.results
+                    };
+                },
+                cache: true
+            },
+        }).data('select2').$selection.css('height', '34px');
+        $('#comboBoxPasta').on('change', function () {
+                $('#comboBoxProcesso')[0].disabled = this.value == 0;
+        });
+        $('#comboBoxProcesso').select2({
+            "placeholder": "Pesquise o registro do processo",
+            "dropdownParent": $("#modalAdd"),
+            "allowClear": true,
+            "dataType": 'json',
+            "type": 'GET',
+            "ajax": {
+                "url": "http://localhost:51485/api/agendamentoCrud/GetProcessoComboDto",
+                "dataType": 'json',
+                "data": function (params) {
+                    return {
+                        search: params.term, // search term
+                        idPasta: $('#comboBoxPasta')[0].value
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: response.results
+                    };
+                },
+                cache: true
+            },
+        }).data('select2').$selection.css('height', '34px');
+
+        $('#tabelaAgendamentos').dataTable({
+            "dom": "Bfrtip",
+            "buttons": [
+                {
+                    extend: 'excel',
+                    header: true,
+                    title: 'Agendamentos',
+                    fontSize: '15',
+                    exportOptions: {
+                        columns: [ 0, 1, 2, 4 ]
+                    }
+                },
+                {
+                    extend: 'pdf',
+                    header: true,
+                    title: 'Agendamentos',
+                    fontSize: '20',
+                    exportOptions: {
+                        columns: [ 0, 1, 2, 4 ]
+                    }
+                }
+            ],
+            "lengthChange": false,
+            "drawCallback": function (settings) {
+                var json = settings.json;
+                $("[name='btnRemove']").click(function () {
+                    var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];
+                    $('#IdRemove').val(idSelecionado.Id);
+                    $('#modalRemove').modal('show');
+                });
+                $("[name='btnEdit']").click(function () {
+                    var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];
+
+                    $.get('http://localhost:51485/api/agendamentoCrud/GetAgendamentoDto', { id: idSelecionado.Id } ,function(data){
+                        $('#modalAdd :input').each(function () {
+                            var me = $(this);
+                            if (me && me.context.name) {
+                                if (me.context.id.includes("comboBox")) {
+                                    var $newOption = $("<option selected='selected'></option>").val(data[me.context.name]).text(data[me.context.name.substring(2)]);
+                                    me.append($newOption).trigger('change');
+                                }
+                                else
+                                    me.val(data[me.context.name]);
+                            }
+                        });
+                        $('#comboBoxProcesso')[0].disabled = false;
+                        $('#modalAdd').modal('show');
+                    });
+                });
+            },
+            "language": {
+                "search": "Pesquisar:",
+                "lengthMenu": "Mostrar _MENU_ registros por página",
+                "zeroRecords": "Nenhum resultado encontrado",
+                "info": "Mostrando _START_ até _END_ de _TOTAL_ registro(s)",
+                "infoEmpty": "Monstrando 0 até 0 de 0 registro(s)",
+                "infoFiltered": "",
+                "processing": "Carregando...",
+                "paginate": {
+                    "first": "Primeiro",
+                    "last": "Último",
+                    "next": "Próximo",
+                    "previous": "Anterior"
+                },
+            },
+            "bServerSide": true,
+            "processing": true,
+            "ajax": {
+                "url": "http://localhost:51485/api/agendamentoCrud/GetAgendamentoDtoGrid",
+                "data": function (d) {
+                    return {
+                        "draw": d.draw,
+                        "start": d.start,
+                        "length": d.length,
+                        "search": d.search.value,
+                        "order": $('th')[d.order[0].column].outerText,
+                        "dir": d.order[0].dir
+                    };
+                }
+            },
+            "columns": [
+                { "data": "Titulo", "width": "60%" },
+                { "data": "DescricaoDataAgendamento", "bSortable": false, "width": "13%" },
+                { "data": "Horario", "bSortable": false, "width": "13%" },
+                {
+                    "bSortable": false,
+                    "data": null,
+                    "width": 90,
+                    "defaultContent":
+                        '<button type="button" name="btnEdit" class="btn btn-primary" style="width:36px; padding-left: 11px; margin: 1px 2px 1px 2px;">' +
+                        '<i class= "fa fa-pencil-square-o" ></i>' +
+                        '</button>' +
+                        '<button type="button" name="btnRemove" class="btn btn-danger" style="width:36px; margin: 1px 2px 1px 2px;">' +
+                        '<i class="fa fa-trash"></i>' +
+                        '</button>'
+                },
+                { "data": "Descricao", "visible": false },
+                { "data": "Id", "visible": false },
+            ]
+        });
+
+    });
+</script>

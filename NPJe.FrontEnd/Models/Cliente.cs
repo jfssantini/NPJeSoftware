@@ -12,7 +12,9 @@ namespace NPJe.FrontEnd.Models
 
         public DateTime DataNascimento { get; set; }
 
-        public string CPFCNPJ { get; set; }
+        public string CPF { get; set; }
+
+        public string CNPJ { get; set; }
 
         public string Telefone { get; set; }
 
@@ -23,9 +25,5 @@ namespace NPJe.FrontEnd.Models
         public long? IdEndereco { get; set; }
 
         public Endereco Endereco { get; set; }
-
-        public int Numero { get; set; }
-
-        public string Complemento { get; set; }
     }
 }

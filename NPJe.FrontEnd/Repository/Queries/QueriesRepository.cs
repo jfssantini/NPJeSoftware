@@ -10,10 +10,15 @@ namespace NPJe.FrontEnd.Repository.Queries
 {
     public class QueriesRepository
     {
+        protected Contexto Contexto { get; set; }
+        public QueriesRepository()
+        {
+            Contexto = new Contexto();
+        }
+
         #region Configurações extras
         public Usuario ConfirmLogin(string login, string password)
         {
-            var Contexto = new Contexto();
             var MD5pass = GerarMD5(password);
 
             return (from c in Contexto.Usuario

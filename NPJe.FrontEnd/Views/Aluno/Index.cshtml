@@ -71,7 +71,9 @@
     </div>
 
     @* Modal add Aluno *@
-    <div class="modal fade" id="modalAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" consultar="false" url="http://localhost:51485/api/alunoCrud/SaveAluno" reload="tabelaAlunos">
+    <div class="modal fade" id="modalAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" 
+         consultar="false" url="http://localhost:51485/api/alunoCrud/SaveAluno" reload="tabelaAlunos"
+         registrosInconsistentes="http://localhost:51485/api/alunoCrud/ExcluirRegistrosInconsistentes">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -253,11 +255,11 @@
                 </div>
 
                 <div class="box-body">
-                    <div class="col-sm-7">
+                    <div class="col-sm-12">
                         <div class="form-group">
                             <input type="hidden" id="IdGrupoEdit" name="Id" value="0">
                             <input type="hidden" id="IdAlunoG" name="IdAluno" value="0">
-                            <label for="comboEspecialidade">Grupo</label>
+                            <label for="comboGrupo">Grupo</label>
                             <br />
                             <select class="form-control" name="IdGrupo" id="comboGrupo" required placeholder="Escolha o grupo" style="width:100%"></select>
                         </div>
@@ -538,7 +540,7 @@
                 },
                 cache: true
             },
-        });
+        }).data('select2').$selection.css('height', '34px');
 
         $('#tabelaAlunos').dataTable({
             "dom": "Bfrtip",

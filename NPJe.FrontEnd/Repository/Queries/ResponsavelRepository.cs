@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic;
 using NPJe.FrontEnd.Configs;
@@ -11,11 +12,7 @@ namespace NPJe.FrontEnd.Repository.Queries
 {
     public class ResponsavelRepository : QueriesRepository
     {
-        private Contexto Contexto { get; set; }
-        public ResponsavelRepository()
-        {
-            Contexto = new Contexto();
-        }
+        public ResponsavelRepository() : base() { }
 
         #region Responsaveis
         public RetornoDto GetResponsavelDtoGrid(int draw, int start, int length, string search, string order, string dir)
@@ -116,6 +113,35 @@ namespace NPJe.FrontEnd.Repository.Queries
             Contexto.SaveChanges();
 
             return true;
+        }
+
+        public RetornoComboDto GetUsuarioResponsavelComboDto(long? id, string search)
+        {
+            var consulta = (from r in Contexto.Responsavel
+                            select r);
+
+            if (id.HasValue)
+                consulta = consulta.Where(x => x.Id == id);
+            else if (!search.IsNullOrEmpty())
+                consulta = consulta.Where(x => x.Nome.Contains(search));
+
+            var grupo = (from r in consulta
+                         orderby r.Nome
+                         select r).ToList();
+
+            var data = new List<GenericInfoComboDto>();
+
+
+            grupo.ForEach(x =>
+            {
+                data.Add(new GenericInfoComboDto()
+                {
+                    id = x.IdUsuario,
+                    text = x.Nome
+                });
+            });
+
+            return CreateDataComboResult(data.Count(), data);
         }
 
         public bool RemoveResponsavel(long id)

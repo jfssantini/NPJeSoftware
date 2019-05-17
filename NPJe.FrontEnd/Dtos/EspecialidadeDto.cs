@@ -11,7 +11,7 @@ namespace NPJe.FrontEnd.Dtos
     {
         public EspecialidadeDto()
         {
-            DisponibilidadeGrid = new List<HorarioDto>();
+            DisponibilidadeGrid = new List<DisponibilidadeDto>();
         }
         public long Id { get; set; }
 
@@ -21,7 +21,7 @@ namespace NPJe.FrontEnd.Dtos
 
         public string DescricaoEspecialidade { get { return IdEspecialidade.GetDescription(); } set { } }
 
-        public List<HorarioDto> DisponibilidadeGrid { get; set; }
+        public List<DisponibilidadeDto> DisponibilidadeGrid { get; set; }
 
         public long IdUsuario { get; set; }
     }

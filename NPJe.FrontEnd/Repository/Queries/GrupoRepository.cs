@@ -10,11 +10,7 @@ namespace NPJe.FrontEnd.Repository.Queries
 {
     public class GrupoRepository : QueriesRepository
     {
-        private Contexto Contexto { get; set; }
-        public GrupoRepository()
-        {
-            Contexto = new Contexto();
-        }
+        public GrupoRepository() : base() { }
 
         #region Grupo
         public RetornoDto GetGrupoDtoGrid(int draw, int start, int length, string search, string order, string dir)

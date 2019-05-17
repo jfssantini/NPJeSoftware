@@ -5,29 +5,29 @@ namespace NPJe.FrontEnd.Repository.Mapping
 {
     public class AtendimentoMap : EntityTypeConfiguration<Atendimento>
     {
-        public AtendimentoMap() 
+        public AtendimentoMap()
         {
             ToTable("atendimento");
 
-            HasRequired(x => x.Cliente)
-                    .WithMany()
-                    .HasForeignKey(x => x.IdCliente);
+            HasOptional(x => x.Pasta)
+                    .WithMany(x => x.Atendimentos)
+                    .HasForeignKey(x => x.IdPasta);
 
-            HasRequired(x => x.Grupo)
+            HasRequired(x => x.UsuarioRegistro)
                     .WithMany()
-                    .HasForeignKey(x => x.IdGrupo);
+                    .HasForeignKey(x => x.IdUsuarioRegistro);
 
-            HasRequired(x => x.UsuarioCriacao)
+            HasOptional(x => x.UsuarioExclusao)
                     .WithMany()
-                    .HasForeignKey(x => x.IdUsuarioCriacao);
+                    .HasForeignKey(x => x.IdUsuarioExclusao);
 
-            HasRequired(x => x.UsuarioResponsavel)
+            HasRequired(x => x.Usuario)
                     .WithMany()
-                    .HasForeignKey(x => x.IdUsuarioResponsavel);
+                    .HasForeignKey(x => x.IdUsuario);
 
-            HasOptional(x => x.TipoAtendimento)
-                    .WithMany()
-                    .HasForeignKey(x => x.IdTipoAtendimento);
+            HasOptional(x => x.Processo)
+                    .WithMany(x => x.Atendimentos)
+                    .HasForeignKey(x => x.IdProcesso);
         }
     }
 }

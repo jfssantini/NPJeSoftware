@@ -41,18 +41,18 @@
                     <thead>
                         <!-- Colunas da tabela -->
                         <tr>
-                            <th>Nome</th>
+                            <th>Nome/Razão Social</th>
                             <th>Sexo</th>
-                            <th>Data de nascimento</th>
+                            <th>Data de nascimento/Início</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
                     <tfoot>
                         <tr>
-                            <th>Nome</th>
+                            <th>Nome/Razão Social</th>
                             <th>Sexo</th>
-                            <th>Data de nascimento</th>
+                            <th>Data de nascimento/Início</th>
                             <th>Ações</th>
                         </tr>
                     </tfoot>
@@ -74,25 +74,11 @@
                 </div>
 
                 <div class="box-body">
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <input type="hidden" id="IdEdit" name="Id" value="0">
-                            <label for="inputLogin">Login</label>
-                            <input type="text" class="form-control" name="Usuario" required id="inputLogin" placeholder="Digite um login">
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label for="inputPassword">Senha</label>
-                            <input type="password" class="form-control" name="Senha" id="inputPassword" placeholder="Digite uma senha"
-                                   readonly onmouseover=" this.removeAttribute('readonly')" onfocus="this.removeAttribute('readonly')">
-                        </div>
-                    </div>
 
                     <div class="col-sm-12">
                         <div class="form-group">
-                            <label for="inputNome">Nome</label>
+                            <input type="hidden" id="IdEdit" name="Id" value="0">
+                            <label for="inputNome">Nome/Razão Social</label>
                             <input type="text" class="form-control" required name="Nome" id="inputNome" placeholder="Digite o nome completo">
                         </div>
                     </div>
@@ -104,21 +90,15 @@
                                 <option value="">Escolha...</option>
                                 <option value="1">Masculino</option>
                                 <option value="2">Feminino</option>
+                                <option value="3">Não informado</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="col-sm-3">
                         <div class="form-group">
-                            <label for="datepicker">Data de nascimento</label>
+                            <label for="datepicker">Data de nascimento/início</label>
                             <input type="text" class="form-control pull-right" name="DescricaoDataNascimento" id="datepicker" placeholder="Selecione a data">
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label for="imputCPF">CPF</label>
-                            <input type="text" class="form-control" name="CPF" id="imputCPF" placeholder="Digite o CPF">
                         </div>
                     </div>
 
@@ -136,6 +116,94 @@
                         </div>
                     </div>
 
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="imputCPF">CPF</label>
+                            <input type="text" class="form-control" name="CNPJ" id="imputCPF" placeholder="Digite o CPF">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="imputCPF">CNPJ</label>
+                            <input type="text" class="form-control" name="CNPJ" id="imputCNPJ" placeholder="Digite o CNPJ">
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-12">
+                        <div class="box box-default box-solid collapsed-box">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Endereço</h3>
+
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="box-body" style="">
+
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <input type="hidden" id="IdEditEndereco" name="IdEndereco" value="0">
+                                        <label for="inputCEP">CEP</label>
+                                        <input type="text" class="form-control" name="CEP" id="inputCEP" placeholder="Digite o CEP">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-9">
+                                    <div class="form-group">
+                                        <label for="inputCidade">Cidade</label>
+                                        <input type="text" class="form-control" name="Cidade" id="inputCidade" placeholder="Digite a cidade">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <input type="hidden" class="form-control" name="hidden" id="hidden" placeholder="Digite o endereço">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label for="inputEndereco">Endereço</label>
+                                        <input type="text" class="form-control" name="InfoEndereco" id="inputEndereco" placeholder="Digite o endereço">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label for="imputNumero">Número</label>
+                                        <input type="text" class="form-control" name="Numero" id="imputNumero" placeholder="Digite o Número">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label for="inputBairro">Bairro</label>
+                                        <input type="text" class="form-control" name="Bairro" id="inputBairro" placeholder="Digite o bairro">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="inputComplemento">Complemento</label>
+                                        <input type="text" class="form-control" name="Complemento" id="inputComplemento" placeholder="Digite o complemento">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label for="inputObservacao">Observações</label>
+                                        <textarea class="form-control" rows="3" name="Observacao" placeholder="Digite alguma observação"></textarea>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="col-md-3">
                     </div>
                     <div class="col-md-9">
@@ -144,6 +212,7 @@
                             <button type="button" id="btnConfirm" class="btn btn-primary">Confirmar</button>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -190,6 +259,7 @@
         $('#imputCelular').inputmask({ "mask": "(99) 9 9999-9999" });
         $('#datepicker').inputmask({ "alias": "dd/mm/yyyy" });
         $('#imputCPF').inputmask({ "mask": "999.999.999-99" });
+        $('#imputCNPJ').inputmask({ "mask": "99.999.999/9999-99" });
         $('#datepicker').datepicker({
             autoclose: true,
             todayHighlight: true,
@@ -276,7 +346,7 @@
             },
             "columns": [
                 { "data": "Nome"},
-                { "data": "DescricaoSexo", "bSortable": false, "width": 70 },
+                { "data": "DescricaoSexo", "bSortable": false, "width": 100 },
                 { "data": "DescricaoDataNascimento", "width": 70 },
                 {
                     "bSortable": false,
