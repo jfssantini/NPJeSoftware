@@ -50,11 +50,11 @@ namespace NPJe.FrontEnd.Dtos
 
         public bool Status { get; set; }
 
-        public decimal ExpectativaValorCausa { get; set; }
+        public decimal? ExpectativaValorCausa { get; set; }
 
-        public decimal PercentualHonorarios { get; set; }
+        public decimal? PercentualHonorarios { get; set; }
 
-        public decimal ValorHonorarios { get; set; }
+        public decimal? ValorHonorarios { get; set; }
 
         public string SegmentoJudiciario { get; set; }
 

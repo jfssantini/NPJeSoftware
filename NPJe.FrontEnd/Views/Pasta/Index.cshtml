@@ -11,12 +11,12 @@
 <!-- Cabeçalho da página -->
 <section class="content-header">
     <h1>
-        Pastas
-        <small>Lista de Pastas</small>
+        Casos
+        <small>Lista de Casos</small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-folder-open"></i> Home</a></li>
-        <li class="active">Pastas</li>
+        <li class="active">Casos</li>
     </ol>
 </section>
 
@@ -72,7 +72,7 @@
         </div>
     </div>
 
-    @* Modal add Pasta *@
+    @* Modal add Casos *@
     <div class="modal fade" id="modalAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" 
          consultar="false" url="http://localhost:51485/api/pastaCrud/SavePasta" reload="tabelaPasta"
          registrosInconsistentes="http://localhost:51485/api/pastaCrud/ExcluirRegistrosInconsistentes">
@@ -84,7 +84,7 @@
                             &times;
                         </span><span class="sr-only"></span>
                     </button>
-                    <h4 class="modal-title" id="myModalLabel">Adicionar registro</h4>
+                    <h4 class="modal-title" id="myModalLabel">Adicionar caso</h4>
                 </div>
 
                 <div class="box-body">
@@ -201,7 +201,7 @@
                             &times;
                         </span><span class="sr-only"></span>
                     </button>
-                    <h4 class="modal-title" id="myModalLabel">Vincular assunto à pasta</h4>
+                    <h4 class="modal-title" id="myModalLabel">Vincular assunto ao caso</h4>
                 </div>
 
                 <div class="box-body">
@@ -255,7 +255,7 @@
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label for="comboSituacaoAtendimento" style="margin-bottom: 0px;">Status</label>
-                            <select class="form-control" name="IdSituacaoAtendimento" id="comboSituacaoAtendimento" required placeholder="" style="margin-top: 4px;">
+                            <select class="form-control" name="IdSituacaoAtendimento" id="comboSituacaoAtendimento" placeholder="" style="margin-top: 4px;">
                                 <option value=""></option>
                                 @foreach (var item in ViewBag.SituacaoAtendimento)
                                 {
@@ -330,15 +330,15 @@
 
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label for="inputUsuarioExclusaoT" style="margin-bottom: 4px;" admin="1">Excluido por</label>
-                                        <input type="text" class="form-control" disabled name="UsuarioExclusao" id="inputUsuarioExclusaoT" placeholder="" admin="1" ignore="1">
+                                        <label for="inputUsuarioExclusaoT" style="margin-bottom: 4px;" hidden admin="1">Excluido por</label>
+                                        <input type="text" class="form-control" disabled name="UsuarioExclusao" id="inputUsuarioExclusaoT" placeholder="" hidden admin="1" ignore="1">
                                     </div>
                                 </div>
 
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label for="inputDataHoraExclusaoT" style="margin-bottom: 4px;" admin="1">Data/Hora da exclusão</label>
-                                        <input type="text" class="form-control" disabled name="DescricaoDataHoraExclusao" id="inputDataHoraExclusaoT" placeholder="" admin="1" ignore="1">
+                                        <label for="inputDataHoraExclusaoT" style="margin-bottom: 4px;" hidden admin="1">Data/Hora da exclusão</label>
+                                        <input type="text" class="form-control" disabled name="DescricaoDataHoraExclusao" id="inputDataHoraExclusaoT" placeholder="" hidden admin="1" ignore="1">
                                     </div>
                                 </div>
                             </div>
@@ -515,7 +515,7 @@
             "buttons": [{
                 extend: 'excel',
                 header: true,
-                title: 'Pasta',
+                title: 'Casos',
                 fontSize: '15',
                 exportOptions: {
                     columns: [0, 1, 2, 3, 4]
@@ -524,7 +524,7 @@
             {
                 extend: 'pdf',
                 header: true,
-                title: 'Pasta',
+                title: 'Casos',
                 fontSize: '20',
                 exportOptions: {
                     columns: [0, 1, 2, 3, 4]
@@ -534,9 +534,14 @@
                 var json = settings.json;               
                     
                 $("[name='btnRemovePasta']").click(function () {
-                    var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];
-                    $('#IdRemovePasta').val(idSelecionado.Id);
-                    $('#modalRemovePasta').modal('show');
+                    if (@ViewBag.IdPapel == -1) {
+                        var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];
+                        $('#IdRemovePasta').val(idSelecionado.Id);
+                        $('#modalRemovePasta').modal('show');
+                    }
+                    else
+                        alert("Você não possui permissão para executar esta operação");
+                    
                 });
                 $("[name='btnEditPasta']").click(function () {
                     var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using NPJe.FrontEnd.Controllers.CRUDs;
 using System.Web.Mvc;
 
 namespace NPJe.FrontEnd.Controllers
@@ -12,12 +9,20 @@ namespace NPJe.FrontEnd.Controllers
         public ActionResult Index()
         {
             DefineViewDatas();
+            
             if (Session["IdUsuario"] == null)
                 return RedirectToAction("Login", "Home");
 
+            DefineNotifications();
             return View();
         }
-        public void DefineViewDatas()
+
+        private void DefineNotifications()
+        {
+            ViewBag.Agendamentos = new AgendamentoCrudController().GetAtendimentosByIsuario();
+        }
+
+        private void DefineViewDatas()
         {
             ViewData["Usuario"] = Session?["Usuario"] ?? "usuario";
             ViewData["Papel"] = Session?["Papel"] ?? "papel";

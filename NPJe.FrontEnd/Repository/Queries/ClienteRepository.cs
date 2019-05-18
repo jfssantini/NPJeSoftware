@@ -16,8 +16,12 @@ namespace NPJe.FrontEnd.Repository.Queries
         #region Cliente
         public RetornoDto GetClienteDtoGrid(int draw, int start, int length, string search, string order, string dir)
         {
-            var data = (from c in Contexto.Cliente
-                        where search.Length > 0 ? c.Nome.Contains(search) : true
+            var consulta = (from c in Contexto.Cliente select c);
+
+            if (search != null && search.Length > 0)
+                consulta = consulta.Where(c => c.Nome.Contains(search));
+
+            var data = (from c in consulta                        
                         select new ClienteGridDto()
                         {
                             Id = c.Id,
@@ -59,6 +63,32 @@ namespace NPJe.FrontEnd.Repository.Queries
             retorno.DescricaoDataNascimento = retorno.DataNascimento.ToString("dd/MM/yyyy");
 
             return retorno;
+        }
+
+        public bool IsClienteRepetidoByCNPJ(string CNPJ)
+        {
+            if (!CNPJ.IsNullOrEmpty())
+            {
+                var responsavel = (from r in Contexto.Cliente
+                               .Where(x => x.CNPJ == CNPJ)
+                                   select r.Id).Count() > 0;
+
+                return responsavel;
+            }
+            return false;
+        }
+
+        public bool IsClienteRepetidoByCPF(string CPF)
+        {
+            if (!CPF.IsNullOrEmpty())
+            {
+                var responsavel = (from r in Contexto.Cliente
+                               .Where(x => x.CPF == CPF)
+                                   select r.Id).Count() > 0;
+
+                return responsavel;
+            }
+            return false;
         }
 
         public bool SaveCliente(ClienteDto dto)

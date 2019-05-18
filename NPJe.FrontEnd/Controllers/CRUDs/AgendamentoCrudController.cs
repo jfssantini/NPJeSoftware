@@ -2,6 +2,7 @@
 using NPJe.FrontEnd.Configs;
 using NPJe.FrontEnd.Dtos;
 using NPJe.FrontEnd.Repository.Queries;
+using System.Collections.Generic;
 using System.Web.Http;
 using System.Web.Http.Cors;
 
@@ -49,8 +50,12 @@ namespace NPJe.FrontEnd.Controllers.CRUDs
         [HttpGet]
         public RetornoComboDto GetProcessoComboDto(long? id = null, string search = null, long? idPasta = null)
         {
-
             return idPasta.HasValue ? new AgendamentoRepository().GetProcessoComboDto(id, search, idPasta.Value) : new RetornoComboDto() { total = 0 };
+        }
+
+        public List<GenericInfoComboDto> GetAtendimentosByIsuario()
+        {
+            return new AgendamentoRepository().GetAgendamentosByIsuario();
         }
     }
 }

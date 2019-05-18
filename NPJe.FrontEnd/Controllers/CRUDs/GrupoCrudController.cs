@@ -2,6 +2,7 @@
 using NPJe.FrontEnd.Configs;
 using NPJe.FrontEnd.Dtos;
 using NPJe.FrontEnd.Repository.Queries;
+using NPJe.FrontEnd.Validations;
 using System.Web.Http;
 using System.Web.Http.Cors;
 
@@ -26,6 +27,7 @@ namespace NPJe.FrontEnd.Controllers.CRUDs
         public bool SaveGrupo(string values)
         {
             var dto = JsonConvert.DeserializeObject<GrupoDto>(values);
+            new GrupoValidator().Validate(dto, false);
             if (dto.Id > 0)
                 return new GrupoRepository().EditGrupo(dto);
             else
@@ -36,7 +38,7 @@ namespace NPJe.FrontEnd.Controllers.CRUDs
         public bool RemoveGrupo(string values)
         {
             var dto = JsonConvert.DeserializeObject<GrupoDto>(values);
-
+            new GrupoValidator().Validate(dto, true);
             return new GrupoRepository().RemoveGrupo(dto.Id);
         }
 

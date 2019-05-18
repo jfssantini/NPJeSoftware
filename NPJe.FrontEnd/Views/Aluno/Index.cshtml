@@ -86,79 +86,101 @@
                 </div>
 
                 <div class="box-body">
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <input type="hidden" id="IdEdit" name="Id" value="0">
-                            <label for="inputLogin">Login</label>
-                            <input type="text" class="form-control" name="Usuario" required id="inputLogin" placeholder="Digite um login">
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label for="inputPassword">Senha</label>
-                            <input type="password" class="form-control" name="Senha" id="inputPassword" placeholder="Digite uma senha"
-                                   readonly onmouseover=" this.removeAttribute('readonly')" onfocus="this.removeAttribute('readonly')">
-                        </div>
-                    </div>
 
                     <div class="col-sm-12">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <input type="hidden" id="IdEdit" name="Id" value="0">
+                                <label for="inputLogin">Login</label>
+                                <input type="text" class="form-control" name="Usuario" required id="inputLogin" placeholder="Digite um login">
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="inputPassword">Senha</label>
+                                <input type="password" class="form-control" name="Senha" id="inputPassword" placeholder="Digite uma senha"
+                                       readonly onmouseover=" this.removeAttribute('readonly')" onfocus="this.removeAttribute('readonly')">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12" style=" padding-left: 30px; padding-right: 30px;">
                         <div class="form-group">
                             <label for="inputNome">Nome</label>
                             <input type="text" class="form-control" required name="Nome" id="inputNome" placeholder="Digite o nome completo">
                         </div>
                     </div>
 
-                    <div class="col-sm-3">
-                        <div class="form-group">
-                            <label for="comboSexo">Sexo</label>
-                            <select class="form-control" id="comboSexo" required name="Sexo" placeholder="Selecione o sexo">
-                                <option value="">Escolha...</option>
-                                <option value="1">Masculino</option>
-                                <option value="2">Feminino</option>
-                            </select>
+                    <div class="col-sm-12">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="imputCPF">CPF</label>
+                                <input type="text" class="form-control" name="CPF" id="imputCPF" placeholder="Digite o CPF">
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="imputEmail">Email</label>
+                                <input type="text" class="form-control" name="Email" id="imputEmail" placeholder="Digite o email">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-sm-12">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label for="comboSexo">Sexo</label>
+                                <select class="form-control" id="comboSexo" required name="Sexo" placeholder="Selecione o sexo">
+                                    <option value="">Escolha...</option>
+                                    <option value="1">Masculino</option>
+                                    <option value="2">Feminino</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label for="imputMatricula">Matrícula</label>
+                                <input type="number" class="form-control" name="Matricula" id="imputMatricula" placeholder="Digite a matrícula">
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label for="imputSemestre">Semestre</label>
+                                <input type="number" class="form-control" name="Semestre" id="imputSemestre" placeholder="Digite o semestre">
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label for="datepicker">Data de nascimento</label>
+                                <input type="text" class="form-control pull-right" name="DescricaoDataNascimento" id="datepicker" placeholder="Selecione a data">
+                            </div>
                         </div>
                     </div>
 
-                    <div class="col-sm-3">
-                        <div class="form-group">
-                            <label for="imputMatricula">Matrícula</label>
-                            <input type="number" class="form-control" required name="Matricula" id="imputMatricula" placeholder="Digite a matrícula">
+                    <div class="col-sm-12">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label for="imputTelefone">Telefone</label>
+                                <input type="text" class="form-control" name="Telefone" id="imputTelefone" placeholder="Digite o telefone fixo">
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="col-sm-3">
-                        <div class="form-group">
-                            <label for="imputSemestre">Semestre</label>
-                            <input type="number" class="form-control" required name="Semestre" id="imputSemestre" placeholder="Digite o semestre">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label for="imputCelular">Celular</label>
+                                <input type="text" class="form-control" name="Celular" id="imputCelular" placeholder="Digite o celular">
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="col-sm-3">
-                        <div class="form-group">
-                            <label for="datepicker">Data de nascimento</label>
-                            <input type="text" class="form-control pull-right" name="DescricaoDataNascimento" id="datepicker" placeholder="Selecione a data">
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label for="imputCPF">CPF</label>
-                            <input type="text" class="form-control" name="CPF" id="imputCPF" placeholder="Digite o CPF">
-                        </div>
-                    </div>
-
-                    <div class="col-sm-3">
-                        <div class="form-group">
-                            <label for="imputTelefone">Telefone</label>
-                            <input type="text" class="form-control" name="Telefone" id="imputTelefone" placeholder="Digite o telefone fixo">
-                        </div>
-                    </div>
-
-                    <div class="col-sm-3">
-                        <div class="form-group">
-                            <label for="imputCelular">Celular</label>
-                            <input type="text" class="form-control" name="Celular" id="imputCelular" placeholder="Digite o celular">
+                        <div class="col-sm-3">
+                            <label for="checkStatus" style="margin-left: 1px; margin-bottom: 5px;">Status</label><br />
+                            <input type="checkbox" id="checkStatus" default="true" name="Ativo">
                         </div>
                     </div>
 
@@ -218,6 +240,7 @@
                                         <thead>
                                             <tr>
                                                 <th>Especialidade</th>
+                                                <th>Disponibilidade</th>
                                                 <th>Ações</th>
                                             </tr>
                                         </thead>
@@ -440,13 +463,13 @@
                                 <div class="input-group">
                                     <div class="input-group">
                                         <div class="col-sm-5" style="padding-left: 0px; padding-right: 0px;">
-                                            <input type="text" id="timepicker1" name="HorarioInicio" required="" class="form-control timepicker" rawvalue="1">
+                                            <input type="text" id="timepicker1" name="HorarioInicio" required class="form-control timepicker" rawvalue="1">
                                         </div>
                                         <div class="col-sm-2" style="padding-right: 0px; padding-left: 10px; padding-top: 5px;">
                                             <label>até</label>
                                         </div>
                                         <div class="col-sm-5" style="padding-left: 0px; padding-right: 0px;">
-                                            <input type="text" id="timepicker2" name="HorarioFim" required="" class="form-control timepicker" rawvalue="1">
+                                            <input type="text" id="timepicker2" name="HorarioFim" required class="form-control timepicker" rawvalue="1">
                                         </div>
                                     </div>
                                 </div>
@@ -541,6 +564,11 @@
                 cache: true
             },
         }).data('select2').$selection.css('height', '34px');
+        $('#checkStatus').bootstrapToggle({
+            on: "Ativo",
+            off: "Inativo",
+            width: 182
+        }).change(function () { this.value = $(this).prop('checked'); });
 
         $('#tabelaAlunos').dataTable({
             "dom": "Bfrtip",
@@ -576,7 +604,10 @@
                         $('#modalAdd :input').each(function () {
                             var me = $(this);
                             if (me && me.context.name) {
-                                me.val(data[me.context.name]);
+                                if (me.context.id.includes("check")) 
+                                    me.prop('checked', data[me.context.name]).change();
+                                else
+                                    me.val(data[me.context.name]);
                             }
                         });
                         $('#modalAdd').modal('show');
@@ -700,7 +731,7 @@
                     
                     $('#modalAddGrupo :input').each(function () {
                         var me = $(this);
-                        if (me && me.context.name) {                            
+                        if (me && me.context.name) { 
                             me.val(idSelecionado[me.context.name]);
                             if (me.context.id == "comboGrupo") {
                                 var $newOption = $("<option selected='selected'></option>").val(idSelecionado.IdGrupo).text(idSelecionado.DescricaoGrupo)
@@ -747,11 +778,12 @@
                 }
             },
             "columns": [
-                { "data": "DescricaoEspecialidade" },
+                { "data": "DescricaoEspecialidade", "width": "25%" },
+                { "data": "Disponibilidade" },
                 {
                     "bSortable": false,
                     "data": null,
-                    "width": 80,
+                    "width": 90,
                     "defaultContent":
                         '<button type="button" name="btnEditEspecialidade" class="btn btn-primary" style="width:36px; padding-left: 11px; margin: 1px 2px 1px 2px;">' +
                         '<i class= "fa fa-pencil-square-o" ></i>' +

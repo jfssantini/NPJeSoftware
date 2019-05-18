@@ -1,9 +1,6 @@
 ﻿using NPJe.FrontEnd.Configs;
 using NPJe.FrontEnd.Enums;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace NPJe.FrontEnd.Dtos
 {
@@ -24,5 +21,9 @@ namespace NPJe.FrontEnd.Dtos
         public List<DisponibilidadeDto> DisponibilidadeGrid { get; set; }
 
         public long IdUsuario { get; set; }
+
+        public List<string> Disponibilidades { get; set; }
+
+        public string Disponibilidade { get { return string.Join(", ", Disponibilidades); } set { } }
     }
 }

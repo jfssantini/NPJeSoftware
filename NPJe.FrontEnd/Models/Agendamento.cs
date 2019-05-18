@@ -22,6 +22,8 @@ namespace NPJe.FrontEnd.Models
 
         public string Horario { get; set; }
 
+        public bool Concluido { get; set; }
+
         /*****Para Controle do sistema*****/
         public bool Temporario { get; set; }
 

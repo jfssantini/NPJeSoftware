@@ -101,6 +101,20 @@
                         </div>
                     </div>
 
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="imputCPF">CPF</label>
+                            <input type="text" class="form-control" name="CPF" id="imputCPF" placeholder="Digite o CPF">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="imputEmail">Email</label>
+                            <input type="text" class="form-control" name="Email" id="imputEmail" placeholder="Digite o email">
+                        </div>
+                    </div>
+
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="comboSexo">Sexo</label>
@@ -119,12 +133,7 @@
                         </div>
                     </div>
 
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label for="imputCPF">CPF</label>
-                            <input type="text" class="form-control" name="CPF" id="imputCPF" placeholder="Digite o CPF">
-                        </div>
-                    </div>
+
 
                     <div class="col-sm-3">
                         <div class="form-group">
@@ -153,14 +162,22 @@
                         </div>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-sm-3">
+                        <label for="checkStatus" style="margin-left: 1px; margin-bottom: 5px;">Status</label><br />
+                        <input type="checkbox" id="checkStatus" default="true" name="Ativo">
                     </div>
-                    <div class="col-md-9">
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Sair</button>
-                            <button type="button" id="btnConfirm" class="btn btn-primary">Confirmar</button>
+
+                    <div class="col-md-12">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-9">
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Sair</button>
+                                <button type="button" id="btnConfirm" class="btn btn-primary">Confirmar</button>
+                            </div>
                         </div>
                     </div>
+                    
+                    
                 </div>
             </div>
         </div>
@@ -216,6 +233,11 @@
             endDate: new Date(),
             clearBtn: true
         }).on('hide', function (e) { e.stopPropagation(); });
+        $('#checkStatus').bootstrapToggle({
+            on: "Ativo",
+            off: "Inativo",
+            width: 190
+        }).change(function () { this.value = $(this).prop('checked'); });
 
         $('#tabelaResponsaveis').dataTable({
             "dom": "Bfrtip",
@@ -254,7 +276,10 @@
                         $('#modalAdd :input').each(function () {
                             var me = $(this);
                             if (me && me.context.name) {
-                                me.val(data[me.context.name]);
+                                if (me.context.id.includes("check")) 
+                                    me.prop('checked', data[me.context.name]).change();
+                                else
+                                    me.val(data[me.context.name]);
                             }
                         });
                         $('#modalAdd').modal('show');

@@ -121,15 +121,15 @@
 
                     <div class="col-sm-12">
                         <div class="form-group">
-                            <label for="comboBoxPasta">Referente ao registro da pasta</label>
-                            <select class="form-control" name="IdPasta" id="comboBoxPasta" required placeholder="Escolha o registro da pasta" style="height: 32px; width:100%"></select>
+                            <label for="comboBoxPasta">Referente ao caso</label>
+                            <select class="form-control" name="IdPasta" id="comboBoxPasta" required placeholder="Escolha o caso" style="height: 32px; width:100%"></select>
                         </div>
                     </div>
 
                     <div class="col-md-12">
                         <div class="box box-default box-solid collapsed-box">
                             <div class="box-header with-border">
-                                <label class="box-title" style="font-size: 15px;">Informações do registro da pasta</label>
+                                <label class="box-title" style="font-size: 15px;">Informações do caso</label>
 
                                 <div class="box-tools pull-right">
                                     <button type="button" class="btn btn-box-tool" data-widget="collapse" collapse="1" ignore="1">
@@ -401,7 +401,7 @@
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label for="comboSituacaoNpj" style="margin-bottom: 0px;">Situação NPJ</label>
-                            <select class="form-control" name="IdSituacaoNpj" id="comboSituacaoNpj" required placeholder="" style="margin-top: 4px;">
+                            <select class="form-control" name="IdSituacaoNpj" id="comboSituacaoNpj" placeholder="" style="margin-top: 4px;">
                                 <option value=""></option>
                                 @foreach (var item in ViewBag.SituacaoNpj)
                                 {
@@ -414,7 +414,7 @@
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label for="comboSituacaoProjudi" style="margin-bottom: 0px;">Situação Projudi</label>
-                            <select class="form-control" name="IdSituacaoProjudi" id="comboSituacaoProjudi" required placeholder="" style="margin-top: 4px;">
+                            <select class="form-control" name="IdSituacaoProjudi" id="comboSituacaoProjudi" placeholder="" style="margin-top: 4px;">
                                 <option value=""></option>
                                 @foreach (var item in ViewBag.SituacaoProjudi)
                                 {
@@ -489,15 +489,15 @@
 
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label for="inputUsuarioExclusaoT" style="margin-bottom: 4px;" admin="1">Excluido por</label>
-                                        <input type="text" class="form-control" disabled name="UsuarioExclusao" id="inputUsuarioExclusaoT" placeholder="" admin="1" ignore="1">
+                                        <label for="inputUsuarioExclusaoT" style="margin-bottom: 4px;" hidden admin="1">Excluido por</label>
+                                        <input type="text" class="form-control" disabled name="UsuarioExclusao" id="inputUsuarioExclusaoT" placeholder="" hidden admin="1" ignore="1">
                                     </div>
                                 </div>
 
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label for="inputDataHoraExclusaoT" style="margin-bottom: 4px;" admin="1">Data/Hora da exclusão</label>
-                                        <input type="text" class="form-control" disabled name="DescricaoDataHoraExclusao" id="inputDataHoraExclusaoT" placeholder="" admin="1" ignore="1">
+                                        <label for="inputDataHoraExclusaoT" style="margin-bottom: 4px;" hidden admin="1">Data/Hora da exclusão</label>
+                                        <input type="text" class="form-control" disabled name="DescricaoDataHoraExclusao" id="inputDataHoraExclusaoT" placeholder="" hidden admin="1" ignore="1">
                                     </div>
                                 </div>
                             </div>
@@ -563,7 +563,6 @@
             format: 'dd/mm/yyyy',
             keyboardNavigation: true,
             language: 'pt-BR',
-            endDate: new Date(),
             clearBtn: true
         }).on('hide', function (e) { e.stopPropagation(); });
         $('#comboBoxGrupo').select2({
@@ -652,7 +651,7 @@
             },
         }).data('select2').$selection.css('height', '34px');
         $('#comboBoxPasta').select2({
-            "placeholder": "Pesquise o registro da pasta",
+            "placeholder": "Pesquise o caso",
             "dropdownParent": $("#modalAdd"),
             "allowClear": true,
             "dataType": 'json',
@@ -755,11 +754,15 @@
                 }],
             "drawCallback": function (settings) {
                 var json = settings.json;
-
                 $("[name='btnRemoveProcesso']").click(function () {
-                    var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];
-                    $('#IdRemoveProcesso').val(idSelecionado.Id);
-                    $('#modalRemoveProcesso').modal('show');
+                    if (@ViewBag.IdPapel == -1) {
+                        
+                        var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];
+                        $('#IdRemoveProcesso').val(idSelecionado.Id);
+                        $('#modalRemoveProcesso').modal('show');
+                    }
+                    else
+                        alert("Você não possui permissão para executar esta operação");
                 });
                 $("[name='btnEditProcesso']").click(function () {
                     var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];

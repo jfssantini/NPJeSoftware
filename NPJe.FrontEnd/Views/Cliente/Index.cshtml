@@ -116,20 +116,26 @@
                         </div>
                     </div>
 
-                    <div class="col-sm-6">
+                    <div class="col-sm-3">
                         <div class="form-group">
                             <label for="imputCPF">CPF</label>
                             <input type="text" class="form-control" name="CNPJ" id="imputCPF" placeholder="Digite o CPF">
                         </div>
                     </div>
 
-                    <div class="col-sm-6">
+                    <div class="col-sm-3">
                         <div class="form-group">
                             <label for="imputCPF">CNPJ</label>
                             <input type="text" class="form-control" name="CNPJ" id="imputCNPJ" placeholder="Digite o CNPJ">
                         </div>
                     </div>
 
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="imputEmail">Email</label>
+                            <input type="text" class="form-control" name="Email" id="imputEmail" placeholder="Digite o email">
+                        </div>
+                    </div>
 
                     <div class="col-md-12">
                         <div class="box box-default box-solid collapsed-box">
@@ -296,9 +302,13 @@
             "drawCallback": function (settings) {
                 var json = settings.json;
                 $("[name='btnRemove']").click(function () {
-                    var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];
-                    $('#IdRemove').val(idSelecionado.Id);
-                    $('#modalRemove').modal('show');
+                    if (@ViewBag.IdPapel == -1) {
+                        var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];
+                        $('#IdRemove').val(idSelecionado.Id);
+                        $('#modalRemove').modal('show');
+                    }
+                    else
+                        alert("Você não possui permissão para executar esta operação");
                 });
                 $("[name='btnEdit']").click(function () {
                     var idSelecionado = json.data[$(this).parents()[1].rowIndex - 1];

@@ -1,5 +1,6 @@
 ﻿using NPJe.FrontEnd.Configs;
 using NPJe.FrontEnd.Dtos;
+using NPJe.FrontEnd.Enums;
 using NPJe.FrontEnd.Models;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace NPJe.FrontEnd.Repository.Queries
         public RetornoDto GetAgendamentoDtoGrid(int draw, int start, int length, string search, string order, string dir)
         {
             var consulta = (from a in Contexto.Agendamento
+                            where a.IdUsuario == SessionUser.IdUsuario
                             select a);
 
             if (!search.IsNullOrEmpty())
@@ -106,12 +108,34 @@ namespace NPJe.FrontEnd.Repository.Queries
             Contexto.SaveChanges();
             return true;
         }
+
+        public List<GenericInfoComboDto> GetAgendamentosByIsuario()
+        {
+            var dataDeHoje = DateTime.Now.Date;
+            var agendamentos = (from a in Contexto.Agendamento
+                               where !a.Concluido && 
+                               a.IdUsuario == SessionUser.IdUsuario
+                               && a.DataAgendamento == dataDeHoje
+                                select new GenericInfoComboDto() {
+                                   id = a.Id,
+                                   text = a.Titulo,
+                                   complement = a.Horario
+                                })
+                               .ToList();
+            agendamentos.ForEach(x => x.complement = x.complement.Substring(0, 5));
+            return agendamentos;
+        }
+
         #endregion
 
         public RetornoComboDto GetPastaComboDto(long? id, string search)
         {
-            var consulta = (from p in Contexto.Pasta
-                            select p);
+            var idGruposPermitidos = GetListaGruposUsuario();
+
+            var consulta = (from p in Contexto.Pasta select p);
+
+            if (idGruposPermitidos.Any())
+                consulta = consulta.Where(p => idGruposPermitidos.Contains(p.IdGrupo));
 
             if (id.HasValue)
                 consulta = consulta.Where(x => x.Id == id);

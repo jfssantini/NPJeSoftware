@@ -23,5 +23,7 @@ namespace NPJe.FrontEnd.Dtos
         public string DescricaoDataAgendamento { get; set; }
 
         public string Horario { get; set; }
+
+        public bool Concluido { get; set; }
     }
 }

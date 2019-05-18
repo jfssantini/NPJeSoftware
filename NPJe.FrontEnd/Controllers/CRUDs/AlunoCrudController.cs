@@ -2,6 +2,7 @@
 using NPJe.FrontEnd.Configs;
 using NPJe.FrontEnd.Dtos;
 using NPJe.FrontEnd.Repository.Queries;
+using NPJe.FrontEnd.Validations;
 using System.Collections.Generic;
 using System.Web.Http;
 using System.Web.Http.Cors;
@@ -21,6 +22,9 @@ namespace NPJe.FrontEnd.Controllers.CRUDs
         public bool SaveAluno(string values)
         {
             var dto = JsonConvert.DeserializeObject<AlunoDto>(values);
+
+            new AlunoValidator().Validate(dto);
+
             if (dto.Id > 0)
                 return new AlunoRepository().EditAluno(dto);
             else
@@ -43,6 +47,9 @@ namespace NPJe.FrontEnd.Controllers.CRUDs
         public bool SaveAlunoEspecialidade(string values)
         {
             var dto = JsonConvert.DeserializeObject<EspecialidadeDto>(values);
+
+            new AlunoValidator().Validate(dto);
+
             if (dto.Id > 0)
                 return new AlunoRepository().EditAlunoEspecialidade(dto);
             else
@@ -75,13 +82,16 @@ namespace NPJe.FrontEnd.Controllers.CRUDs
         [HttpGet]
         public RetornoComboDto GetGrupoComboDto(long? id = null, string search = null)
         {
-            return new GrupoRepository().GetGrupoComboDto(id, search);
+            return new GrupoRepository().GetGrupoComboDto(id, search,false);
         }
 
         [HttpGet]
         public bool SaveAlunoGrupo(string values)
         {
             var dto = JsonConvert.DeserializeObject<AlunoGrupoDto>(values);
+
+            new AlunoValidator().Validate(dto);
+
             if (dto.Id > 0)
                 return new AlunoRepository().EditAlunoGrupo(dto);
             else

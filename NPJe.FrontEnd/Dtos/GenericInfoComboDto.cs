@@ -13,5 +13,7 @@
         public long id {  get; set; }
 
         public string text { get; set; }
+
+        public string complement { get; set; }
     }
 }

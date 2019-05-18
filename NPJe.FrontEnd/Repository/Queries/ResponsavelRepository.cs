@@ -17,8 +17,12 @@ namespace NPJe.FrontEnd.Repository.Queries
         #region Responsaveis
         public RetornoDto GetResponsavelDtoGrid(int draw, int start, int length, string search, string order, string dir)
         {
-            var data = (from r in Contexto.Responsavel
-                        where search.Length > 0 ? r.Nome.Contains(search) : true
+            var consulta = (from r in Contexto.Responsavel select r);
+
+            if (search != null && search.Length > 0)
+                consulta = consulta.Where(r => r.Nome.Contains(search));
+
+            var data = (from r in consulta
                         select new ResponsavelGridDto()
                         {
                             Id = r.Id,
@@ -158,6 +162,40 @@ namespace NPJe.FrontEnd.Repository.Queries
             Contexto.Usuario.Remove(usuario);
             Contexto.SaveChanges();
             return true;
+        }
+
+        public bool ResponsavelPossuiVinculos(long id)
+        {
+            var vinculoPasta = (from r in Contexto.Responsavel.Where(x => x.Id == id)
+                                from p in Contexto.Pasta.Where(x => x.IdUsuarioResponsavel == r.IdUsuario)
+                                select p.Id).Count() > 0;
+
+            return vinculoPasta;
+        }
+
+        public bool IsResponsavelRepetidoByCPF(string CPF)
+        {
+            if (!CPF.IsNullOrEmpty())
+            {
+                var responsavel = (from r in Contexto.Responsavel
+                               .Where(x => x.CPF == CPF)
+                                   select r.Id).Count() > 0;
+
+                return responsavel;
+            }
+            return false;
+        }
+
+        public bool IsUsuarioLoginRepetido(string login)
+        {
+            if (!login.IsNullOrEmpty()) {
+                var responsavel = (from u in Contexto.Usuario
+                                   .Where(x => x.UsuarioLogin == login)
+                                   select u.Id).Count() > 0;
+
+                return responsavel;
+            }
+            return false;
         }
 
         #endregion

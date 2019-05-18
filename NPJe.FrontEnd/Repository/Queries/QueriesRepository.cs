@@ -5,6 +5,8 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Linq.Dynamic;
+using System.Collections.Generic;
+using NPJe.FrontEnd.Enums;
 
 namespace NPJe.FrontEnd.Repository.Queries
 {
@@ -14,6 +16,26 @@ namespace NPJe.FrontEnd.Repository.Queries
         public QueriesRepository()
         {
             Contexto = new Contexto();
+        }
+
+        public List<long> GetListaGruposUsuario()
+        {
+            var idGruposPermitidos = new List<long>();
+            if (SessionUser.IdPapel == PapelUsuarioEnum.Aluno)
+            {
+                idGruposPermitidos = (from a in Contexto.AlunoGrupo
+                                      where a.Aluno.IdUsuario == SessionUser.IdUsuario
+                                      select a.IdGrupo).ToList();
+            }
+            return idGruposPermitidos;
+        }
+
+        public bool ValidarUsuarioComGrupos(List<long> idGrupos)
+        {
+            if (SessionUser.IdPapel == PapelUsuarioEnum.Aluno && !idGrupos.Any())
+                return false;
+
+            return true;
         }
 
         #region Configurações extras

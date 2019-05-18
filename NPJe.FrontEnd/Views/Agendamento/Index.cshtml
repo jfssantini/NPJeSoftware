@@ -88,7 +88,7 @@
                     <div class="col-md-12">
                         <div class="box box-default box-solid collapsed-box">
                             <div class="box-header with-border">
-                                <label class="box-title" style="font-size: 15px;">Referente a</label>
+                                <label class="box-title" style="font-size: 15px;">Referente ao</label>
 
                                 <div class="box-tools pull-right">
                                     <button type="button" class="btn btn-box-tool" data-widget="collapse" collapse="1" ignore="1">
@@ -100,8 +100,8 @@
 
                                 <div class="col-sm-12">
                                     <div class="form-group">
-                                        <label for="comboBoxPasta">Pasta</label>
-                                        <select class="form-control" name="IdPasta" id="comboBoxPasta" required placeholder="Escolha o registro da pasta" style="height: 32px; width:100%"></select>
+                                        <label for="comboBoxPasta">Caso</label>
+                                        <select class="form-control" name="IdPasta" id="comboBoxPasta" required placeholder="Escolha o caso" style="height: 32px; width:100%"></select>
                                     </div>
                                 </div>
 
@@ -199,7 +199,7 @@
             clearBtn: true
         }).on('hide', function (e) { e.stopPropagation(); });
         $('#comboBoxPasta').select2({
-            "placeholder": "Pesquise o registro da pasta",
+            "placeholder": "Pesquise o caso",
             "dropdownParent": $("#modalAdd"),
             "allowClear": true,
             "dataType": 'json',

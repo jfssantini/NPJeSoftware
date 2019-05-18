@@ -17,8 +17,12 @@ namespace NPJe.FrontEnd.Repository.Queries
         #region Aluno
         public RetornoDto GetAlunoDtoGrid(int draw, int start, int length, string search, string order, string dir)
         {
-            var data = (from a in Contexto.Aluno
-                        where search.Length > 0 ? a.Nome.Contains(search) : true
+            var consulta = (from a in Contexto.Aluno select a);
+
+            if (search != null && search.Length > 0)
+                consulta = consulta.Where(a => a.Nome.Contains(search));
+
+            var data = (from a in consulta
                         select new AlunoGridDto()
                         {
                             Id = a.Id,
@@ -111,16 +115,13 @@ namespace NPJe.FrontEnd.Repository.Queries
                 SET Temporario = false, IdAluno = {retorno.Id} 
                 WHERE IdUsuario = {SessionUser.IdUsuario} AND IdAluno IS NULL
                 AND Temporario = true");
-
             Contexto.Database.ExecuteSqlCommand($@"UPDATE dbo.alunogrupo 
                 SET Temporario = false, IdAluno = {retorno.Id} 
                 WHERE IdUsuario = {SessionUser.IdUsuario} AND IdAluno IS NULL
                 AND Temporario = true");
-
             Contexto.Database.ExecuteSqlCommand($@"DELETE FROM dbo.alunoespecialidade 
                 WHERE IdUsuario = {SessionUser.IdUsuario} AND 
                 (Esconder = true OR Excluir = true);");
-
             Contexto.Database.ExecuteSqlCommand($@"DELETE FROM dbo.alunogrupo 
                 WHERE IdUsuario = {SessionUser.IdUsuario} AND 
                 (Esconder = true OR Excluir = true);");
@@ -158,16 +159,13 @@ namespace NPJe.FrontEnd.Repository.Queries
                 SET Temporario = false, IdAluno = {dto.Id} 
                 WHERE IdUsuario = {SessionUser.IdUsuario}
                 AND Temporario = true");
-
             Contexto.Database.ExecuteSqlCommand($@"UPDATE dbo.alunogrupo 
                 SET Temporario = false, IdAluno = {dto.Id} 
                 WHERE IdUsuario = {SessionUser.IdUsuario}
                 AND Temporario = true");
-
             Contexto.Database.ExecuteSqlCommand($@"DELETE FROM dbo.alunoespecialidade 
                 WHERE IdUsuario = {SessionUser.IdUsuario} AND 
                 (Esconder = true OR Excluir = true);");
-
             Contexto.Database.ExecuteSqlCommand($@"DELETE FROM dbo.alunogrupo 
                 WHERE IdUsuario = {SessionUser.IdUsuario} AND 
                 (Esconder = true OR Excluir = true);");
@@ -181,35 +179,54 @@ namespace NPJe.FrontEnd.Repository.Queries
         {
             Contexto.Database.ExecuteSqlCommand($@"DELETE FROM dbo.alunoespecialidade 
                 WHERE IdUsuario = {SessionUser.IdUsuario} AND Temporario = true;");
-
             Contexto.Database.ExecuteSqlCommand($@"DELETE FROM dbo.alunogrupo 
                 WHERE IdUsuario = {SessionUser.IdUsuario} AND Temporario = true;");
-
             Contexto.Database.ExecuteSqlCommand($@"UPDATE dbo.alunoespecialidade 
                 SET Esconder = false WHERE IdUsuario = {SessionUser.IdUsuario} 
                 AND Esconder = true;");
-
             Contexto.Database.ExecuteSqlCommand($@"UPDATE dbo.alunogrupo 
                 SET Esconder = false WHERE IdUsuario = {SessionUser.IdUsuario} 
                 AND Esconder = true;");
-
             Contexto.Database.ExecuteSqlCommand($@"DELETE FROM dbo.alunoespecialidade 
                 WHERE IdUsuario = {SessionUser.IdUsuario} AND IdAluno IS NULL
                 AND Temporario = false AND Esconder = false AND Excluir = false;");
-
             Contexto.Database.ExecuteSqlCommand($@"DELETE FROM dbo.alunogrupo 
                 WHERE IdUsuario = {SessionUser.IdUsuario} AND IdAluno IS NULL
                 AND Temporario = false AND Esconder = false AND Excluir = false;");
-
             Contexto.Database.ExecuteSqlCommand($@"UPDATE dbo.alunoespecialidade 
                 SET Excluir = false WHERE IdUsuario = {SessionUser.IdUsuario}
                 AND Excluir = true;");
-
             Contexto.Database.ExecuteSqlCommand($@"UPDATE dbo.alunogrupo 
                 SET Excluir = false WHERE IdUsuario = {SessionUser.IdUsuario}
                 AND Excluir = true;");
 
             return true;
+        }
+
+        public bool IsAlunoRepetidoByCPF(string CPF)
+        {
+            if (!CPF.IsNullOrEmpty())
+            {
+                var responsavel = (from r in Contexto.Aluno
+                               .Where(x => x.CPF == CPF)
+                                   select r.Id).Count() > 0;
+
+                return responsavel;
+            }
+            return false;
+        }
+
+        public bool IsUsuarioLoginRepetido(string login)
+        {
+            if (!login.IsNullOrEmpty())
+            {
+                var responsavel = (from u in Contexto.Usuario
+                                   .Where(x => x.UsuarioLogin == login)
+                                   select u.Id).Count() > 0;
+
+                return responsavel;
+            }
+            return false;
         }
         #endregion
 
@@ -321,11 +338,20 @@ namespace NPJe.FrontEnd.Repository.Queries
                             }).ToList()
                         }).ToList();
 
+            data.ForEach(x =>
+            {
+                x.Disponibilidades = x.DisponibilidadeGrid.Select(y => y.IdDiaSemana.GetDescription()
+                + " - " + y.HorarioInicio.Substring(0, 5) + " até " + y.HorarioFim.Substring(0, 5)).ToList();
+            });
+
             return CreateDataResult(data.Count, data);
         }
 
         public bool SaveAlunoEspecialidade(EspecialidadeDto dto)
         {
+            if (dto.DisponibilidadeGrid == null)
+                dto.DisponibilidadeGrid = new List<DisponibilidadeDto>();
+
             var entity = new AlunoEspecialidade()
             {
                 IdAluno = dto.IdAluno == 0 ? null : dto.IdAluno,

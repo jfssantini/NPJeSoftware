@@ -61,17 +61,20 @@
                         <li class="dropdown notifications-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-bell-o"></i>
-                                <span class="label label-warning">1</span>
+                                <span class="label label-warning">@Enumerable.Count(ViewBag.Agendamentos)</span>
                             </a>
-                            <ul class="dropdown-menu">
-                                <li class="header">Você possui 1 agendamento(s) para hoje</li>
+                            <ul class="dropdown-menu" style="width: 400px;">
+                                <li class="header">Você possui @Enumerable.Count(ViewBag.Agendamentos) agendamento(s) para hoje</li>
                                 <li>
                                     <!-- inner menu: contains the actual data -->
                                     <ul class="menu">
                                         <li>
+                                            @foreach (var item in ViewBag.Agendamentos)
+                                            {
                                             <a href="#">
-                                                <i class="fa fa-calendar text-aqua"></i> Atendimento para fazer tal tal coisa referente a tal coisa
+                                                <i class="fa fa-calendar text-aqua"></i> @item.text.<br /> &#8194; &#8194; &#8201;Às @item.complement horas.
                                             </a>
+                                            }
                                         </li>
                                     </ul>
                                 </li>
@@ -148,7 +151,7 @@
                     <li class="treeview">
                         <a href="@Url.Action("Index", "Pasta")">
                             <i class="fa fa-folder-open"></i>
-                            <span>Pastas</span>
+                            <span>Casos</span>
                         </a>
                     </li>
                     <li class="treeview">
@@ -163,19 +166,19 @@
                             <span>Agendamentos</span>
                         </a>
                     </li>
-                    <li class="treeview" admin="1">
+                    <li class="treeview" hidden admin="1">
                         <a href="@Url.Action("Index", "Aluno")">
                             <i class="fa fa-graduation-cap"></i>
                             <span>Alunos</span>
                         </a>
                     </li>
-                    <li class="treeview" admin="1">
+                    <li class="treeview" hidden admin="1">
                         <a href="@Url.Action("Index", "Responsavel")">
                             <i class="fa fa-binoculars"></i>
                             <span>Responsáveis</span>
                         </a>
                     </li>
-                    <li class="treeview" admin="1">
+                    <li class="treeview" hidden admin="1">
                         <a href="@Url.Action("Index", "Grupo")">
                             <i class="fa fa-group"></i>
                             <span>Grupos</span>
@@ -372,8 +375,8 @@
     <script>
         $(document).ready(function () {
 
-            if (@ViewBag.IdPapel != -1)
-                $('[admin=1]').hide();
+            if (@ViewBag.IdPapel == -1)
+                $('[admin=1]').show();
 
 
             $($.fn.dataTable.tables(true)).css('width', '100%');
@@ -443,6 +446,8 @@
 
 
                         $('#' + modal.id).modal('hide');
+                    }).fail(function (data) {
+                            alert(data.responseJSON.ExceptionMessage);
                     });
                 }
             });
@@ -453,11 +458,12 @@
                 var result = '{ ';
                 var rawValue = "";
                 var option = false;
+                
                 $('#' + $(this).parents().toArray().filter(x => x.className.includes("modal fade"))[0].id + ' :input').each(function () {
                     var me = $(this);
                     if (me && me.context.name) {
                         me.on('click', x => x.delegateTarget.style.borderColor = "#ccc");
-                        if (me.context.validity.valueMissing && me.context.required) {
+                        if (me.context.validity.valueMissing && me.context.required &&  me.context.value == 0) {
                             me.context.style.borderColor = "red";
                             formValid = false;
                         }
@@ -483,16 +489,19 @@
                             else {
 
                                 if (me.context.options && me.context.multiple) {
+                                    if (me.context.options.length > 0) {
+                                        var value = "'" + me.context.name + "': ["
 
-                                    var value = "'" + me.context.name + "': ["
-
-                                    for (var i = 0; i < me.context.options.length; i++) {
-                                        if (me.context.options[i].value.length > 0) {
-                                            value = value + me.context.options[i].value + ", ";
+                                        for (var i = 0; i < me.context.options.length; i++) {
+                                            if (me.context.options[i].value.length > 0) {
+                                                value = value + me.context.options[i].value + ", ";
+                                            }
                                         }
+                                        value = value.substr(0, value.length - 2) + "]";
+                                        result = result + value + ',';
                                     }
-                                    value = value.substr(0, value.length - 2) + "]";
-                                    result = result + value + ',';
+                                    //else
+                                    //    result = result + "'',";
                                 }
                                 else {
                                     result = result + "'" + me.context.name + "': '" + me.context.value + "',";
@@ -529,6 +538,8 @@
                                 reload.DataTable().ajax.reload();
 
                             $('#' + modal.id).modal('hide');
+                        }).fail(function (data) {
+                            alert(data.responseJSON.ExceptionMessage);
                         });
                     }
                 }
@@ -565,7 +576,10 @@
                 });
 
                 if (me.context.id == "modalAdd" && me.context.getAttribute('registrosInconsistentes'))
-                    $.get(me.context.getAttribute('registrosInconsistentes'), {}, function (data) { });
+                    $.get(me.context.getAttribute('registrosInconsistentes'), {}, function (data) { })
+                        .fail(function (data) {
+                            alert(data.responseJSON.ExceptionMessage);
+                        });
 
                 $('button').toArray().filter(x => x.getAttribute('collapse')).forEach(x => {
                     if(x.innerHTML.includes("fa-minus"))
@@ -583,8 +597,16 @@
             });
 
             $('#modalAdd').on('shown.bs.modal', function () {
+                if($('#modalAdd' + ' [id=IdEdit]')[0].value == 0)
+                    $('#modalAdd' + ' [default=true]').prop('checked', true).change();
                 $($.fn.dataTable.tables(true)).css('width', '100%');
                 $($.fn.dataTable.tables(true)).DataTable().columns.adjust().draw();
+            });
+
+            $('.timepicker').on('change', function (event) {
+                var horarios = event.currentTarget.value.split(':');
+                if (horarios[0] > 24 || horarios[1] > 59)
+                    event.currentTarget.value = null;
             });
 
         });

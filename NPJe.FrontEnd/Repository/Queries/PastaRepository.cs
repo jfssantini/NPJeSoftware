@@ -16,25 +16,37 @@ namespace NPJe.FrontEnd.Repository.Queries
         #region Pasta
         public RetornoDto GetPastaDtoGrid(int draw, int start, int length, string search, string order, string dir)
         {
-            var data = (from p in Contexto.Pasta
-                        where search.Length > 0 ? p.Assunto.Descricao.Contains(search) : true
+            var idGruposPermitidos = GetListaGruposUsuario();
+
+            if (!ValidarUsuarioComGrupos(idGruposPermitidos))
+                return new RetornoDto() { data = new List<PastaGridDto>(), recordsFiltered = 0 };
+
+            var consulta = (from p in Contexto.Pasta
+                            select p);
+
+            if (idGruposPermitidos.Any())
+                consulta = consulta.Where(p => idGruposPermitidos.Contains(p.IdGrupo));
+            if (search != null && search.Length > 0)
+                consulta = consulta.Where(p => p.Assunto.Descricao.Contains(search));
+
+            var data = (from p in consulta
                         select new PastaGridDto()
-                        {
-                            Id = p.Id,
-                            Assunto = p.Assunto.Descricao,
-                            IdCliente = p.IdCliente,
-                            Cliente = p.Cliente.Nome,
-                            IdGrupo = p.IdGrupo,
-                            NumeroGrupo = p.Grupo.Numero,
-                            IdEspecialidadeGrupo = p.Grupo.IdEspecialidade,
-                            IdSituacaoNpjAtual = p.IdSituacaoNpjAtual,
-                            IdSituacaoProjudiAtual = p.IdSituacaoProjudiAtual,
-                            IdSituacaoAtendimentoAtual = p.IdSituacaoAtendimentoAtual,
-                            DataHoraCriacao = p.DataHoraCriacao
-                        })
-                        .OrderBy(x => x.Id)
-                        //.OrderBy(AjustarOrdenacao(order) + " " + dir)
-                        .Skip(start).Take(length);
+                    {
+                        Id = p.Id,
+                        Assunto = p.Assunto.Descricao,
+                        IdCliente = p.IdCliente,
+                        Cliente = p.Cliente.Nome,
+                        IdGrupo = p.IdGrupo,
+                        NumeroGrupo = p.Grupo.Numero,
+                        IdEspecialidadeGrupo = p.Grupo.IdEspecialidade,
+                        IdSituacaoNpjAtual = p.IdSituacaoNpjAtual,
+                        IdSituacaoProjudiAtual = p.IdSituacaoProjudiAtual,
+                        IdSituacaoAtendimentoAtual = p.IdSituacaoAtendimentoAtual,
+                        DataHoraCriacao = p.DataHoraCriacao
+                    })
+                    .OrderBy(x => x.Id)
+                    //.OrderBy(AjustarOrdenacao(order) + " " + dir)
+                    .Skip(start).Take(length);
 
 
             var pastas = data.ToList();
@@ -121,14 +133,14 @@ namespace NPJe.FrontEnd.Repository.Queries
             Contexto.Database.ExecuteSqlCommand($@"UPDATE dbo.atendimento 
                 SET Temporario = false, IdPasta = {retorno.Id}
                 WHERE IdUsuario = {SessionUser.IdUsuario} AND IdPasta IS NULL
-                AND Temporario = true");
+                AND Temporario = true AND IdProcesso IS NULL");
             Contexto.Database.ExecuteSqlCommand($@"DELETE FROM dbo.atendimento 
                 WHERE IdUsuario = {SessionUser.IdUsuario} AND 
-                Esconder = true;");
+                Esconder = true AND IdProcesso IS NULL");
             Contexto.Database.ExecuteSqlCommand($@"UPDATE dbo.atendimento 
                 SET Excluir = false, IdUsuarioExclusao = {SessionUser.IdUsuario}
                 WHERE IdUsuario = {SessionUser.IdUsuario} AND 
-                Excluir = true;");
+                Excluir = true AND IdProcesso IS NULL");
 
             return true;
         }
@@ -148,14 +160,14 @@ namespace NPJe.FrontEnd.Repository.Queries
             Contexto.Database.ExecuteSqlCommand($@"UPDATE dbo.atendimento 
                 SET Temporario = false, IdPasta = {dto.Id}
                 WHERE IdUsuario = {SessionUser.IdUsuario}
-                AND Temporario = true");
+                AND Temporario = true AND IdProcesso IS NULL;");
             Contexto.Database.ExecuteSqlCommand($@"DELETE FROM dbo.atendimento 
                 WHERE IdUsuario = {SessionUser.IdUsuario} AND 
-                Esconder = true;");
+                Esconder = true AND IdProcesso IS NULL;");
             Contexto.Database.ExecuteSqlCommand($@"UPDATE dbo.atendimento 
                 SET Excluir = false, IdUsuarioExclusao = {SessionUser.IdUsuario}
                 WHERE IdUsuario = {SessionUser.IdUsuario} AND 
-                Excluir = true;");
+                Excluir = true AND IdProcesso IS NULL;");
 
             var ultimosStatus = (from a in Contexto.Atendimento
                                where a.IdPasta == dto.Id && !a.IdUsuarioExclusao.HasValue
@@ -178,17 +190,19 @@ namespace NPJe.FrontEnd.Repository.Queries
         public bool ExcluirRegistrosInconsistentes()
         {
             Contexto.Database.ExecuteSqlCommand($@"DELETE FROM dbo.atendimento 
-                WHERE IdUsuario = {SessionUser.IdUsuario} AND Temporario = true;");
+                WHERE IdUsuario = {SessionUser.IdUsuario} AND Temporario = true 
+                AND IdProcesso IS NULL; ");
             Contexto.Database.ExecuteSqlCommand($@"UPDATE dbo.atendimento 
                 SET Esconder = false WHERE IdUsuario = {SessionUser.IdUsuario} 
-                AND Esconder = true;");
+                AND Esconder = true AND IdProcesso IS NULL;");
             Contexto.Database.ExecuteSqlCommand($@"DELETE FROM dbo.atendimento 
                 WHERE IdUsuario = {SessionUser.IdUsuario} AND IdPasta IS NULL
-                AND Temporario = false AND Esconder = false AND Excluir = false;");
+                AND Temporario = false AND Esconder = false AND Excluir = false
+                AND IdProcesso IS NULL;");
             Contexto.Database.ExecuteSqlCommand($@"UPDATE dbo.atendimento 
                 SET Excluir = false, IdUsuarioExclusao = NULL, DataHoraExclusao = NULL
                 WHERE IdUsuario = {SessionUser.IdUsuario}
-                AND Excluir = true;");
+                AND IdProcesso IS NULL AND Excluir = true;");
 
             return true;
         }

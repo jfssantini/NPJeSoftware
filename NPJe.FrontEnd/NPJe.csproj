@@ -286,6 +286,12 @@
     <Compile Include="Repository\Queries\ProcessoRepository.cs" />
     <Compile Include="Repository\Queries\QueriesRepository.cs" />
     <Compile Include="Repository\Queries\ResponsavelRepository.cs" />
+    <Compile Include="Validations\AlunoValidator.cs" />
+    <Compile Include="Validations\ClienteValidator.cs" />
+    <Compile Include="Validations\GrupoValidator.cs" />
+    <Compile Include="Validations\PastaValidator.cs" />
+    <Compile Include="Validations\ProcessoValidator.cs" />
+    <Compile Include="Validations\ResponsavelValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />

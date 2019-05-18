@@ -1,4 +1,5 @@
 ﻿using NPJe.FrontEnd.Configs;
+using NPJe.FrontEnd.Controllers.CRUDs;
 using NPJe.FrontEnd.Enums;
 using NPJe.FrontEnd.Models;
 using NPJe.FrontEnd.Repository.Queries;
@@ -11,9 +12,11 @@ namespace NPJe.FrontEnd.Controllers
         public ActionResult Index()
         {
             DefineViewDatas();
+            
             if (Session["IdUsuario"] == null)
                 return RedirectToAction("Login");
-                
+
+            DefineNotifications();
             return View();
         }
 
@@ -83,7 +86,12 @@ namespace NPJe.FrontEnd.Controllers
             }
         }
 
-        public void DefineViewDatas()
+        private void DefineNotifications()
+        {
+            ViewBag.Agendamentos = new AgendamentoCrudController().GetAtendimentosByIsuario();
+        }
+
+        private void DefineViewDatas()
         {
             ViewData["Usuario"] = Session?["Usuario"] ?? "usuario";
             ViewData["Papel"] = Session?["Papel"] ?? "papel";

@@ -34,10 +34,17 @@ namespace NPJe.FrontEnd.Repository.Queries
             return CreateDataResult(data.Count(), data.ToList());
         }
 
-        public RetornoComboDto GetGrupoComboDto(long? id, string search)
+        public RetornoComboDto GetGrupoComboDto(long? id, string search, bool filtroGrupo)
         {
-            var consulta = (from g in Contexto.Grupo
-                            select g);
+            var idGruposPermitidos = filtroGrupo ? GetListaGruposUsuario() : new List<long>();
+
+            if (!ValidarUsuarioComGrupos(idGruposPermitidos) && filtroGrupo)
+                return new RetornoComboDto() { results = new List<GenericInfoComboDto>(), total = 0 };
+
+            var consulta = (from g in Contexto.Grupo select g);
+
+            if (idGruposPermitidos.Any())
+                consulta = consulta.Where(g => idGruposPermitidos.Contains(g.Id));
 
             if (id.HasValue)
                 consulta = consulta.Where(x => x.Id == id);
@@ -99,6 +106,27 @@ namespace NPJe.FrontEnd.Repository.Queries
             Contexto.SaveChanges();
 
             return true;
+        }
+
+        public bool GrupoPossuiVinculos(long id)
+        {
+            var vinculoAluno = (from a in Contexto.AlunoGrupo
+                                where a.IdGrupo == id
+                                select a.Id).Count() > 0;
+
+            var vinculoPasta = (from p in Contexto.Pasta
+                                where p.IdGrupo == id
+                                select p.Id).Count() > 0;
+
+            return (vinculoAluno || vinculoPasta);
+        }
+
+        public bool IsGrupoRepetido(int Numero)
+        {
+            return (from g in Contexto.Grupo
+                            where g.Numero == Numero
+                            select g.Id).Count() > 0;
+
         }
 
         public bool RemoveGrupo(long id)

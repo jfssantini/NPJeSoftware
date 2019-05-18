@@ -53,7 +53,7 @@ namespace NPJe.FrontEnd.Controllers.CRUDs
         [HttpGet]
         public RetornoComboDto GetGrupoComboDto(long? id = null, string search = null)
         {
-            return new GrupoRepository().GetGrupoComboDto(id, search);
+            return new GrupoRepository().GetGrupoComboDto(id, search, true);
         }
 
         [HttpGet]
