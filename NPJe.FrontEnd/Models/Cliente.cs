@@ -25,5 +25,11 @@ namespace NPJe.FrontEnd.Models
         public long? IdEndereco { get; set; }
 
         public Endereco Endereco { get; set; }
+
+        public long? IdUsuarioExclusao { get; set; }
+
+        public Usuario UsuarioExclusao { get; set; }
+
+        public DateTime? DataHoraExclusao { get; set; }
     }
 }

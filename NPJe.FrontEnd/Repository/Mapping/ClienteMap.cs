@@ -12,6 +12,10 @@ namespace NPJe.FrontEnd.Repository.Mapping
             HasOptional(x => x.Endereco)
                     .WithMany()
                     .HasForeignKey(x => x.IdEndereco);
+
+            HasOptional(x => x.UsuarioExclusao)
+                .WithMany()
+                .HasForeignKey(x => x.IdUsuarioExclusao);
         }
     }
 }

@@ -14,9 +14,10 @@ namespace NPJe.FrontEnd.Repository.Queries
         public PastaRepository() : base() { }
 
         #region Pasta
-        public RetornoDto GetPastaDtoGrid(int draw, int start, int length, string search, string order, string dir)
+        public RetornoDto GetPastaDtoGrid(int draw, int start, int length, string search, string order, string dir,
+            long? idCliente, long? idGrupo, int? idSituacaoAtendimento)
         {
-            var idGruposPermitidos = GetListaGruposUsuario();
+            var idGruposPermitidos = GetListaGruposUsuario(null);
 
             if (!ValidarUsuarioComGrupos(idGruposPermitidos))
                 return new RetornoDto() { data = new List<PastaGridDto>(), recordsFiltered = 0 };
@@ -26,8 +27,21 @@ namespace NPJe.FrontEnd.Repository.Queries
 
             if (idGruposPermitidos.Any())
                 consulta = consulta.Where(p => idGruposPermitidos.Contains(p.IdGrupo));
-            if (search != null && search.Length > 0)
-                consulta = consulta.Where(p => p.Assunto.Descricao.Contains(search));
+
+            if (!search.IsNullOrEmpty())
+            {
+                var searchLower = search.ToLowerInvariant();
+                consulta = consulta.Where(p => (p.Assunto.Descricao.ToLower()).Contains(searchLower));
+            }
+
+            if(idCliente.HasValue)
+                consulta = consulta.Where(x => x.IdCliente == idCliente);
+
+            if (idGrupo.HasValue)
+                consulta = consulta.Where(x => x.IdGrupo == idGrupo);
+
+            if (idSituacaoAtendimento.HasValue)
+                consulta = consulta.Where(x => x.IdSituacaoAtendimentoAtual == (SituacaoAtendimentoEnum)idSituacaoAtendimento);
 
             var data = (from p in consulta
                         select new PastaGridDto()
@@ -42,10 +56,10 @@ namespace NPJe.FrontEnd.Repository.Queries
                         IdSituacaoNpjAtual = p.IdSituacaoNpjAtual,
                         IdSituacaoProjudiAtual = p.IdSituacaoProjudiAtual,
                         IdSituacaoAtendimentoAtual = p.IdSituacaoAtendimentoAtual,
-                        DataHoraCriacao = p.DataHoraCriacao
+                        DataHoraCriacao = p.DataHoraCriacao,
+                        DataHoraAlteracao = p.DataHoraAlteracao
                     })
-                    .OrderBy(x => x.Id)
-                    //.OrderBy(AjustarOrdenacao(order) + " " + dir)
+                    .OrderBy(AjustarOrdenacao(order) + " " + dir)
                     .Skip(start).Take(length);
 
 
@@ -73,10 +87,7 @@ namespace NPJe.FrontEnd.Repository.Queries
                     {
                         x.UsuarioUltimaTarefa = ultimoAtendimento.UsuarioRegistro;
                         x.IdUsuarioUltimaTarefa = ultimoAtendimento.IdUsuarioRegistro;
-                        x.DataHoraUltimaTarefa = ultimoAtendimento.DataHoraRegistro;
                     }
-                    else
-                        x.DataHoraUltimaTarefa = x.DataHoraCriacao;
                 });
             }
 
@@ -106,7 +117,8 @@ namespace NPJe.FrontEnd.Repository.Queries
                                IdUsuarioCriacao = p.IdUsuarioCriacao,
                                UsuarioCriacao = p.UsuarioCriacao.UsuarioLogin,
                                DataHoraCriacao = p.DataHoraCriacao,
-                               Concluido = p.Concluido
+                               Concluido = p.Concluido,
+                               DataHoraAlteracao = p.DataHoraAlteracao
                            }).FirstOrDefault();
 
             return retorno;
@@ -125,6 +137,7 @@ namespace NPJe.FrontEnd.Repository.Queries
                 IdAssunto = dto.IdAssunto,
                 Concluido = dto.Concluido,
                 DataHoraCriacao = DateTime.Now,
+                DataHoraAlteracao = DateTime.Now,
                 IdUsuarioCriacao = SessionUser.IdUsuario
             });
 
@@ -156,6 +169,7 @@ namespace NPJe.FrontEnd.Repository.Queries
             pasta.IdAssunto = dto.IdAssunto;
             pasta.Concluido = dto.Concluido;
             pasta.IdUsuarioResponsavel = dto.IdUsuarioResponsavel;
+            pasta.DataHoraAlteracao = DateTime.Now;
 
             Contexto.Database.ExecuteSqlCommand($@"UPDATE dbo.atendimento 
                 SET Temporario = false, IdPasta = {dto.Id}
@@ -206,6 +220,17 @@ namespace NPJe.FrontEnd.Repository.Queries
 
             return true;
         }
+
+        public bool RemovePasta(PastaDto dto)
+        {
+            Contexto.Database.ExecuteSqlCommand($@"UPDATE dbo.pasta 
+                SET IdUsuarioExclusao = {SessionUser.IdUsuario}, 
+                DataHoraExclusao = '{DateTime.Now.ToString("dd/MM/yyyy HH:mm")}'
+                WHERE Id = {dto.Id}");
+
+            return true;
+        }
+
         #endregion
 
         #region Atendimento
@@ -319,8 +344,11 @@ namespace NPJe.FrontEnd.Repository.Queries
 
             if (id.HasValue)
                 consulta = consulta.Where(x => x.Id == id);
-            else if (!search.IsNullOrEmpty())
-                consulta = consulta.Where(x => x.Descricao.Contains(search));
+            else if (!search.IsNullOrEmpty()) {
+                var searchLower = search.ToLowerInvariant();
+                consulta = consulta.Where(x => (x.Descricao.ToLower()).Contains(searchLower));
+            }
+                
 
             var assuntos = (from a in consulta
                             orderby a.Descricao
@@ -353,11 +381,16 @@ namespace NPJe.FrontEnd.Repository.Queries
             var retorno = "";
             switch (order)
             {
-                case "Data de nascimento":
-                    retorno = "DataNascimento";
-                    break;
-                case "Nome":
+                case "Id":
+                case "Assunto":
+                case "Cliente":
                     retorno = order;
+                    break;
+                case "Grupo":
+                    retorno = "NumeroGrupo";
+                    break;
+                case "Ult. alteração":
+                    retorno = "DataHoraAlteracao";
                     break;
                 default:
                     break;

@@ -197,6 +197,7 @@
     <Compile Include="Configs\EnumExtension.cs" />
     <Compile Include="Configs\RetornoComboDto.cs" />
     <Compile Include="Configs\RetornoDto.cs" />
+    <Compile Include="Configs\ReturnSession.cs" />
     <Compile Include="Configs\SessionUser.cs" />
     <Compile Include="Configs\StringExtension.cs" />
     <Compile Include="Controllers\AgendamentoController.cs" />
@@ -229,6 +230,8 @@
     <Compile Include="Dtos\DisponibilidadeDto.cs" />
     <Compile Include="Dtos\ProcessoDto.cs" />
     <Compile Include="Dtos\ProcessoGridDto.cs" />
+    <Compile Include="Dtos\Relatorios\RelatorioProcessoDto.cs" />
+    <Compile Include="Dtos\Relatorios\RelatoriosGeneric.cs" />
     <Compile Include="Dtos\ResponsavelDto.cs" />
     <Compile Include="Dtos\ResponsavelGridDto.cs" />
     <Compile Include="Dtos\AtendimentoDto.cs" />
@@ -286,6 +289,7 @@
     <Compile Include="Repository\Queries\ProcessoRepository.cs" />
     <Compile Include="Repository\Queries\QueriesRepository.cs" />
     <Compile Include="Repository\Queries\ResponsavelRepository.cs" />
+    <Compile Include="Validations\AgendamentoValidator.cs" />
     <Compile Include="Validations\AlunoValidator.cs" />
     <Compile Include="Validations\ClienteValidator.cs" />
     <Compile Include="Validations\GrupoValidator.cs" />

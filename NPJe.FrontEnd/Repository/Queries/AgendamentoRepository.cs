@@ -14,14 +14,50 @@ namespace NPJe.FrontEnd.Repository.Queries
         public AgendamentoRepository() : base() { }
 
         #region Agendamento
-        public RetornoDto GetAgendamentoDtoGrid(int draw, int start, int length, string search, string order, string dir)
+        public RetornoDto GetAgendamentoDtoGrid(int draw, int start, int length, string search, string order, string dir,
+            bool somenteAlunos, bool somenteDoUsuario, string dataAgendamento, long? idAluno)
         {
             var consulta = (from a in Contexto.Agendamento
-                            where a.IdUsuario == SessionUser.IdUsuario
                             select a);
 
-            if (!search.IsNullOrEmpty())
-                consulta = consulta.Where(x => x.Titulo.Contains(search));
+            if (SessionUser.IdPapel == PapelUsuarioEnum.Aluno || somenteDoUsuario)
+                consulta = consulta.Where(x => x.IdUsuario == SessionUser.IdUsuario);
+            else
+            {
+                if (somenteAlunos)
+                {
+                    consulta = (from c in consulta
+                                from a in Contexto.Aluno.Where(x => x.IdUsuario == c.IdUsuario)
+                                select c);
+                }
+                else if (idAluno.HasValue)
+                {
+                    consulta = (from c in consulta
+                                from a in Contexto.Aluno.Where(x => x.IdUsuario == c.IdUsuario)
+                                where a.Id == idAluno
+                                select c);
+                }
+                else
+                {
+                    consulta = (from c in consulta
+                                from a in Contexto.Aluno.Where(x => x.IdUsuario == c.IdUsuario).DefaultIfEmpty()
+                                where (c.IdUsuario == SessionUser.IdUsuario || (c.IdUsuario != SessionUser.IdUsuario && ((long?)a.Id).HasValue))
+                                select c);
+                }
+            }
+
+            if (!dataAgendamento.IsNullOrEmpty())
+            {
+                var atendimentoDate = Convert.ToDateTime(dataAgendamento);
+                consulta = consulta.Where(x => x.DataAgendamento == atendimentoDate);
+            }
+
+
+            if (!search.IsNullOrEmpty()) {
+                var searchLower = search.ToLowerInvariant();
+                consulta = consulta.Where(x => (x.Titulo.ToLower()).Contains(searchLower));
+            }
+            
 
             var data = (from a in consulta
                         select new AgendamentoDto()
@@ -30,16 +66,17 @@ namespace NPJe.FrontEnd.Repository.Queries
                             Titulo = a.Titulo,
                             Descricao = a.Descricao,
                             DataAgendamento = a.DataAgendamento,
-                            Horario = a.Horario
+                            Horario = a.Horario,
+                            Usuario = a.Usuario.UsuarioLogin
                         })
-                    .OrderBy(order.RemoveAccents() + " " + dir)
+                    .OrderBy(AjustarOrdenacao(order, dir) + " " + dir)
                     .Skip(start).Take(length);
 
             var agendamentos = data.ToList();
 
             agendamentos.ForEach(x => x.DescricaoDataAgendamento = x.DataAgendamento.ToString("dd/MM/yyyy"));
 
-            return CreateDataResult(data.Count(), agendamentos);
+            return CreateDataResult(agendamentos.Count(), agendamentos);
         }
 
         public AgendamentoDto GetAgendamentoDto(long id)
@@ -56,7 +93,9 @@ namespace NPJe.FrontEnd.Repository.Queries
                         Titulo = a.Titulo,
                         Descricao = a.Descricao,
                         DataAgendamento = a.DataAgendamento,
-                        Horario = a.Horario
+                        Horario = a.Horario,
+                        Concluido = a.Concluido,
+                        Usuario = a.Usuario.UsuarioLogin
                     }).FirstOrDefault();
 
             retorno.DescricaoDataAgendamento = retorno.DataAgendamento.ToString("dd/MM/yyyy");
@@ -74,7 +113,8 @@ namespace NPJe.FrontEnd.Repository.Queries
                 Descricao = dto.Descricao,
                 DataAgendamento = Convert.ToDateTime(dto.DescricaoDataAgendamento),
                 Horario = dto.Horario,
-                IdUsuario = SessionUser.IdUsuario
+                IdUsuario = SessionUser.IdUsuario,
+                Concluido = dto.Concluido
             });
             Contexto.SaveChanges();
 
@@ -94,6 +134,7 @@ namespace NPJe.FrontEnd.Repository.Queries
             agendamento.DataAgendamento = Convert.ToDateTime(dto.DescricaoDataAgendamento);
             agendamento.Horario = dto.Horario;
             agendamento.IdUsuario = SessionUser.IdUsuario;
+            agendamento.Concluido = dto.Concluido;
 
             Contexto.SaveChanges();
 
@@ -130,7 +171,7 @@ namespace NPJe.FrontEnd.Repository.Queries
 
         public RetornoComboDto GetPastaComboDto(long? id, string search)
         {
-            var idGruposPermitidos = GetListaGruposUsuario();
+            var idGruposPermitidos = GetListaGruposUsuario(null);
 
             var consulta = (from p in Contexto.Pasta select p);
 
@@ -140,7 +181,11 @@ namespace NPJe.FrontEnd.Repository.Queries
             if (id.HasValue)
                 consulta = consulta.Where(x => x.Id == id);
             else if (!search.IsNullOrEmpty())
-                consulta = consulta.Where(x => x.Assunto.Descricao.Contains(search) || x.Id.ToString() == search);
+            {
+                var searchLower = search.ToLowerInvariant();
+                consulta = consulta.Where(x => (x.Assunto.Descricao.ToLower()).Contains(searchLower) || x.Id.ToString() == search);
+            }
+                
 
             var pastas = (from p in consulta
                           orderby p.Id
@@ -169,7 +214,11 @@ namespace NPJe.FrontEnd.Repository.Queries
             if (id.HasValue)
                 consulta = consulta.Where(x => x.Id == id);
             else if (!search.IsNullOrEmpty())
-                consulta = consulta.Where(x => x.TipoAcao.Descricao.Contains(search));
+            {
+                var searchLower = search.ToLowerInvariant();
+                consulta = consulta.Where(x => (x.TipoAcao.Descricao.ToLower()).Contains(searchLower));
+            }
+                
 
             var pastas = (from p in consulta
                           orderby p.Id
@@ -187,6 +236,26 @@ namespace NPJe.FrontEnd.Repository.Queries
             });
 
             return CreateDataComboResult(data.Count(), data);
+        }
+
+        public string AjustarOrdenacao(string order, string dir)
+        {
+            var retorno = "";
+            switch (order)
+            {
+                case "Título":
+                    retorno = order.RemoveAccents();
+                    break;
+                case "Horário":
+                    retorno = "DataAgendamento " + dir + ", " + order.RemoveAccents();
+                    break;
+                case "Data":
+                    retorno = "DataAgendamento";
+                    break;
+                default:
+                    break;
+            }
+            return retorno;
         }
     }
 }

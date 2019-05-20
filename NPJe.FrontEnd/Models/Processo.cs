@@ -58,6 +58,14 @@ namespace NPJe.FrontEnd.Models
 
         public DateTime DataHoraCriacao { get; set; }
 
+        public long? IdUsuarioExclusao { get; set; }
+
+        public Usuario UsuarioExclusao { get; set; }
+
+        public DateTime? DataHoraExclusao { get; set; }
+
+        public DateTime DataHoraAlteracao { get; set; }
+
         public List<Atendimento> Atendimentos { get; set; }
 
         public List<Agendamento> Agendamentos { get; set; }

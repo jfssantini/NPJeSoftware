@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using System.Text;
-using System.Web;
 
 namespace NPJe.FrontEnd.Configs
 {
     public static class StringExtension
     {
         public static bool IsNullOrEmpty(this string e) { 
-            return e == null || (e != null && e.Length == 0);
+            return e == null || (e != null && e.Trim().Length == 0);
         }
 
         public static string RemoveAccents(this string text)

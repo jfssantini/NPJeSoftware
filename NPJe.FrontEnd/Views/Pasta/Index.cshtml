@@ -12,7 +12,7 @@
 <section class="content-header">
     <h1>
         Casos
-        <small>Lista de Casos</small>
+        <small>Pasta de Casos</small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-folder-open"></i> Home</a></li>
@@ -29,7 +29,66 @@
             <div class="box-header" style="padding-bottom: 0px;">
                 <div class="row">
                     <div class="col-sm-12">
-                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6" style="padding-left: 0px;">
+
+                            <div class="col-md-12" style="padding-left: 0px;">
+                                <div class="box box-default box-solid collapsed-box" style="margin-bottom: 0px;">
+                                    <div class="box-header with-border" style="padding-bottom: 5px; padding-top: 5px;">
+                                        <h3 class="box-title">Filtros</h3>
+
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn btn-box-tool" data-widget="collapse" style="padding-top: 0px; padding-bottom: 0px;">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body" id="modalFiltro" style="">
+
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label for="filtroCliente">Cliente</label>
+                                                <br />
+                                                <select class="form-control" name="filtroCliente" id="filtroCliente" comboBox="1" style="width:100%" filtro="1" reload="tabelaPasta"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label for="filtroGrupo">Grupo</label>
+                                                <br />
+                                                <select class="form-control" name="filtroGrupo" id="filtroGrupo" comboBox="1" placeholder="Escolha o grupo" style="width:100%" filtro="1" reload="tabelaPasta"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label for="filtroSituacaoAtendimento">Situação atual</label>
+                                                <select class="form-control" name="filtroSituacaoAtendimento" id="filtroSituacaoAtendimento" filtro="1" reload="tabelaPasta" placeholder="Escolha a situação" style="margin-top: 4px;">
+                                                    <option value="">Escolha...</option>
+                                                    @foreach (var item in ViewBag.SituacaoAtendimento)
+                                                    {
+                                                        <option value="@item.id"> @item.text </option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-8">
+                                        </div>
+                                        <div class="col-sm-2" style=" text-align: right;">
+                                            <div class="form-group">
+                                                <button type="button" class="btn btn-default" id="btnLimparFiltro" style="text-align: right">
+                                                    <i class="fa fa-reply-all"></i>
+                                                    Limpar filtros
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
                         <div class="col-sm-6" id="colAdd" style=" text-align: right; padding-right: 0;">
                             <!-- Botão de adicionar -->
                             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalAdd" id="btnAdd" style="text-align: right">
@@ -73,7 +132,7 @@
     </div>
 
     @* Modal add Casos *@
-    <div class="modal fade" id="modalAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" 
+    <div class="modal fade" id="modalAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
          consultar="false" url="http://localhost:51485/api/pastaCrud/SavePasta" reload="tabelaPasta"
          registrosInconsistentes="http://localhost:51485/api/pastaCrud/ExcluirRegistrosInconsistentes">
         <div class="modal-dialog modal-lg">
@@ -191,6 +250,40 @@
         </div>
     </div>
 
+    @* Modal Remove Caso *@
+    <div class="modal fade" id="modalRemovePasta" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" grid="tabelaPasta" url="http://localhost:51485/api/pastaCrud/RemovePasta" reload="tabelaPasta">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">
+                            &times;
+                        </span><span class="sr-only"></span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Remover caso</h4>
+                </div>
+
+                <div class="box-body">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>Deseja mesmo excluir este registro?</label>
+                            <input type="hidden" id="IdRemovePasta" name="Id">
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-9">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Sair</button>
+                            <button type="button" id="btnConfirm" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @* Modal add Assunto *@
     <div class="modal fade" id="modalAddAssunto" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" grid="comboBoxAssunto" url="http://localhost:51485/api/pastaCrud/SaveAssunto" reload="comboBoxAssunto">
         <div class="modal-dialog">
@@ -205,7 +298,7 @@
                 </div>
 
                 <div class="box-body">
-                    
+
                     <div class="form-group">
                         <div class="col-sm-12">
                             <div class="form-group">
@@ -396,6 +489,51 @@
 
 <script>
     $(document).ready(function () {
+        $('#filtroCliente').select2({
+            "placeholder": "Pesquise o cliente",
+            "dropdownParent": $("#modalFiltro"),
+            "allowClear": true,
+            "dataType": 'json',
+            "type": 'GET',
+            "ajax": {
+                "url": "http://localhost:51485/api/processoCrud/GetClienteComboDto",
+                "dataType": 'json',
+                "data": function (params) {
+                    return {
+                        search: params.term // search term
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                    results: response.results
+                    };
+                },
+                cache: true
+            },
+        }).data('select2').$selection.css('height', '34px');
+        $('#filtroGrupo').select2({
+            "placeholder": "Pesquise o grupo",
+            "dropdownParent": $("#modalFiltro"),
+            "allowClear": true,
+            "dataType": 'json',
+            "type": 'GET',
+            "ajax": {
+                "url": "http://localhost:51485/api/alunoCrud/GetGrupoComboDto",
+                "dataType": 'json',
+                "data": function (params) {
+                    return {
+                        search: params.term // search term
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                    results: response.results
+                    };
+                },
+                cache: true
+            },
+        }).data('select2').$selection.css('height', '34px');
+
         $('#imputCelular').inputmask({ "mask": "(99) 9 9999-9999" });
         $('#datepicker').inputmask({ "alias": "dd/mm/yyyy" });
         $('#imputCPF').inputmask({ "mask": "999.999.999-99" });
@@ -567,7 +705,7 @@
                 "details": false
             },
             "language": {
-                "search": "Pesquisar:",
+                "search": "Pesquisar assunto:",
                 "lengthMenu": "Mostrar _MENU_ registros por página",
                 "zeroRecords": "Nenhum resultado encontrado",
                 "info": "Mostrando _START_ até _END_ de _TOTAL_ registro(s)",
@@ -592,7 +730,10 @@
                         "length": d.length,
                         "search": d.search.value,
                         "order": $('th')[d.order[0].column].outerText,
-                        "dir": d.order[0].dir
+                        "dir": d.order[0].dir,
+                        "idCliente": $('#filtroCliente')[0].value,
+                        "idGrupo": $('#filtroGrupo')[0].value,
+                        "idSituacaoAtendimento": $('#filtroSituacaoAtendimento')[0].value
                     };
                 }
             },
@@ -601,8 +742,8 @@
                 { "data": "Assunto", "width": "20%" },
                 { "data": "Cliente", "width": "20%" },
                 { "data": "Grupo", "width": "12%" },
-                { "data": "DescricaoSituacaoAtendimentoAtual", "width": "12%" },
-                { "data": "DescricaoDataHoraUltimaTarefa", "width": "10%" },
+                { "data": "DescricaoSituacaoAtendimentoAtual", "bSortable": false, "width": "12%" },
+                { "data": "DescricaoDataHoraAlteracao", "width": "10%" },
                 {
                     "bSortable": false,
                     "data": null,
@@ -653,13 +794,13 @@
             },
             "columns": [
                 { "data": "Titulo", "bSortable": false, "width": "25%" },
-                { "data": "DescricaoSituacaoAtendimento", "bSortable": false, "width": "15%" },
+                { "data": "DescricaoSituacaoAtendimento", "bSortable": false, "width": "12%" },
                 { "data": "UsuarioAlteracao", "bSortable": false, "width": "10%" },
                 { "data": "DescricaoDataHoraAlteracao", "bSortable": false, "width": "10%" },    
                 {
                     "bSortable": false,
                     "data": null,
-                    "width": "5%",
+                    "width": "8%",
                     "defaultContent":
                         '<button type="button" name="btnEditAtendimento" class="btn btn-primary" style="width:36px; padding-left: 11px; margin: 1px 2px 1px 2px;">' +
                         '<i class= "fa fa-pencil-square-o" ></i>' +

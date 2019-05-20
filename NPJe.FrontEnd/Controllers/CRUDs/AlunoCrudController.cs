@@ -13,9 +13,10 @@ namespace NPJe.FrontEnd.Controllers.CRUDs
     public class AlunoCrudController : ApiController
     {
         [HttpGet]
-        public RetornoDto GetAlunoDtoGrid(int draw, int start, int length, string search, string order, string dir)
+        public RetornoDto GetAlunoDtoGrid(int draw, int start, int length, string search, string order, 
+            string dir, bool incluiExcluidos, long? idGrupo = null, long? idEspecialidade = null)
         {
-            return new AlunoRepository().GetAlunoDtoGrid(draw, start, length, search, order, dir);
+            return new AlunoRepository().GetAlunoDtoGrid(draw, start, length, search, order, dir, incluiExcluidos, idGrupo, idEspecialidade);
         }
 
         [HttpGet]
@@ -23,7 +24,7 @@ namespace NPJe.FrontEnd.Controllers.CRUDs
         {
             var dto = JsonConvert.DeserializeObject<AlunoDto>(values);
 
-            new AlunoValidator().Validate(dto);
+            new AlunoValidator().Validate(dto, false);
 
             if (dto.Id > 0)
                 return new AlunoRepository().EditAluno(dto);
@@ -44,11 +45,21 @@ namespace NPJe.FrontEnd.Controllers.CRUDs
         }
 
         [HttpGet]
+        public bool RemoveAluno(string values)
+        {
+            var dto = JsonConvert.DeserializeObject<AlunoDto>(values);
+
+            new AlunoValidator().Validate(dto, true);
+
+            return new AlunoRepository().RemoveAluno(dto);
+        }
+
+        [HttpGet]
         public bool SaveAlunoEspecialidade(string values)
         {
             var dto = JsonConvert.DeserializeObject<EspecialidadeDto>(values);
 
-            new AlunoValidator().Validate(dto);
+            new AlunoValidator().Validate(dto, false);
 
             if (dto.Id > 0)
                 return new AlunoRepository().EditAlunoEspecialidade(dto);
@@ -86,11 +97,17 @@ namespace NPJe.FrontEnd.Controllers.CRUDs
         }
 
         [HttpGet]
+        public RetornoComboDto GetAlunoComboDto(long? id = null, string search = null)
+        {
+            return new AlunoRepository().GetAlunoComboDto(id, search);
+        }
+
+        [HttpGet]
         public bool SaveAlunoGrupo(string values)
         {
             var dto = JsonConvert.DeserializeObject<AlunoGrupoDto>(values);
 
-            new AlunoValidator().Validate(dto);
+            new AlunoValidator().Validate(dto, false);
 
             if (dto.Id > 0)
                 return new AlunoRepository().EditAlunoGrupo(dto);

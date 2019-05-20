@@ -24,7 +24,60 @@
             <div class="box-header" style="padding-bottom: 0px;">
                 <div class="row">
                     <div class="col-sm-12">
-                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6" style="padding-left: 0px;">
+
+                            <div class="col-md-12" style="padding-left: 0px;">
+                                <div class="box box-default box-solid collapsed-box" style="margin-bottom: 0px;">
+                                    <div class="box-header with-border" style="padding-bottom: 5px; padding-top: 5px;">
+                                        <h3 class="box-title">Filtros</h3>
+
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn btn-box-tool" data-widget="collapse" style="padding-top: 0px; padding-bottom: 0px;">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body" id="modalFiltro" style="">
+
+                                        <div class="col-sm-12" style="padding-left: 0px; padding-right: 0px;">
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="filtroPF">Somente PF</label><br />
+                                                    <input type="checkbox" id="filtroPF" checkBox="1" value="false" default="true" name="filtroPF" filtro="1" reload="tabelaClientes">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="filtroPJ">Somente PJ</label><br />
+                                                    <input type="checkbox" id="filtroPJ" checkBox="1" value="false" default="true" name="filtroPJ" filtro="1" reload="tabelaClientes">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label for="filtroSemProcessoAndamento">Clientes sem nenhum vínculo com algum caso</label><br />
+                                                <input type="checkbox" id="filtroSemProcessoAndamento" checkBox="1" value="false" default="true" name="filtroSemProcessoAndamento" filtro="1" reload="tabelaClientes">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-8">
+                                        </div>
+                                        <div class="col-sm-2" style=" text-align: right;">
+                                            <div class="form-group">
+                                                <button type="button" class="btn btn-default" id="btnLimparFiltro" style="text-align: right">
+                                                    <i class="fa fa-reply-all"></i>
+                                                    Limpar filtros
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
                         <div class="col-sm-6" id="colAdd" style=" text-align: right; padding-right: 0;">
                             <!-- Botão de adicionar -->
                             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalAdd" id="btnAdd" style="text-align: right">
@@ -119,7 +172,7 @@
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="imputCPF">CPF</label>
-                            <input type="text" class="form-control" name="CNPJ" id="imputCPF" placeholder="Digite o CPF">
+                            <input type="text" class="form-control" name="CPF" id="imputCPF" placeholder="Digite o CPF">
                         </div>
                     </div>
 
@@ -261,6 +314,22 @@
 
 <script>
     $(document).ready(function () {
+        $('#filtroPF').bootstrapToggle({
+            on: "Sim",
+            off: "Não",
+            width: 182
+        }).change(function () { this.value = $(this).prop('checked'); });
+        $('#filtroPJ').bootstrapToggle({
+            on: "Sim",
+            off: "Não",
+            width: 182
+        }).change(function () { this.value = $(this).prop('checked'); });
+        $('#filtroSemProcessoAndamento').bootstrapToggle({
+            on: "Sim",
+            off: "Não",
+            width: 182
+        }).change(function () { this.value = $(this).prop('checked'); });
+
         $('#imputTelefone').inputmask({ "mask": "(99) 9999-9999" });
         $('#imputCelular').inputmask({ "mask": "(99) 9 9999-9999" });
         $('#datepicker').inputmask({ "alias": "dd/mm/yyyy" });
@@ -325,7 +394,7 @@
                 });
             },
             "language": {
-                "search": "Pesquisar:",
+                "search": "Pesquisar nome/razão social:",
                 "lengthMenu": "Mostrar _MENU_ registros por página",
                 "zeroRecords": "Nenhum resultado encontrado",
                 "info": "Mostrando _START_ até _END_ de _TOTAL_ registro(s)",
@@ -350,7 +419,10 @@
                         "length": d.length,
                         "search": d.search.value,
                         "order": $('th')[d.order[0].column].outerText,
-                        "dir": d.order[0].dir
+                        "dir": d.order[0].dir,
+                        "apenasPF": $('#filtroPF')[0].value,
+                        "apenasPJ": $('#filtroPJ')[0].value,
+                        "apenasSemProcessoAndamento": $('#filtroSemProcessoAndamento')[0].value,
                     };
                 }
             },

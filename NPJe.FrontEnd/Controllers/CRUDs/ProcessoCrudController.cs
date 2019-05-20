@@ -1,12 +1,11 @@
 ﻿using Newtonsoft.Json;
 using NPJe.FrontEnd.Configs;
 using NPJe.FrontEnd.Dtos;
+using NPJe.FrontEnd.Dtos.Relatorios;
 using NPJe.FrontEnd.Models;
 using NPJe.FrontEnd.Repository.Queries;
-using System;
+using NPJe.FrontEnd.Validations;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
 
@@ -16,15 +15,22 @@ namespace NPJe.FrontEnd.Controllers.CRUDs
     public class ProcessoCrudController : ApiController
     {
         [HttpGet]
-        public RetornoDto GetProcessoDtoGrid(int draw, int start, int length, string search, string order, string dir)
+        public RetornoDto GetProcessoDtoGrid(int draw, int start, int length, string search, string order, string dir,
+            bool somenteConcluidos, bool processos15dias, bool processos30dias, string dataDistribuicao, 
+            long? idCliente = null, long? idGrupo = null, int? idSituacaoNpj = null, int? idSituacaoProjudi = null)
         {
-            return new ProcessoRepository().GetProcessoDtoGrid(draw, start, length, search, order, dir);
+            return new ProcessoRepository().GetProcessoDtoGrid(draw, start, length, search, order, dir,
+                somenteConcluidos, processos15dias, processos30dias, dataDistribuicao, 
+                idCliente, idGrupo, idSituacaoNpj, idSituacaoProjudi);
         }
 
         [HttpGet]
         public bool SaveProcesso(string values)
         {
             var dto = JsonConvert.DeserializeObject<ProcessoDto>(values);
+
+            new ProcessoValidator().Validate(dto, false);
+
             if (dto.Id > 0)
                 return new ProcessoRepository().EditProcesso(dto);
             else
@@ -37,13 +43,19 @@ namespace NPJe.FrontEnd.Controllers.CRUDs
             return new ProcessoRepository().ExcluirRegistrosInconsistentes();
         }
 
-
         [HttpGet]
         public ProcessoDto GetProcessoDto(long id)
         {
             return new ProcessoRepository().GetProcessoDto(id);
         }
 
+        [HttpGet]
+        public bool RemoveProcesso(string values)
+        {
+            var dto = JsonConvert.DeserializeObject<ProcessoDto>(values);
+            new ProcessoValidator().Validate(dto, true);
+            return new ProcessoRepository().RemoveProcesso(dto);
+        }
 
         [HttpGet]
         public RetornoDto GetAtendimentoGrid(string order, string dir, long? idProcesso = 0, bool consultar = false)
@@ -75,6 +87,9 @@ namespace NPJe.FrontEnd.Controllers.CRUDs
         public bool SaveAtendimento(string values)
         {
             var dto = JsonConvert.DeserializeObject<AtendimentoDto>(values);
+
+            new ProcessoValidator().Validate(dto, false);
+
             if (dto.Id > 0)
                 return new ProcessoRepository().EditAtendimento(dto);
             else
@@ -91,6 +106,7 @@ namespace NPJe.FrontEnd.Controllers.CRUDs
         public long SaveTipoAcao(string values)
         {
             var entity = JsonConvert.DeserializeObject<TipoAcao>(values);
+            new ProcessoValidator().Validate(entity, false);
             return new ProcessoRepository().SaveTipoAcao(entity);
         }
 
@@ -98,6 +114,7 @@ namespace NPJe.FrontEnd.Controllers.CRUDs
         public bool RemoveAtendimento(string values)
         {
             var dto = JsonConvert.DeserializeObject<AtendimentoDto>(values);
+            new ProcessoValidator().Validate(dto, true);
             return new ProcessoRepository().RemoveAtendimento(dto.Id);
         }
 
@@ -111,6 +128,21 @@ namespace NPJe.FrontEnd.Controllers.CRUDs
         public RetornoComboDto GetInformacoesPastas(long idPasta)
         {
             return new ProcessoRepository().GetInformacoesPastas(idPasta);
+        }
+
+        [HttpGet]
+        public RelatorioProcessoDto GetRelatoriosProcessos(long? idAluno = null)
+        {
+            var repository = new ProcessoRepository();
+            var result = repository.GetQuantidadeProcessos(idAluno);
+
+            return result;
+        }
+
+        [HttpGet]
+        public void SetFiltroProcesso(string value)
+        {
+            ReturnSession.ReturnObj = value;
         }
     }
 }

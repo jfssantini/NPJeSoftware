@@ -18,13 +18,18 @@ namespace NPJe.FrontEnd.Repository.Queries
             Contexto = new Contexto();
         }
 
-        public List<long> GetListaGruposUsuario()
+        public List<long> GetListaGruposUsuario(long? idAluno)
         {
             var idGruposPermitidos = new List<long>();
-            if (SessionUser.IdPapel == PapelUsuarioEnum.Aluno)
+            if (SessionUser.IdPapel == PapelUsuarioEnum.Aluno || idAluno.HasValue)
             {
-                idGruposPermitidos = (from a in Contexto.AlunoGrupo
-                                      where a.Aluno.IdUsuario == SessionUser.IdUsuario
+                var consulta = (from a in Contexto.AlunoGrupo select a);
+                if (idAluno.HasValue)
+                    consulta = consulta.Where(x => x.IdAluno == idAluno);
+                else
+                    consulta = consulta.Where(x => x.Aluno.IdUsuario == SessionUser.IdUsuario);
+
+                idGruposPermitidos = (from a in consulta
                                       select a.IdGrupo).ToList();
             }
             return idGruposPermitidos;
@@ -45,7 +50,7 @@ namespace NPJe.FrontEnd.Repository.Queries
 
             return (from c in Contexto.Usuario
                     where c.UsuarioLogin == login &&
-                    MD5pass == c.Senha
+                    MD5pass == c.Senha && !c.Excluido
                     select c)
                     .FirstOrDefault();
         }

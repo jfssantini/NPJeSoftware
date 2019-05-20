@@ -1,4 +1,5 @@
-﻿@{
+﻿@model NPJe.FrontEnd.Dtos.Relatorios.RelatorioProcessoDto
+@{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -22,8 +23,7 @@
         <div class="box-body">
 
 
-
-            <div class="col-md-12">
+            <div class="col-md-12" id="Processos">
                 <div class="box box-default box-solid">
                     <div class="box-header with-border">
                         <label class="box-title" style="font-size: 15px;">Processos</label>
@@ -36,18 +36,26 @@
                     </div>
                     <div class="box-body" style="">
 
+                        <div class="col-md-12" hidden admin="1" style="padding-left: 0px;">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="comboBoxAluno">Aluno</label>
+                                    <select class="form-control" name="comboBoxAluno" id="comboBoxAluno" style="height: 32px; width:100%"></select>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="col-lg-3 col-xs-6">
                             <!-- small box -->
                             <div class="small-box bg-aqua">
                                 <div class="inner">
-                                    <h3>6</h3>
-
-                                    <p>Processos</p>
+                                    <h3 id="QuantidadeProcessos">@ViewBag.Relatorios.RelatorioProcesso.QuantidadeProcessos</h3>
+                                    <p>Total<br />⠀</p>
                                 </div>
                                 <div class="icon">
-                                    <i class="fa ion-stats-bars"></i>
+                                    <i class="fa fa-list-alt"></i>
                                 </div>
-                                <a href="#" class="small-box-footer">
+                                <a href="#" name="link" value="0" url="http://localhost:51485/api/processoCrud/SetFiltroProcesso" action="Processo" class="small-box-footer">
                                     Mais informações <i class="fa fa-arrow-circle-right"></i>
                                 </a>
                             </div>
@@ -57,14 +65,13 @@
                             <!-- small box -->
                             <div class="small-box bg-green">
                                 <div class="inner">
-                                    <h3>2<sup style="font-size: 20px"></sup></h3>
-
-                                    <p>Processos concluídos</p>
+                                    <h3 id="QuantidadeProcessosConcluidos">@ViewBag.Relatorios.RelatorioProcesso.QuantidadeProcessosConcluidos</h3>
+                                    <p>Concluídos<br />⠀</p>
                                 </div>
                                 <div class="icon">
-                                    <i class="ion ion-stats-bars"></i>
+                                    <i class="fa fa-list-alt"></i>
                                 </div>
-                                <a href="#" class="small-box-footer">
+                                <a href="#" name="link" value="1" url="http://localhost:51485/api/processoCrud/SetFiltroProcesso" action="Processo" class="small-box-footer">
                                     Mais informações <i class="fa fa-arrow-circle-right"></i>
                                 </a>
                             </div>
@@ -74,14 +81,13 @@
                             <!-- small box -->
                             <div class="small-box bg-yellow">
                                 <div class="inner">
-                                    <h3>2</h3>
-
-                                    <p>Processos em andamento</p>
+                                    <h3 id="QuantidadeProcessosParados15Dias">@ViewBag.Relatorios.RelatorioProcesso.QuantidadeProcessosParados15Dias</h3>
+                                    <p>Sem atividade<br />há mais de 15 dias</p>
                                 </div>
                                 <div class="icon">
-                                    <i class="ion ion-stats-bars"></i>
+                                    <i class="fa fa-list-alt"></i>
                                 </div>
-                                <a href="#" class="small-box-footer">
+                                <a href="#" name="link" value="15" url="http://localhost:51485/api/processoCrud/SetFiltroProcesso" action="Processo" class="small-box-footer">
                                     Mais informações <i class="fa fa-arrow-circle-right"></i>
                                 </a>
                             </div>
@@ -91,16 +97,35 @@
                             <!-- small box -->
                             <div class="small-box bg-red">
                                 <div class="inner">
-                                    <h3>2</h3>
-
-                                    <p>Processos cancelados</p>
+                                    <h3 id="QuantidadeProcessosParados30Dias">@ViewBag.Relatorios.RelatorioProcesso.QuantidadeProcessosParados30Dias</h3>
+                                    <p>Sem atividade<br />há mais de 30 dias</p>
                                 </div>
                                 <div class="icon">
-                                    <i class="ion ion-stats-bars"></i>
+                                    <i class="fa fa-list-alt"></i>
                                 </div>
-                                <a href="#" class="small-box-footer">
+                                <a href="#" name="link" value="30" url="http://localhost:51485/api/processoCrud/SetFiltroProcesso" action="Processo" class="small-box-footer">
                                     Mais informações <i class="fa fa-arrow-circle-right"></i>
                                 </a>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" id="chart">
+                            <div class="box box-default">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title">Quantidade de processos abertos x concluídos por mês</h3>
+
+                                    <div class="box-tools pull-right">
+                                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                        
+                                    </div>
+                                </div>
+                                <div class="box-body">
+                                    <div class="chart">
+                                        <canvas id="barChart" style="height: 230px; width: 510px;" width="510" height="230"></canvas>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -108,7 +133,7 @@
                 </div>
             </div>
 
-            <div class="col-md-12">
+            <div class="col-md-12" hidden>
                 <div class="box box-default box-solid">
                     <div class="box-header with-border">
                         <label class="box-title" style="font-size: 15px;">Alunos</label>
@@ -159,14 +184,120 @@
                     </div>
                 </div>
             </div>
-
-
-
-
-
         </div>
-        @*<div class="box-footer">
-                Footer
-            </div>*@
+
+
     </div>
 </section>
+
+<script>
+    $(document).ready(function () {
+
+        var abertaPorMes = @Html.Raw(Json.Encode(ViewBag.Relatorios.RelatorioProcesso.QuantidadeAbertaMes));
+        var concluidaPorMes = @Html.Raw(Json.Encode(ViewBag.Relatorios.RelatorioProcesso.QuantidadeConcluidaMes));
+        var chart = $('#chart');
+        var htmlChart = chart[0].innerHTML;
+        var areaChartData = {
+            labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+            datasets: [
+                {
+                    label: 'Abertos',
+                    fillColor: 'rgba(210, 214, 222, 1)',
+                    strokeColor: 'rgba(210, 214, 222, 1)',
+                    pointColor: 'rgba(210, 214, 222, 1)',
+                    pointStrokeColor: '#c1c7d1',
+                    pointHighlightFill: '#fff',
+                    pointHighlightStroke: 'rgba(220,220,220,1)',
+                    data: abertaPorMes
+                },
+                {
+                    label: 'Concluídos',
+                    fillColor: 'rgba(60,141,188,0.9)',
+                    strokeColor: 'rgba(60,141,188,0.8)',
+                    pointColor: '#3b8bba',
+                    pointStrokeColor: 'rgba(60,141,188,1)',
+                    pointHighlightFill: '#fff',
+                    pointHighlightStroke: 'rgba(60,141,188,1)',
+                    data: concluidaPorMes
+                }
+            ]
+        };
+        var barChartCanvas = $('#barChart').get(0).getContext('2d')
+        var barChart = new Chart(barChartCanvas)
+        var barChartData = areaChartData
+
+        barChartData.datasets[1].fillColor = '#00a65a'
+        barChartData.datasets[1].strokeColor = '#00a65a'
+        barChartData.datasets[1].pointColor = '#00a65a'
+
+        var barChartOptions = {
+            //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
+            scaleBeginAtZero: true,
+            //Boolean - Whether grid lines are shown across the chart
+            scaleShowGridLines: true,
+            //String - Colour of the grid lines
+            scaleGridLineColor: 'rgba(0,0,0,.05)',
+            //Number - Width of the grid lines
+            scaleGridLineWidth: 1,
+            //Boolean - Whether to show horizontal lines (except X axis)
+            scaleShowHorizontalLines: true,
+            //Boolean - Whether to show vertical lines (except Y axis)
+            scaleShowVerticalLines: true,
+            //Boolean - If there is a stroke on each bar
+            barShowStroke: true,
+            //Number - Pixel width of the bar stroke
+            barStrokeWidth: 2,
+            //Number - Spacing between each of the X value sets
+            barValueSpacing: 5,
+            //Number - Spacing between data sets within X values
+            barDatasetSpacing: 1,
+            //String - A legend template
+            legendTemplate: '<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>',
+            //Boolean - whether to make the chart responsive
+            responsive: true,
+            maintainAspectRatio: true
+        };
+
+        barChartOptions.datasetFill = false;
+        barChart.Bar(barChartData, barChartOptions);
+
+        $('#comboBoxAluno').select2({
+            "placeholder": "Pesquise o aluno",
+            "dropdownParent": $("#Processos"),
+            "allowClear": true,
+            "dataType": 'json',
+            "type": 'GET',
+            "ajax": {
+                "url": "http://localhost:51485/api/alunoCrud/GetAlunoComboDto",
+                "dataType": 'json',
+                "data": function (params) {
+                    return {
+                        search: params.term // search term
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                    results: response.results
+                    };
+                },
+                cache: true
+            },
+        }).data('select2').$selection.css('height', '34px');
+        $('#comboBoxAluno').on('change', function () {
+            $.get('http://localhost:51485/api/processoCrud/GetRelatoriosProcessos', { idAluno: this.value }, function (data) {
+                $('#Processos h3').toArray().forEach(x => {
+                    x.innerHTML = data[x.id];
+                });
+                chart[0].innerHTML = htmlChart;
+                
+                areaChartData.datasets[0].data = data.QuantidadeAbertaMes;
+                areaChartData.datasets[1].data = data.QuantidadeConcluidaMes;
+                barChartCanvas = $('#barChart').get(0).getContext('2d');
+                barChart = new Chart(barChartCanvas);
+                barChartData = areaChartData;
+
+                barChart.Bar(barChartData, barChartOptions).update()
+            });
+        });
+    });
+</script>

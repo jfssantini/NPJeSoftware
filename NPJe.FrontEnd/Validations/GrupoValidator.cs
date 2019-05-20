@@ -21,7 +21,7 @@ namespace NPJe.FrontEnd.Validations
                 if (dto.IdEspecialidade == 0)
                     throw new ApplicationException("Grupo: O campo 'Especialidade' é obrigatório.");
 
-                if(new GrupoRepository().IsGrupoRepetido(dto.Numero))
+                if(new GrupoRepository().IsGrupoRepetido(dto.Id, dto.Numero))
                     throw new ApplicationException("Grupo: Já existe um registro de grupo com o número informado.");
             }
             else

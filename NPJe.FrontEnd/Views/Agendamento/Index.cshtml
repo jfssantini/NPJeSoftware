@@ -26,7 +26,71 @@
             <div class="box-header" style="padding-bottom: 0px;">
                 <div class="row">
                     <div class="col-sm-12">
-                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6" style="padding-left: 0px;">
+
+                            <div class="col-md-12" style="padding-left: 0px;">
+                                <div class="box box-default box-solid collapsed-box" style="margin-bottom: 0px;">
+                                    <div class="box-header with-border" style="padding-bottom: 5px; padding-top: 5px;">
+                                        <h3 class="box-title">Filtros</h3>
+
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn btn-box-tool" data-widget="collapse" style="padding-top: 0px; padding-bottom: 0px;">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body" id="modalFiltro" style="">
+
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label for="filtroData">Data</label>
+                                                <input type="text" id="filtroData" name="filtroData" filtro="1" dateField="1" reload="tabelaAgendamentos" class="form-control timepicker">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-12" admin="1" hidden>
+                                            <div class="form-group">
+                                                <label for="filtroAluno">Aluno</label>
+                                                <br />
+                                                <select class="form-control" name="filtroAluno" id="filtroAluno" comboBox="1" placeholder="Escolha o aluno" style="width:100%" filtro="1" reload="tabelaAgendamentos"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-12" admin="1" hidden style="padding-left: 0px; padding-right: 0px;">
+
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="filtroSomenteAlunos">Somente de alunos</label><br />
+                                                    <input type="checkbox" id="filtroSomenteAlunos" value="false" checkBox="1" default="true" name="filtroSomenteAlunos" filtro="1" reload="tabelaAgendamentos">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="filtroSomenteDoUsuario">Somente meus agendamentos</label><br />
+                                                    <input type="checkbox" id="filtroSomenteDoUsuario" value="false" checkBox="1" default="true" name="filtroSomenteDoUsuario" filtro="1" reload="tabelaAgendamentos">
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="col-sm-8">
+                                        </div>
+                                        <div class="col-sm-2" style=" text-align: right;">
+                                            <div class="form-group">
+                                                <button type="button" class="btn btn-default" id="btnLimparFiltro" style="text-align: right">
+                                                    <i class="fa fa-reply-all"></i>
+                                                    Limpar filtros
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
                         <div class="col-sm-6" id="colAdd" style=" text-align: right; padding-right: 0;">
                             <!-- Botão de adicionar -->
                             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalAdd" id="btnAdd" style="text-align: right">
@@ -46,6 +110,7 @@
                             <th>Título</th>
                             <th>Data</th>
                             <th>Horário</th>
+                            <th>Usuário</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -55,6 +120,7 @@
                             <th>Título</th>
                             <th>Data</th>
                             <th>Horário</th>
+                            <th>Usuário</th>
                             <th>Ações</th>
                         </tr>
                     </tfoot>
@@ -77,12 +143,17 @@
 
                 <div class="box-body">
 
-                    <div class="col-sm-12">
+                    <div class="col-sm-9">
                         <div class="form-group">
                             <input type="hidden" id="IdEdit" name="Id" value="0">
                             <label for="inputTitulo">Título</label>
                             <input type="text" class="form-control" required name="Titulo" id="inputTitulo" placeholder="Digite o título">
                         </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <label for="checkStatus" style="margin-left: 1px; margin-bottom: 5px;">Status</label><br />
+                        <input type="checkbox" id="checkStatus" default="true" name="Concluido">
                     </div>
 
                     <div class="col-md-12">
@@ -119,13 +190,13 @@
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label for="datepicker">Data</label>
-                            <input type="text" class="form-control pull-right" required name="DescricaoDataAgendamento" id="datepicker" placeholder="Selecione uma data">
+                            <input type="text" class="form-control pull-right" required name="DescricaoDataAgendamento" dateField="1" id="datepicker" placeholder="Selecione uma data">
                         </div>
                     </div>
 
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label for="datepicker">Horário</label>
+                            <label for="timepicker">Horário</label>
                             <input type="text" id="timepicker" name="Horario" required class="form-control timepicker">
                         </div>
                     </div>
@@ -187,6 +258,31 @@
 
 <script>
     $(document).ready(function () {
+        var data = JSON.parse('@Html.Raw(@ViewBag.Agendamento)');
+
+        if (data != null && data != 0 && data.Id != 0) {
+            $('#modalAdd :input').each(function () {
+                var me = $(this);
+                if (me && me.context.name) {
+                    if (me.context.id.includes("comboBox")) {
+                        var $newOption = $("<option selected='selected'></option>").val(data[me.context.name]).text(data[me.context.name.substring(2)]);
+                        me.append($newOption).trigger('change');
+                    }
+                    else {
+                        if (me.context.getAttribute('dateField')) {
+                            var splitData = data[me.context.name].split('/'),
+                                date = new Date(splitData[2], splitData[1] - 1, splitData[0]);
+                            $("#" + me.context.id).datepicker("setDate", date);
+                        }
+                        me.val(data[me.context.name]);
+                    }
+                                    
+                }
+            });
+            $('#comboBoxProcesso')[0].disabled = false;
+            $('#modalAdd').modal('show');
+        }
+        
         $("#timepicker").inputmask({ "mask": "99:99" });
         $('#datepicker').inputmask({ "alias": "dd/mm/yyyy" });
         $('#datepicker').datepicker({
@@ -198,6 +294,37 @@
             startDate: new Date(),
             clearBtn: true
         }).on('hide', function (e) { e.stopPropagation(); });
+        $('#filtroData').inputmask({ "alias": "dd/mm/yyyy" });
+        $('#filtroData').datepicker({
+            autoclose: true,
+            todayHighlight: true,
+            format: 'dd/mm/yyyy',
+            keyboardNavigation: true,
+            language: 'pt-BR',
+            clearBtn: true
+        }).on('hide', function (e) { e.stopPropagation(); }).datepicker("setDate", new Date());
+        $('#filtroAluno').select2({
+            "placeholder": "Pesquise o aluno",
+            "dropdownParent": $("#modalFiltro"),
+            "allowClear": true,
+            "dataType": 'json',
+            "type": 'GET',
+            "ajax": {
+                "url": "http://localhost:51485/api/agendamentoCrud/GetAlunoComboDto",
+                "dataType": 'json',
+                "data": function (params) {
+                    return {
+                        search: params.term // search term
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                    results: response.results
+                    };
+                },
+                cache: true
+            },
+        }).data('select2').$selection.css('height', '34px');
         $('#comboBoxPasta').select2({
             "placeholder": "Pesquise o caso",
             "dropdownParent": $("#modalAdd"),
@@ -246,6 +373,29 @@
                 cache: true
             },
         }).data('select2').$selection.css('height', '34px');
+        $('#checkStatus').bootstrapToggle({
+            on: "Concluído",
+            off: "Não concluído",
+            width: 182
+        }).change(function () { this.value = $(this).prop('checked'); });
+        $('#filtroSomenteDoUsuario').bootstrapToggle({
+            on: "Sim",
+            off: "Não",
+            width: 182
+        }).change(function () {
+            this.value = $(this).prop('checked');
+            $("#filtroAluno").val(null).trigger('change');
+            $("#filtroAluno")[0].disabled = $(this).prop('checked');
+            });
+        $('#filtroSomenteAlunos').bootstrapToggle({
+            on: "Sim",
+            off: "Não",
+            width: 182
+        }).change(function () {
+            this.value = $(this).prop('checked');
+            $("#filtroAluno").val(null).trigger('change');
+            $("#filtroAluno")[0].disabled = $(this).prop('checked');
+        });
 
         $('#tabelaAgendamentos').dataTable({
             "dom": "Bfrtip",
@@ -256,7 +406,7 @@
                     title: 'Agendamentos',
                     fontSize: '15',
                     exportOptions: {
-                        columns: [ 0, 1, 2, 4 ]
+                        columns: [ 0, 1, 2, 3, 5 ]
                     }
                 },
                 {
@@ -265,7 +415,7 @@
                     title: 'Agendamentos',
                     fontSize: '20',
                     exportOptions: {
-                        columns: [ 0, 1, 2, 4 ]
+                        columns: [ 0, 1, 2, 3, 5 ]
                     }
                 }
             ],
@@ -288,8 +438,18 @@
                                     var $newOption = $("<option selected='selected'></option>").val(data[me.context.name]).text(data[me.context.name.substring(2)]);
                                     me.append($newOption).trigger('change');
                                 }
-                                else
-                                    me.val(data[me.context.name]);
+                                else {
+                                    if (me.context.getAttribute('dateField')) {
+                                        var splitData = data[me.context.name].split('/'),
+                                            date = new Date(splitData[2], splitData[1] - 1, splitData[0]);
+                                        $("#" + me.context.id).datepicker("setDate", date);
+                                    }
+                                     if (me.context.id.includes("check")) 
+                                        me.prop('checked', data[me.context.name]).change();
+                                    else
+                                        me.val(data[me.context.name]);
+                                }
+                                    
                             }
                         });
                         $('#comboBoxProcesso')[0].disabled = false;
@@ -298,7 +458,7 @@
                 });
             },
             "language": {
-                "search": "Pesquisar:",
+                "search": "Pesquisar título:",
                 "lengthMenu": "Mostrar _MENU_ registros por página",
                 "zeroRecords": "Nenhum resultado encontrado",
                 "info": "Mostrando _START_ até _END_ de _TOTAL_ registro(s)",
@@ -323,14 +483,19 @@
                         "length": d.length,
                         "search": d.search.value,
                         "order": $('th')[d.order[0].column].outerText,
-                        "dir": d.order[0].dir
+                        "dir": d.order[0].dir,
+                        "dataAgendamento": $('#filtroData')[0].value,
+                        "idAluno": $('#filtroAluno')[0].value,
+                        "somenteDoUsuario": $('#filtroSomenteDoUsuario')[0].value,
+                        "somenteAlunos": $('#filtroSomenteAlunos')[0].value
                     };
                 }
             },
             "columns": [
-                { "data": "Titulo", "width": "60%" },
-                { "data": "DescricaoDataAgendamento", "bSortable": false, "width": "13%" },
-                { "data": "Horario", "bSortable": false, "width": "13%" },
+                { "data": "Titulo", "width": "50%" },
+                { "data": "DescricaoDataAgendamento", "width": "13%" },
+                { "data": "Horario", "width": "13%" },
+                { "data": "Usuario", "bSortable": false, "width": "13%" },
                 {
                     "bSortable": false,
                     "data": null,

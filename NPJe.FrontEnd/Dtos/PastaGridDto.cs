@@ -35,9 +35,9 @@ namespace NPJe.FrontEnd.Dtos
 
         public string UsuarioUltimaTarefa { get; set; }
 
-        public DateTime? DataHoraUltimaTarefa { get; set; }
+        public DateTime DataHoraAlteracao { get; set; }
 
-        public string DescricaoDataHoraUltimaTarefa { get { return DataHoraUltimaTarefa?.ToString("dd/MM/yyyy HH:mm") ?? ""; } set { } }
+        public string DescricaoDataHoraAlteracao { get { return DataHoraAlteracao.ToString("dd/MM/yyyy HH:mm") ?? ""; } set { } }
 
         public DateTime? DataHoraCriacao { get; set; }
     }

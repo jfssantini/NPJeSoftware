@@ -15,12 +15,22 @@ namespace NPJe.FrontEnd.Repository.Queries
         public ResponsavelRepository() : base() { }
 
         #region Responsaveis
-        public RetornoDto GetResponsavelDtoGrid(int draw, int start, int length, string search, string order, string dir)
+        public RetornoDto GetResponsavelDtoGrid(int draw, int start, int length, string search, string order, string dir, bool incluiExcluidos, long? idTipo)
         {
             var consulta = (from r in Contexto.Responsavel select r);
 
-            if (search != null && search.Length > 0)
-                consulta = consulta.Where(r => r.Nome.Contains(search));
+            if (!search.IsNullOrEmpty())
+            {
+                var searchLower = search.ToLowerInvariant();
+                consulta = consulta.Where(r => (r.Nome.ToLower()).Contains(searchLower));
+            }
+                
+
+            if (idTipo.HasValue)
+                consulta = consulta.Where(x => x.IdTipoResponsavel == (TipoResponsavelEnum)idTipo);
+
+            if (!incluiExcluidos)
+                consulta = consulta.Where(x => !x.IdUsuarioExclusao.HasValue);
 
             var data = (from r in consulta
                         select new ResponsavelGridDto()
@@ -119,6 +129,16 @@ namespace NPJe.FrontEnd.Repository.Queries
             return true;
         }
 
+        public bool RemoveResponsavel(ResponsavelDto dto)
+        {
+            Contexto.Database.ExecuteSqlCommand($@"UPDATE dbo.responsavel 
+                SET IdUsuarioExclusao = {SessionUser.IdUsuario}, 
+                DataHoraExclusao = '{DateTime.Now.ToString("dd/MM/yyyy HH:mm")}'
+                WHERE Id = {dto.Id}");
+
+            return true;
+        }
+
         public RetornoComboDto GetUsuarioResponsavelComboDto(long? id, string search)
         {
             var consulta = (from r in Contexto.Responsavel
@@ -127,7 +147,11 @@ namespace NPJe.FrontEnd.Repository.Queries
             if (id.HasValue)
                 consulta = consulta.Where(x => x.Id == id);
             else if (!search.IsNullOrEmpty())
-                consulta = consulta.Where(x => x.Nome.Contains(search));
+            {
+                var searchLower = search.ToLowerInvariant();
+                consulta = consulta.Where(x => (x.Nome.ToLower()).Contains(searchLower));
+            }
+                
 
             var grupo = (from r in consulta
                          orderby r.Nome
@@ -173,12 +197,12 @@ namespace NPJe.FrontEnd.Repository.Queries
             return vinculoPasta;
         }
 
-        public bool IsResponsavelRepetidoByCPF(string CPF)
+        public bool IsResponsavelRepetidoByCPF(long id, string CPF)
         {
             if (!CPF.IsNullOrEmpty())
             {
                 var responsavel = (from r in Contexto.Responsavel
-                               .Where(x => x.CPF == CPF)
+                               .Where(x => x.CPF == CPF && x.Id != id)
                                    select r.Id).Count() > 0;
 
                 return responsavel;
@@ -186,11 +210,12 @@ namespace NPJe.FrontEnd.Repository.Queries
             return false;
         }
 
-        public bool IsUsuarioLoginRepetido(string login)
+        public bool IsUsuarioLoginRepetido(long id, string login)
         {
             if (!login.IsNullOrEmpty()) {
                 var responsavel = (from u in Contexto.Usuario
-                                   .Where(x => x.UsuarioLogin == login)
+                                   from r in Contexto.Responsavel.Where(x => x.IdUsuario == u.Id)
+                                   where u.UsuarioLogin == login && r.Id != id
                                    select u.Id).Count() > 0;
 
                 return responsavel;

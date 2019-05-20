@@ -1,10 +1,12 @@
 ﻿using NPJe.FrontEnd.Configs;
 using NPJe.FrontEnd.Dtos;
+using NPJe.FrontEnd.Dtos.Relatorios;
 using NPJe.FrontEnd.Enums;
 using NPJe.FrontEnd.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic;
 
 namespace NPJe.FrontEnd.Repository.Queries
 {
@@ -13,9 +15,11 @@ namespace NPJe.FrontEnd.Repository.Queries
         public ProcessoRepository() : base() { }
 
         #region Processo
-        public RetornoDto GetProcessoDtoGrid(int draw, int start, int length, string search, string order, string dir)
+        public RetornoDto GetProcessoDtoGrid(int draw, int start, int length, string search, string order, string dir,
+            bool somenteConcluidos, bool processos15dias, bool processos30dias, string dataDistribuicao, 
+            long? idCliente, long? idGrupo, int? idSituacaoNpj, int? idSituacaoProjudi)
         {
-            var idGruposPermitidos = GetListaGruposUsuario();
+            var idGruposPermitidos = GetListaGruposUsuario(null);
 
             if (!ValidarUsuarioComGrupos(idGruposPermitidos))
                 return new RetornoDto() { data = new List<ProcessoGridDto>(), recordsFiltered = 0 };
@@ -24,8 +28,43 @@ namespace NPJe.FrontEnd.Repository.Queries
 
             if (idGruposPermitidos.Any())
                 consulta = consulta.Where(p => idGruposPermitidos.Contains(p.Pasta.IdGrupo));
+
             if (search != null && search.Length > 0)
-                consulta = consulta.Where(p => p.TipoAcao.Descricao.Contains(search));
+                consulta = consulta.Where(p => p.NumeroProcesso.Contains(search));
+
+            if (!dataDistribuicao.IsNullOrEmpty())
+            {
+                var distribuicaoDate = Convert.ToDateTime(dataDistribuicao);
+                consulta = consulta.Where(x => x.Distribuicao == distribuicaoDate);
+            }
+
+            if(idCliente.HasValue)
+                consulta = consulta.Where(x => x.Pasta.IdCliente == idCliente);
+
+            if (idGrupo.HasValue)
+                consulta = consulta.Where(x => x.Pasta.IdGrupo == idGrupo);
+
+            if (idSituacaoNpj.HasValue)
+                consulta = consulta.Where(x => x.IdSituacaoNpjAtual == (SituacaoNpjEnum)idSituacaoNpj);
+
+            if (idSituacaoProjudi.HasValue)
+                consulta = consulta.Where(x => x.IdSituacaoProjudiAtual == (SituacaoProjudiEnum)idSituacaoProjudi);
+
+            if(somenteConcluidos)
+                consulta = consulta.Where(x => x.Status);
+
+            if (processos15dias)
+            {
+                var dataLimite = DateTime.Now.AddDays(-15);
+                consulta = consulta.Where(x => !x.Status && x.DataHoraAlteracao < dataLimite);
+            }
+
+            if (processos30dias)
+            {
+                var dataLimite = DateTime.Now.AddDays(-30);
+                consulta = consulta.Where(x => !x.Status && x.DataHoraAlteracao < dataLimite);
+            }
+                
 
             var data = (from p in consulta
                         select new ProcessoGridDto()
@@ -43,9 +82,10 @@ namespace NPJe.FrontEnd.Repository.Queries
                             DataHoraCriacao = p.DataHoraCriacao,
                             IdUsuario = p.IdUsuarioCriacao,
                             Usuario = p.UsuarioCriacao.UsuarioLogin,
+                            TipoAcao = p.TipoAcao.Descricao,
+                            Status = p.Status
                         })
-                        .OrderBy(x => x.Id)
-                        //.OrderBy(AjustarOrdenacao(order) + " " + dir)
+                        .OrderBy(AjustarOrdenacao(order) + " " + dir)
                         .Skip(start).Take(length);
 
 
@@ -121,11 +161,48 @@ namespace NPJe.FrontEnd.Repository.Queries
                                AnotacoesGerais = p.AnotacoesGerais,
                                IdUsuarioCriacao = p.IdUsuarioCriacao,
                                UsuarioCriacao = p.UsuarioCriacao.UsuarioLogin,
-                               DataHoraCriacao = p.DataHoraCriacao
+                               DataHoraCriacao = p.DataHoraCriacao,
+                               DataHoraAlteracao = p.DataHoraAlteracao
                            }).FirstOrDefault();
 
             retorno.DescricaoDistribuicao = retorno.Distribuicao?.ToString("dd/MM/yyyy") ?? "";
             return retorno;
+        }
+
+        public RelatorioProcessoDto GetQuantidadeProcessos(long? idAluno)
+        {
+            var result = new RelatorioProcessoDto();
+
+            var consulta = (from p in Contexto.Processo select p);
+
+            if(SessionUser.IdPapel == PapelUsuarioEnum.Aluno || idAluno.HasValue)
+            {
+                var idGruposPermitidos = GetListaGruposUsuario(idAluno);
+
+                if (!ValidarUsuarioComGrupos(idGruposPermitidos))
+                    return result;
+
+                if (idGruposPermitidos.Any())
+                    consulta = consulta.Where(p => idGruposPermitidos.Contains(p.Pasta.IdGrupo));
+            }
+
+            var processos = (from p in consulta
+                          select new { p.Id, p.Status, p.DataHoraAlteracao, p.DataHoraCriacao })
+                          .ToList();
+
+            result.QuantidadeProcessos = processos.Count();
+            result.QuantidadeProcessosConcluidos = processos.Count(x => x.Status);
+            result.QuantidadeProcessosParados15Dias = processos.Count(x => !x.Status && x.DataHoraAlteracao < DateTime.Now.AddDays(-15));
+            result.QuantidadeProcessosParados30Dias = processos.Count(x => !x.Status && x.DataHoraAlteracao < DateTime.Now.AddDays(-30));
+            var processosPorMes = processos.GroupBy(x => x.DataHoraCriacao.Month).OrderBy(x => x).ToList();
+
+            for (int i = 0; i < 12; i++){
+                var atual = processosPorMes.Count > i ? processosPorMes[i] : null;
+                result.QuantidadeAbertaMes.Add(atual?.Count() ?? 0);
+                result.QuantidadeConcluidaMes.Add(atual?.Count(y => y.Status) ?? 0);
+            }
+
+            return result;
         }
 
         public bool SaveProcesso(ProcessoDto dto)
@@ -149,7 +226,8 @@ namespace NPJe.FrontEnd.Repository.Queries
                 Tribunal = dto.Tribunal,
                 AnotacoesGerais = dto.AnotacoesGerais,
                 DataHoraCriacao = DateTime.Now,
-                IdUsuarioCriacao = SessionUser.IdUsuario
+                IdUsuarioCriacao = SessionUser.IdUsuario,
+                DataHoraAlteracao = dto.DataHoraAlteracao
             });
 
             Contexto.SaveChanges();
@@ -191,6 +269,7 @@ namespace NPJe.FrontEnd.Repository.Queries
             processo.Vara = dto.Vara;
             processo.Tribunal = dto.Tribunal;
             processo.AnotacoesGerais = dto.AnotacoesGerais;
+            processo.DataHoraAlteracao = dto.DataHoraAlteracao;
 
             Contexto.Database.ExecuteSqlCommand($@"UPDATE dbo.atendimento 
                 SET Temporario = false, IdProcesso = {dto.Id}
@@ -241,6 +320,17 @@ namespace NPJe.FrontEnd.Repository.Queries
 
             return true;
         }
+
+        public bool RemoveProcesso(ProcessoDto dto)
+        {
+            Contexto.Database.ExecuteSqlCommand($@"UPDATE dbo.processo 
+                SET IdUsuarioExclusao = {SessionUser.IdUsuario}, 
+                DataHoraExclusao = '{DateTime.Now.ToString("dd/MM/yyyy HH:mm")}'
+                WHERE Id = {dto.Id}");
+
+            return true;
+        }
+
         #endregion
 
         #region Atendimento
@@ -355,7 +445,11 @@ namespace NPJe.FrontEnd.Repository.Queries
             if (id.HasValue)
                 consulta = consulta.Where(x => x.Id == id);
             else if (!search.IsNullOrEmpty())
-                consulta = consulta.Where(x => x.Descricao.Contains(search));
+            {
+                var searchLower = search.ToLowerInvariant();
+                consulta = consulta.Where(x => (x.Descricao.ToLower()).Contains(searchLower));
+            }
+                ;
 
             var assuntos = (from t in consulta
                             orderby t.Descricao
@@ -385,7 +479,7 @@ namespace NPJe.FrontEnd.Repository.Queries
 
         public RetornoComboDto GetPastaComboDto(long? id, string search)
         {
-            var idGruposPermitidos = GetListaGruposUsuario();
+            var idGruposPermitidos = GetListaGruposUsuario(null);
 
             if (!ValidarUsuarioComGrupos(idGruposPermitidos))
                 return new RetornoComboDto() { results = new List<GenericInfoComboDto>(), total = 0 };
@@ -397,8 +491,11 @@ namespace NPJe.FrontEnd.Repository.Queries
 
             if (id.HasValue)
                 consulta = consulta.Where(x => x.Id == id);
-            else if (!search.IsNullOrEmpty())
-                consulta = consulta.Where(x => x.Assunto.Descricao.Contains(search) || x.Id.ToString() == search);
+            else if (!search.IsNullOrEmpty()) {
+                var searchLower = search.ToLowerInvariant();
+                consulta = consulta.Where(x => (x.Assunto.Descricao.ToLower()).Contains(searchLower) || x.Id.ToString() == search);
+            }
+                
 
             var pastas = (from t in consulta
                             orderby t.Id
@@ -455,11 +552,17 @@ namespace NPJe.FrontEnd.Repository.Queries
             var retorno = "";
             switch (order)
             {
-                case "Data de nascimento":
-                    retorno = "DataNascimento";
+                case "Distribuição":
+                    retorno = "Distribuicao";
                     break;
-                case "Nome":
-                    retorno = order;
+                case "Número":
+                    retorno = "NumeroProcesso";
+                    break;
+                case "Grupo":
+                    retorno = "NumeroGrupo";
+                    break;
+                case "Cliente":
+                    retorno = order.RemoveAccents();
                     break;
                 default:
                     break;

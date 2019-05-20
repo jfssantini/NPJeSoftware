@@ -1,5 +1,6 @@
 ﻿using NPJe.FrontEnd.Configs;
 using NPJe.FrontEnd.Dtos;
+using NPJe.FrontEnd.Enums;
 using NPJe.FrontEnd.Models;
 using NPJe.FrontEnd.Repository.Context;
 using System;
@@ -14,12 +15,28 @@ namespace NPJe.FrontEnd.Repository.Queries
         public ClienteRepository() : base() { }
 
         #region Cliente
-        public RetornoDto GetClienteDtoGrid(int draw, int start, int length, string search, string order, string dir)
+        public RetornoDto GetClienteDtoGrid(int draw, int start, int length, string search, string order, string dir,
+            bool apenasSemProcessoAndamento, bool apenasPF, bool apenasPJ)
         {
             var consulta = (from c in Contexto.Cliente select c);
 
-            if (search != null && search.Length > 0)
-                consulta = consulta.Where(c => c.Nome.Contains(search));
+            if (!search.IsNullOrEmpty())
+            {
+                var searchLower = search.ToLowerInvariant();
+                consulta = consulta.Where(c => (c.Nome.ToLower()).Contains(searchLower));
+            }
+
+            if (apenasPF)
+                consulta = consulta.Where(x => x.CPF.Length > 0);
+
+            if (apenasPJ)
+                consulta = consulta.Where(x => x.CNPJ.Length > 0);
+
+            if (apenasSemProcessoAndamento)
+                consulta = (from c in consulta
+                            from p in Contexto.Pasta.Where(x => x.IdCliente == c.Id).DefaultIfEmpty()
+                            where (!((long?)p.Id).HasValue)
+                            select c);
 
             var data = (from c in consulta                        
                         select new ClienteGridDto()
@@ -29,6 +46,7 @@ namespace NPJe.FrontEnd.Repository.Queries
                             Sexo = c.Sexo,
                             DataNascimento = c.DataNascimento
                         })
+                        .Distinct()
                         .OrderBy(AjustarOrdenacao(order) + " " + dir)
                         .Skip(start).Take(length);
 
@@ -128,7 +146,11 @@ namespace NPJe.FrontEnd.Repository.Queries
             if (id.HasValue)
                 consulta = consulta.Where(x => x.Id == id);
             else if (!search.IsNullOrEmpty())
-                consulta = consulta.Where(x => x.Nome.Contains(search));
+            {
+                var searchLower = search.ToLowerInvariant();
+                consulta = consulta.Where(x => (x.Nome.ToLower()).Contains(searchLower));
+            }
+                
 
             var grupo = (from c in consulta
                          orderby c.Nome
@@ -183,17 +205,11 @@ namespace NPJe.FrontEnd.Repository.Queries
 
         public bool RemoveCliente(long id)
         {
-            var cliente = (from c in Contexto.Cliente
-                               where c.Id == id
-                               select c).FirstOrDefault();
+            Contexto.Database.ExecuteSqlCommand($@"UPDATE dbo.cliente 
+            SET IdUsuarioExclusao = {SessionUser.IdUsuario}, 
+            DataHoraExclusao = '{DateTime.Now.ToString("dd/MM/yyyy HH:mm")}'
+            WHERE Id = {id}");
 
-            var endereco = (from e in Contexto.Endereco
-                           where e.Id == cliente.IdEndereco
-                           select e).FirstOrDefault();
-
-            Contexto.Cliente.Remove(cliente);
-            Contexto.Endereco.Remove(endereco);
-            Contexto.SaveChanges();
             return true;
         }
 

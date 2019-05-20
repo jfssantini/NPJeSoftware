@@ -15,12 +15,32 @@ namespace NPJe.FrontEnd.Repository.Queries
         public AlunoRepository() : base() { }
 
         #region Aluno
-        public RetornoDto GetAlunoDtoGrid(int draw, int start, int length, string search, string order, string dir)
+        public RetornoDto GetAlunoDtoGrid(int draw, int start, int length, string search, string order, string dir, 
+            bool incluiExcluidos, long? idGrupo, long? idEspecialidade)
         {
             var consulta = (from a in Contexto.Aluno select a);
 
-            if (search != null && search.Length > 0)
-                consulta = consulta.Where(a => a.Nome.Contains(search));
+            if (!search.IsNullOrEmpty())
+            {
+                var searchLower = search.ToLowerInvariant();
+                consulta = consulta.Where(a => (a.Nome.ToLower()).Contains(searchLower));
+            }
+                
+
+            if (idGrupo.HasValue)
+                consulta = (from a in consulta
+                            from g in Contexto.AlunoGrupo
+                            where g.IdAluno == a.Id && g.IdGrupo == idGrupo
+                            select a);
+
+            if (idEspecialidade.HasValue)
+                consulta = (from a in consulta
+                            from g in Contexto.AlunoEspecialidade
+                            where g.IdAluno == a.Id && g.IdEspecialidade == (EspecialidadeEnum) idEspecialidade
+                            select a);
+
+            if (!incluiExcluidos)
+                consulta = consulta.Where(x => !x.IdUsuarioExclusao.HasValue);
 
             var data = (from a in consulta
                         select new AlunoGridDto()
@@ -56,6 +76,22 @@ namespace NPJe.FrontEnd.Repository.Queries
             });
 
             return CreateDataResult(data.Count(), alunos);
+        }
+
+        public bool RemoveAluno(AlunoDto dto)
+        {
+            Contexto.Database.ExecuteSqlCommand($@"UPDATE dbo.aluno 
+                SET IdUsuarioExclusao = {SessionUser.IdUsuario}, 
+                DataHoraExclusao = '{DateTime.Now.ToString("dd/MM/yyyy HH:mm")}'
+                WHERE Id = {dto.Id}");
+
+            Contexto.Database.ExecuteSqlCommand($@"DELETE FROM dbo.alunogrupo 
+                WHERE IdAluno = {dto.Id}");
+
+            Contexto.Database.ExecuteSqlCommand($@"DELETE FROM dbo.alunoespecialidade 
+                WHERE IdAluno = {dto.Id}");
+
+            return true;
         }
 
         public AlunoDto GetAlunoDto(long id)
@@ -203,12 +239,44 @@ namespace NPJe.FrontEnd.Repository.Queries
             return true;
         }
 
-        public bool IsAlunoRepetidoByCPF(string CPF)
+        public RetornoComboDto GetAlunoComboDto(long? id, string search)
         {
-            if (!CPF.IsNullOrEmpty())
+            var consulta = (from a in Contexto.Aluno select a);
+
+
+            if (id.HasValue)
+                consulta = consulta.Where(x => x.Id == id);
+            else if (!search.IsNullOrEmpty())
+            {
+                var searchLower = search.ToLowerInvariant();
+                consulta = consulta.Where(x => (x.Nome.ToLower()).Contains(searchLower));
+            }
+
+            var pastas = (from a in consulta
+                          where !a.IdUsuarioExclusao.HasValue && a.Ativo
+                          orderby a.Id
+                          select new { a.Id, a.Nome }).ToList();
+
+            var data = new List<GenericInfoComboDto>();
+
+            pastas.ForEach(x =>
+            {
+                data.Add(new GenericInfoComboDto()
+                {
+                    id = x.Id,
+                    text = x.Nome
+                });
+            });
+
+            return CreateDataComboResult(data.Count(), data);
+        }
+
+        public bool IsAlunoRepetidoByCPF(long id, string CPF)
+        {
+            if (!CPF.IsNullOrEmpty() && id != 0)
             {
                 var responsavel = (from r in Contexto.Aluno
-                               .Where(x => x.CPF == CPF)
+                               .Where(x => x.CPF == CPF && x.Id != id)
                                    select r.Id).Count() > 0;
 
                 return responsavel;
@@ -216,12 +284,13 @@ namespace NPJe.FrontEnd.Repository.Queries
             return false;
         }
 
-        public bool IsUsuarioLoginRepetido(string login)
+        public bool IsUsuarioLoginRepetido(long id, string login)
         {
-            if (!login.IsNullOrEmpty())
+            if (!login.IsNullOrEmpty() && id != 0)
             {
                 var responsavel = (from u in Contexto.Usuario
-                                   .Where(x => x.UsuarioLogin == login)
+                                   from a in Contexto.Aluno.Where(x => x.IdUsuario == u.Id)
+                                   where u.UsuarioLogin == login && a.Id != id
                                    select u.Id).Count() > 0;
 
                 return responsavel;

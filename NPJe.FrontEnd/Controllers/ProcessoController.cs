@@ -1,4 +1,5 @@
-﻿using NPJe.FrontEnd.Configs;
+﻿using Newtonsoft.Json;
+using NPJe.FrontEnd.Configs;
 using NPJe.FrontEnd.Controllers.CRUDs;
 using NPJe.FrontEnd.Enums;
 using NPJe.FrontEnd.Repository.Queries;
@@ -19,15 +20,32 @@ namespace NPJe.FrontEnd.Controllers
                 return RedirectToAction("Login", "Home");
 
             DefineNotifications();
-            ViewBag.SituacaoNpj = EnumExtension.GetList<SituacaoNpjEnum>();
-            ViewBag.SituacaoProjudi = EnumExtension.GetList<SituacaoProjudiEnum>();
-            ViewBag.Polo = EnumExtension.GetList<PoloEnum>();
+            DefineEnums();
+            DefineReturnObject();
+            
             return View("Index");
         }
 
         private void DefineNotifications()
         {
             ViewBag.Agendamentos = new AgendamentoCrudController().GetAtendimentosByIsuario();
+        }
+
+        private void DefineEnums()
+        {
+            ViewBag.SituacaoNpj = EnumExtension.GetList<SituacaoNpjEnum>();
+            ViewBag.SituacaoProjudi = EnumExtension.GetList<SituacaoProjudiEnum>();
+            ViewBag.Polo = EnumExtension.GetList<PoloEnum>();
+        }
+
+        private void DefineReturnObject()
+        {
+            var result = "0";
+            if (ReturnSession.ReturnObj != null)
+                result = JsonConvert.SerializeObject(ReturnSession.ReturnObj);
+
+            ReturnSession.ReturnObj = null;
+            ViewBag.Filtros = result;
         }
 
         private void DefineViewDatas()

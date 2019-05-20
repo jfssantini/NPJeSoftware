@@ -28,6 +28,10 @@ namespace NPJe.FrontEnd.Repository.Mapping
             HasRequired(x => x.UsuarioCriacao)
                     .WithMany()
                     .HasForeignKey(x => x.IdUsuarioCriacao);
+
+            HasOptional(x => x.UsuarioExclusao)
+                .WithMany()
+                .HasForeignKey(x => x.IdUsuarioExclusao);
         }
     }
 }

@@ -12,5 +12,7 @@ namespace NPJe.FrontEnd.Dtos
         public int Numero { get; set; }
 
         public string Especialidade { get { return IdEspecialidade.GetDescription(); } set { } }
+
+        public int QuantidadeAlunos { get; set; }
     }
 }

@@ -8,6 +8,10 @@ namespace NPJe.FrontEnd.Repository.Mapping
         public GrupoMap()
         {
             ToTable("grupo");
+
+            HasOptional(x => x.UsuarioExclusao)
+                .WithMany()
+                .HasForeignKey(x => x.IdUsuarioExclusao);
         }
     }
 }

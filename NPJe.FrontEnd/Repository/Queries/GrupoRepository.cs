@@ -1,7 +1,9 @@
 ﻿using NPJe.FrontEnd.Configs;
 using NPJe.FrontEnd.Dtos;
+using NPJe.FrontEnd.Enums;
 using NPJe.FrontEnd.Models;
 using NPJe.FrontEnd.Repository.Context;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic;
@@ -13,7 +15,8 @@ namespace NPJe.FrontEnd.Repository.Queries
         public GrupoRepository() : base() { }
 
         #region Grupo
-        public RetornoDto GetGrupoDtoGrid(int draw, int start, int length, string search, string order, string dir)
+        public RetornoDto GetGrupoDtoGrid(int draw, int start, int length, string search, string order, string dir, 
+            bool incluiExcluidos, bool apenasGruposVazios, long? idEspecialidade)
         {
             var consulta = (from g in Contexto.Grupo
                             select g);
@@ -21,22 +24,48 @@ namespace NPJe.FrontEnd.Repository.Queries
             if (!search.IsNullOrEmpty() && int.TryParse(search, out int result))
                 consulta = consulta.Where(x => x.Numero == result);
 
+            if (idEspecialidade.HasValue)
+                consulta = consulta.Where(x => x.IdEspecialidade == (EspecialidadeEnum)idEspecialidade);
+
+            if (!incluiExcluidos)
+                consulta = consulta.Where(x => !x.IdUsuarioExclusao.HasValue);
+
+            if (apenasGruposVazios)
+                consulta = (from g in consulta
+                            from a in Contexto.AlunoGrupo.Where(x => x.IdGrupo == g.Id).DefaultIfEmpty()
+                            where !((long?)a.Id).HasValue
+                            select g);
+
+
             var data = (from g in consulta
                         select new GrupoDto()
                         {
                             Id = g.Id,
                             IdEspecialidade = g.IdEspecialidade,
-                            Numero = g.Numero
+                            Numero = g.Numero,
                         })
                     .OrderBy(order.RemoveAccents() + " " + dir)
                     .Skip(start).Take(length);
 
-            return CreateDataResult(data.Count(), data.ToList());
+            var grupos = data.ToList();
+            var idGrupos = grupos.Select(x => x.Id).ToList();
+
+            var vinculoAlunos = (from a in Contexto.AlunoGrupo
+                                 where idGrupos.Contains(a.IdGrupo) &&
+                                 a.Aluno.Ativo
+                                 select a.IdGrupo).ToList();
+
+            grupos.ForEach(x =>
+            {
+                x.QuantidadeAlunos = vinculoAlunos.Count(y => y == x.Id);
+            });
+                                
+            return CreateDataResult(grupos.Count(), grupos);
         }
 
         public RetornoComboDto GetGrupoComboDto(long? id, string search, bool filtroGrupo)
         {
-            var idGruposPermitidos = filtroGrupo ? GetListaGruposUsuario() : new List<long>();
+            var idGruposPermitidos = filtroGrupo ? GetListaGruposUsuario(null) : new List<long>();
 
             if (!ValidarUsuarioComGrupos(idGruposPermitidos) && filtroGrupo)
                 return new RetornoComboDto() { results = new List<GenericInfoComboDto>(), total = 0 };
@@ -121,20 +150,24 @@ namespace NPJe.FrontEnd.Repository.Queries
             return (vinculoAluno || vinculoPasta);
         }
 
-        public bool IsGrupoRepetido(int Numero)
+        public bool IsGrupoRepetido(long id, int Numero)
         {
             return (from g in Contexto.Grupo
-                            where g.Numero == Numero
-                            select g.Id).Count() > 0;
+                            where g.Numero == Numero && g.Id != id
+                    select g.Id).Count() > 0;
 
         }
 
         public bool RemoveGrupo(long id)
         {
-            Grupo grupo = new Grupo() { Id = id };
-            Contexto.Grupo.Attach(grupo);
-            Contexto.Grupo.Remove(grupo);
-            Contexto.SaveChanges();
+            Contexto.Database.ExecuteSqlCommand($@"UPDATE dbo.grupo 
+                SET IdUsuarioExclusao = {SessionUser.IdUsuario}, 
+                DataHoraExclusao = '{DateTime.Now.ToString("dd/MM/yyyy HH:mm")}'
+                WHERE Id = {id}");
+
+            Contexto.Database.ExecuteSqlCommand($@"DELETE FROM dbo.alunogrupo 
+                WHERE IdGrupo = {id}");
+
             return true;
         }
         #endregion

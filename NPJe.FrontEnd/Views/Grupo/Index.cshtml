@@ -26,7 +26,66 @@
             <div class="box-header" style="padding-bottom: 0px;">
                 <div class="row">
                     <div class="col-sm-12">
-                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6" style="padding-left: 0px;">
+
+                            <div class="col-md-12" style="padding-left: 0px;">
+                                <div class="box box-default box-solid collapsed-box" style="margin-bottom: 0px;">
+                                    <div class="box-header with-border" style="padding-bottom: 5px; padding-top: 5px;">
+                                        <h3 class="box-title">Filtros</h3>
+
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn btn-box-tool" data-widget="collapse" style="padding-top: 0px; padding-bottom: 0px;">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body" id="modalFiltro" style="">
+
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label for="filtroGrupo">Especialidade</label>
+                                                <select class="form-control" name="filtroEspecialidade" id="filtroEspecialidade" filtro="1" reload="tabelaGrupos" placeholder="Escolha a especialidade" style="margin-top: 4px;">
+                                                    <option value="">Escolha...</option>
+                                                    @foreach (var item in ViewBag.Especialidades)
+                                                    {
+                                                        <option value="@item.id"> @item.text </option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-12" style="padding-left: 0px; padding-right: 0px;">
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="filtroExcluidos">Incluir registros excluidos</label><br />
+                                                    <input type="checkbox" id="filtroExcluidos" checkBox="1" value="false" default="true" name="filtroExcluidos" filtro="1" reload="tabelaGrupos">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="filtroVazios">Somente grupos sem alunos</label><br />
+                                                    <input type="checkbox" id="filtroVazios" checkBox="1" value="false" default="true" name="filtroVazios" filtro="1" reload="tabelaGrupos">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-8">
+                                        </div>
+                                        <div class="col-sm-2" style=" text-align: right;">
+                                            <div class="form-group">
+                                                <button type="button" class="btn btn-default" id="btnLimparFiltro" style="text-align: right">
+                                                    <i class="fa fa-reply-all"></i>
+                                                    Limpar filtros
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
                         <div class="col-sm-6" id="colAdd" style=" text-align: right; padding-right: 0;">
                             <!-- Botão de adicionar -->
                             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalAdd" id="btnAdd" style="text-align: right">
@@ -45,6 +104,7 @@
                         <tr>
                             <th>Número</th>
                             <th>Especialidade</th>
+                            <th>Alunos vinculados</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -53,6 +113,7 @@
                         <tr>
                             <th>Número</th>
                             <th>Especialidade</th>
+                            <th>Alunos vinculados</th>
                             <th>Ações</th>
                         </tr>
                     </tfoot>
@@ -144,6 +205,17 @@
 
 <script>
     $(document).ready(function () {
+        $('#filtroExcluidos').bootstrapToggle({
+            on: "Sim",
+            off: "Não",
+            width: 182
+        }).change(function () { this.value = $(this).prop('checked'); });
+        $('#filtroVazios').bootstrapToggle({
+            on: "Sim",
+            off: "Não",
+            width: 182
+        }).change(function () { this.value = $(this).prop('checked'); });
+
         $('#tabelaGrupos').dataTable({
             "dom": "Bfrtip",
             "buttons": [
@@ -189,7 +261,7 @@
                 });
             },
             "language": {
-                "search": "Pesquisar:",
+                "search": "pesquisar número:",
                 "lengthMenu": "Mostrar _MENU_ registros por página",
                 "zeroRecords": "Nenhum resultado encontrado",
                 "info": "Mostrando _START_ até _END_ de _TOTAL_ registro(s)",
@@ -214,13 +286,17 @@
                         "length": d.length,
                         "search": d.search.value,
                         "order": $('th')[d.order[0].column].outerText,
-                        "dir": d.order[0].dir
+                        "dir": d.order[0].dir,
+                        "idEspecialidade": $('#filtroEspecialidade')[0].value,
+                        "incluiExcluidos": $('#filtroExcluidos')[0].value,
+                        "apenasGruposVazios": $('#filtroVazios')[0].value,
                     };
                 }
             },
             "columns": [
-                { "data": "Numero" },
+                { "data": "Numero", "width": 120 },
                 { "data": "Especialidade", "bSortable": false },
+                { "data": "QuantidadeAlunos", "bSortable": false, "width": 90 },
                 {
                     "bSortable": false,
                     "data": null,
@@ -237,6 +313,5 @@
                 { "data": "IdEspecialidade", "visible": false },
             ]
         });
-
     });
 </script>

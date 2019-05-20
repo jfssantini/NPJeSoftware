@@ -16,5 +16,7 @@ namespace NPJe.FrontEnd.Models
         public PapelUsuarioEnum IdPapelUsuario { get; set; }
 
         public StatusUsuarioEnum IdStatusUsuario { get; set; }
+
+        public bool Excluido { get; set; }
     }
 }

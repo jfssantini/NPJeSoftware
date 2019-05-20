@@ -43,6 +43,12 @@ namespace NPJe.FrontEnd.Models
 
         public bool Ativo { get; set; }
 
+        public long? IdUsuarioExclusao { get; set; }
+
+        public Usuario UsuarioExclusao { get; set; }
+
+        public DateTime? DataHoraExclusao { get; set; }
+
         public List<AlunoEspecialidade> Especialidades { get; set; }
 
         public List<AlunoGrupo> Grupos { get; set; }

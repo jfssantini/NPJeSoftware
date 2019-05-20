@@ -49,15 +49,14 @@ namespace NPJe.FrontEnd.Validations
                 if (dto.IdTipoResponsavel == 0)
                     throw new ApplicationException("Responsável: O campo 'Tipo' é obrigatório.");
 
-                if (new ResponsavelRepository().IsResponsavelRepetidoByCPF(dto.CPF))
+                if (new ResponsavelRepository().IsResponsavelRepetidoByCPF(dto.Id, dto.CPF))
                     throw new ApplicationException("Responsável: Já existe um registro de responsável com o CPF informado.");
 
-                if (new ResponsavelRepository().IsUsuarioLoginRepetido(dto.Usuario))
+                if (new ResponsavelRepository().IsUsuarioLoginRepetido(dto.Id, dto.Usuario))
                     throw new ApplicationException("Responsável: Já existe um registro de usuário com o login informado.");
             }
             else
             {
-                
                 if (new ResponsavelRepository().ResponsavelPossuiVinculos(dto.Id))
                     throw new ApplicationException("Não é permitido excluir o registro pois o mesmo possui vínculos.");
             }

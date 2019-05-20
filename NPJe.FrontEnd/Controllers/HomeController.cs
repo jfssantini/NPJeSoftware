@@ -1,5 +1,6 @@
 ﻿using NPJe.FrontEnd.Configs;
 using NPJe.FrontEnd.Controllers.CRUDs;
+using NPJe.FrontEnd.Dtos.Relatorios;
 using NPJe.FrontEnd.Enums;
 using NPJe.FrontEnd.Models;
 using NPJe.FrontEnd.Repository.Queries;
@@ -9,6 +10,13 @@ namespace NPJe.FrontEnd.Controllers
 {
     public class HomeController : Controller
     {
+        private RelatoriosGeneric RelatoriosGeneric { get; set; }
+
+        public HomeController()
+        {
+            RelatoriosGeneric = new RelatoriosGeneric();
+        }
+
         public ActionResult Index()
         {
             DefineViewDatas();
@@ -17,6 +25,9 @@ namespace NPJe.FrontEnd.Controllers
                 return RedirectToAction("Login");
 
             DefineNotifications();
+            DefineRelatorioProcesso();
+
+            ViewBag.Relatorios = RelatoriosGeneric;
             return View();
         }
 
@@ -97,6 +108,11 @@ namespace NPJe.FrontEnd.Controllers
             ViewData["Papel"] = Session?["Papel"] ?? "papel";
             ViewData["IdPapel"] = Session["IdPapel"] ?? 0;
             ViewData["Status"] = Session?["Status"] ?? "offline";
+        }
+
+        private void DefineRelatorioProcesso()
+        {
+            RelatoriosGeneric.RelatorioProcesso = new ProcessoCrudController().GetRelatoriosProcessos();
         }
 
     }

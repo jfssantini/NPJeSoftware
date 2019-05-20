@@ -71,7 +71,7 @@
                                         <li>
                                             @foreach (var item in ViewBag.Agendamentos)
                                             {
-                                            <a href="#">
+                                            <a href="#" name="link" value="@item.id" url="http://localhost:51485/api/agendamentoCrud/GetAgendamentoDtoAuto" action="Agendamento">
                                                 <i class="fa fa-calendar text-aqua"></i> @item.text.<br /> &#8194; &#8194; &#8201;Às @item.complement horas.
                                             </a>
                                             }
@@ -155,13 +155,13 @@
                         </a>
                     </li>
                     <li class="treeview">
-                        <a href="@Url.Action("Index", "Processo")">
+                        <a id="Processo" href="@Url.Action("Index", "Processo")">
                             <i class="fa fa-list-alt"></i>
                             <span>Processos</span>
                         </a>
                     </li>
                     <li class="treeview">
-                        <a href="@Url.Action("Index", "Agendamento")">
+                        <a id="Agendamento" href="@Url.Action("Index", "Agendamento")">
                             <i class="fa fa-calendar"></i>
                             <span>Agendamentos</span>
                         </a>
@@ -378,7 +378,6 @@
             if (@ViewBag.IdPapel == -1)
                 $('[admin=1]').show();
 
-
             $($.fn.dataTable.tables(true)).css('width', '100%');
             $($.fn.dataTable.tables(true)).DataTable().columns.adjust().draw();
 
@@ -569,6 +568,8 @@
 
                 $("#" + me.context.id + " [type=checkbox]").prop('checked', false).change();
 
+                $("#" + me.context.id + " [dateField=1]").datepicker("setDate", "");
+
                 $("#" + me.context.id + " input").each(function () {
                     var input = $(this);
                     if (input && input.context.style.borderColor == "red")
@@ -607,6 +608,42 @@
                 var horarios = event.currentTarget.value.split(':');
                 if (horarios[0] > 24 || horarios[1] > 59)
                     event.currentTarget.value = null;
+            });
+
+            $('[filtro=1]').on('change', function () {
+                if (this.getAttribute('recarregar') == "false") { }
+                else 
+                    $('#'+$(this).context.getAttribute('reload')).DataTable().ajax.reload();                    
+            });
+
+            $('#btnLimparFiltro').on('click', function () {
+                var reload = "";
+                $('[filtro=1]').toArray().forEach(x => {
+                    x.setAttribute('recarregar', false);
+                    reload = x.getAttribute('reload');
+                    if (x.getAttribute('dateField'))
+                        $("#" + x.id).datepicker("setDate", "");
+                    if (x.getAttribute('comboBox'))
+                        $("#" + x.id).val(null).trigger('change');
+                    if (x.getAttribute('checkBox'))
+                        $("#" + x.id).prop('checked', false).change();
+                    else
+                        $("#" + x.id).val("");
+
+                    x.setAttribute('recarregar', true);
+                });
+                $('#' + reload).DataTable().ajax.reload();
+                $('#consultaPersonalizada').hide();
+            });
+
+            $('[name=link]').on('click', function () {
+                var me = this;
+                $.get(me.getAttribute('url'), { value: me.getAttribute('value') }, function (data) {
+                    $('#' + me.getAttribute('action'))[0].click();
+
+                }).fail(function (data) {
+                    alert(data.responseJSON.ExceptionMessage);
+                });
             });
 
         });

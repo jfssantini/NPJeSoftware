@@ -43,5 +43,9 @@ namespace NPJe.FrontEnd.Dtos
         public DateTime DataHoraCriacao { get; set; }
 
         public string DescricaoDataHoraCriacao { get { return DataHoraCriacao.ToString("dd/MM/yyyy HH:mm"); } set { } }
+
+        public DateTime DataHoraAlteracao { get; set; }
+
+        public string DescricaoDataHoraAlteracao { get { return DataHoraAlteracao.ToString("dd/MM/yyyy HH:mm"); } set { } }
     }
 }

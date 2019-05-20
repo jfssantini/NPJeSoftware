@@ -12,9 +12,10 @@ namespace NPJe.FrontEnd.Controllers.CRUDs
     public class GrupoCrudController : ApiController
     {
         [HttpGet]
-        public RetornoDto GetGrupoDtoGrid(int draw, int start, int length, string search, string order, string dir)
+        public RetornoDto GetGrupoDtoGrid(int draw, int start, int length, string search, string order, string dir,
+            bool incluiExcluidos, bool apenasGruposVazios, long? idEspecialidade = null)
         {
-            return new GrupoRepository().GetGrupoDtoGrid(draw, start, length, search, order, dir);
+            return new GrupoRepository().GetGrupoDtoGrid(draw, start, length, search, order, dir, incluiExcluidos, apenasGruposVazios, idEspecialidade);
         }
 
         [HttpGet]
@@ -27,7 +28,9 @@ namespace NPJe.FrontEnd.Controllers.CRUDs
         public bool SaveGrupo(string values)
         {
             var dto = JsonConvert.DeserializeObject<GrupoDto>(values);
+
             new GrupoValidator().Validate(dto, false);
+
             if (dto.Id > 0)
                 return new GrupoRepository().EditGrupo(dto);
             else
@@ -38,7 +41,9 @@ namespace NPJe.FrontEnd.Controllers.CRUDs
         public bool RemoveGrupo(string values)
         {
             var dto = JsonConvert.DeserializeObject<GrupoDto>(values);
+
             new GrupoValidator().Validate(dto, true);
+
             return new GrupoRepository().RemoveGrupo(dto.Id);
         }
 

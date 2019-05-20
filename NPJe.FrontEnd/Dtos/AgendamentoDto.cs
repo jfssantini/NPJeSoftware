@@ -25,5 +25,7 @@ namespace NPJe.FrontEnd.Dtos
         public string Horario { get; set; }
 
         public bool Concluido { get; set; }
+
+        public string Usuario { get; set; }
     }
 }

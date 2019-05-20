@@ -1,5 +1,6 @@
 ﻿using NPJe.FrontEnd.Configs;
 using NPJe.FrontEnd.Dtos;
+using NPJe.FrontEnd.Models;
 using System;
 
 namespace NPJe.FrontEnd.Validations
@@ -9,30 +10,41 @@ namespace NPJe.FrontEnd.Validations
         public void Validate(object dto, bool delete)
         {
             if (dto is ProcessoDto)
-                ValidateProcesso(dto as ProcessoDto);
+                ValidateProcesso(dto as ProcessoDto, delete);
             if (dto is AtendimentoDto)
                 ValidateAtendimento(dto as AtendimentoDto);
+            if (dto is TipoAcao)
+                ValidateTipoAcao(dto as TipoAcao);
+        }
+
+        private void ValidateTipoAcao(TipoAcao entity)
+        {
+            if (!entity.Descricao.IsNullOrEmpty())
+                throw new ApplicationException("Tipo de ação: O campo 'Descricao' é obrigatório.");
         }
 
         private void ValidateAtendimento(AtendimentoDto dto)
         {
-            if (!dto.Titulo.IsNullOrEmpty())
+            if (dto.Titulo.IsNullOrEmpty())
                 throw new ApplicationException("Atendimento: O campo 'Título' é obrigatório.");
         }
 
-        private void ValidateProcesso(ProcessoDto dto)
+        private void ValidateProcesso(ProcessoDto dto, bool delete)
         {
-            if(DateTime.TryParse(dto.DescricaoDistribuicao, out DateTime data) && data < DateTime.Now.Date)
-                throw new ApplicationException("Processo: O campo 'Distribuição' possui um valor inválido.");
+            if (!delete)
+            {
+                if (!DateTime.TryParse(dto.DescricaoDistribuicao, out DateTime data))
+                    throw new ApplicationException("Processo: O campo 'Distribuição' possui um valor inválido.");
 
-            if (dto.IdTipoAcao == 0)
-                throw new ApplicationException("Processo: O campo 'Tipo de ação' é obrigatório.");
+                if (dto.IdTipoAcao == 0)
+                    throw new ApplicationException("Processo: O campo 'Tipo de ação' é obrigatório.");
 
-            if (dto.IdPasta == 0)
-                throw new ApplicationException("Processo: O campo 'Referente ao caso' é obrigatório.");
+                if (dto.IdPasta == 0)
+                    throw new ApplicationException("Processo: O campo 'Referente ao caso' é obrigatório.");
 
-            if (!dto.NumeroProcesso.IsNullOrEmpty() && dto.NumeroProcesso.Length < 25)
-                throw new ApplicationException("Processo: O campo 'Número do processo' deve ter 25 caracteres.");
+                if (!dto.NumeroProcesso.IsNullOrEmpty() && dto.NumeroProcesso.Length < 25)
+                    throw new ApplicationException("Processo: O campo 'Número do processo' deve ter 25 caracteres.");
+            }
         }
     }
 }

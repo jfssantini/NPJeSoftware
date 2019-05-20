@@ -29,8 +29,107 @@
             <div class="box-header" style="padding-bottom: 0px;">
                 <div class="row">
                     <div class="col-sm-12">
-                        <div class="col-sm-6"></div>
-                        <div class="col-sm-6" id="colAdd" style=" text-align: right; padding-right: 0;">
+                        <div class="col-sm-8" style="padding-left: 0px;">
+
+                            <div class="col-md-12" style="padding-left: 0px;">
+                                <div class="box box-default box-solid collapsed-box" style="margin-bottom: 0px;">
+                                    <div class="box-header with-border" style="padding-bottom: 5px; padding-top: 5px;">
+                                        <h3 class="box-title">Filtros</h3>
+                                        <label for="filtroData" hidden id="consultaPersonalizada" style="color:red;font-weight:bold"> * Tela com consulta personalizada, pressione o botão "Limpar filtros" para desfazer.</label>
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn btn-box-tool" data-widget="collapse" style="padding-top: 0px; padding-bottom: 0px;">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body" id="modalFiltro" style="">
+
+                                        <div class="form-group" hidden>
+                                            <input type="checkbox" id="processos15dias" value="false" checkBox="1" default="true" name="processos15dias" filtro="1" reload="tabelaProcesso">
+                                        </div>
+
+                                        <div class="form-group" hidden>
+                                            <input type="checkbox" id="processos30dias" value="false" checkBox="1" default="true" name="processos30dias" filtro="1" reload="tabelaProcesso">
+                                        </div>
+
+                                        <div class="col-sm-12" style="padding-left: 0px; padding-right: 0px;">
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="filtroData">Distribuição</label>
+                                                    <input type="text" id="filtroData" name="filtroData" filtro="1" dateField="1" reload="tabelaProcesso" class="form-control timepicker">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="filtroConcluidos">Concluídos</label><br />
+                                                    <input type="checkbox" id="filtroConcluidos" value="false" checkBox="1" default="true" name="filtroConcluidos" filtro="1" reload="tabelaProcesso">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label for="filtroCliente">Cliente</label>
+                                                <br />
+                                                <select class="form-control" name="filtroCliente" id="filtroCliente" comboBox="1" style="width:100%" filtro="1" reload="tabelaProcesso"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label for="filtroGrupo">Grupo</label>
+                                                <br />
+                                                <select class="form-control" name="filtroGrupo" id="filtroGrupo" comboBox="1" placeholder="Escolha o grupo" style="width:100%" filtro="1" reload="tabelaProcesso"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-12" style="padding-left: 0px; padding-right: 0px;">
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="filtroSituacaoNpj">Situação NPJ atual</label>
+                                                    <select class="form-control" name="filtroSituacaoNpj" id="filtroSituacaoNpj" filtro="1" reload="tabelaProcesso" placeholder="Escolha a situação" style="margin-top: 4px;">
+                                                        <option value="">Escolha...</option>
+                                                        @foreach (var item in ViewBag.SituacaoNpj)
+                                                        {
+                                                            <option value="@item.id"> @item.text </option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="filtroSituacaoProjudi">Situação Projudi atual</label>
+                                                    <select class="form-control" name="filtroSituacaoProjudi" id="filtroSituacaoProjudi" filtro="1" reload="tabelaProcesso" placeholder="Escolha a situação" style="margin-top: 4px;">
+                                                        <option value="">Escolha...</option>
+                                                        @foreach (var item in ViewBag.SituacaoProjudi)
+                                                        {
+                                                            <option value="@item.id"> @item.text </option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-9">
+                                        </div>
+                                        <div class="col-sm-2" style=" text-align: right;">
+                                            <div class="form-group">
+                                                <button type="button" class="btn btn-default" id="btnLimparFiltro" style="text-align: right">
+                                                    <i class="fa fa-reply-all"></i>
+                                                    Limpar filtros
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-sm-4" id="colAdd" style=" text-align: right; padding-right: 0;">
                             <!-- Botão de adicionar -->
                             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalAdd" id="btnAdd" style="text-align: right">
                                 <i class="fa fa-plus"></i>
@@ -48,6 +147,7 @@
                         <tr>
                             <th>Distribuição</th>
                             <th>Número</th>
+                            @*<th>Tipo</th>*@
                             <th>Cliente</th>
                             <th>Grupo</th>
                             <th>Sit. NPJ atual</th>
@@ -60,6 +160,7 @@
                         <tr>
                             <th>Distribuição</th>
                             <th>Número</th>
+                            @*<th>Tipo</th>*@
                             <th>Cliente</th>
                             <th>Grupo</th>
                             <th>Sit. NPJ atual</th>
@@ -337,6 +438,40 @@
         </div>
     </div>
 
+    @* Modal Remove Processo *@
+    <div class="modal fade" id="modalRemoveProcesso" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" grid="tabelaProcesso" url="http://localhost:51485/api/processoCrud/RemoveProcesso" reload="tabelaProcesso">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">
+                            &times;
+                        </span><span class="sr-only"></span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Remover processo</h4>
+                </div>
+
+                <div class="box-body">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>Deseja mesmo excluir este registro?</label>
+                            <input type="hidden" id="IdRemoveProcesso" name="Id">
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-9">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Sair</button>
+                            <button type="button" id="btnConfirm" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @* Modal add TipoAcao *@
     <div class="modal fade" id="modalAddTipoAcao" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" grid="comboBoxTipoAcao" url="http://localhost:51485/api/processoCrud/SaveTipoAcao" reload="comboBoxTipoAcao">
         <div class="modal-dialog">
@@ -410,7 +545,7 @@
                             </select>
                         </div>
                     </div>
-                    
+
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label for="comboSituacaoProjudi" style="margin-bottom: 0px;">Situação Projudi</label>
@@ -555,6 +690,75 @@
 
 <script>
     $(document).ready(function () {
+        $('#filtroData').inputmask({ "alias": "dd/mm/yyyy" });
+        $('#filtroData').datepicker({
+            autoclose: true,
+            todayHighlight: true,
+            format: 'dd/mm/yyyy',
+            keyboardNavigation: true,
+            language: 'pt-BR',
+            clearBtn: true
+        }).on('hide', function (e) { e.stopPropagation(); });
+        $('#filtroCliente').select2({
+            "placeholder": "Pesquise o cliente",
+            "dropdownParent": $("#modalFiltro"),
+            "allowClear": true,
+            "dataType": 'json',
+            "type": 'GET',
+            "ajax": {
+                "url": "http://localhost:51485/api/processoCrud/GetClienteComboDto",
+                "dataType": 'json',
+                "data": function (params) {
+                    return {
+                        search: params.term // search term
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                    results: response.results
+                    };
+                },
+                cache: true
+            },
+        }).data('select2').$selection.css('height', '34px');
+        $('#filtroGrupo').select2({
+            "placeholder": "Pesquise o grupo",
+            "dropdownParent": $("#modalFiltro"),
+            "allowClear": true,
+            "dataType": 'json',
+            "type": 'GET',
+            "ajax": {
+                "url": "http://localhost:51485/api/alunoCrud/GetGrupoComboDto",
+                "dataType": 'json',
+                "data": function (params) {
+                    return {
+                        search: params.term // search term
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                    results: response.results
+                    };
+                },
+                cache: true
+            },
+        }).data('select2').$selection.css('height', '34px');
+        $('#filtroConcluidos').bootstrapToggle({
+            on: "Sim",
+            off: "Não",
+            width: 182
+        }).change(function () {  this.value = $(this).prop('checked'); });
+        $('#processos15dias').bootstrapToggle({
+            on: "Sim",
+            off: "Não",
+            width: 182
+        }).change(function () {  $("#filtroConcluidos")[0].disabled = $(this).prop('checked'); this.value = $(this).prop('checked'); });
+        $('#processos30dias').bootstrapToggle({
+            on: "Sim",
+            off: "Não",
+            width: 182
+        }).change(function () { $("#filtroConcluidos")[0].disabled = $(this).prop('checked'); this.value = $(this).prop('checked'); });
+
         $('#inputNumeroProcesso').inputmask({ "mask": "9999999-99.9999.9.99.9999" });
         $('#datepicker').inputmask({ "alias": "dd/mm/yyyy" });
         $('#datepicker').datepicker({
@@ -752,6 +956,13 @@
                     columns: [0, 1, 2, 3, 4]
                 }
                 }],
+            "rowCallback": function (row, data) {
+                var linha = $('td', row).eq(1);
+                if (data.Status == true) {
+                    linha.context.style.color = "green"
+                    linha.context.style.fontWeight = "bold"
+                }                   
+            },
             "drawCallback": function (settings) {
                 var json = settings.json;
                 $("[name='btnRemoveProcesso']").click(function () {
@@ -799,7 +1010,7 @@
                 "details": false
             },
             "language": {
-                "search": "Pesquisar:",
+                "search": "Pesquisar número:",
                 "lengthMenu": "Mostrar _MENU_ registros por página",
                 "zeroRecords": "Nenhum resultado encontrado",
                 "info": "Mostrando _START_ até _END_ de _TOTAL_ registro(s)",
@@ -824,17 +1035,26 @@
                         "length": d.length,
                         "search": d.search.value,
                         "order": $('th')[d.order[0].column].outerText,
-                        "dir": d.order[0].dir
+                        "dir": d.order[0].dir,
+                        "dataDistribuicao": $('#filtroData')[0].value,
+                        "idCliente": $('#filtroCliente')[0].value,
+                        "idGrupo": $('#filtroGrupo')[0].value,
+                        "idSituacaoNpj": $('#filtroSituacaoNpj')[0].value,
+                        "idSituacaoProjudi": $('#filtroSituacaoProjudi')[0].value,
+                        "somenteConcluidos": $('#filtroConcluidos')[0].value,
+                        "processos15dias": $('#processos15dias')[0].value,
+                        "processos30dias": $('#processos30dias')[0].value
                     };
                 }
             },
             "columns": [
-                { "data": "DescricaoDistribuicao", "width": "7%" },
+                { "data": "DescricaoDistribuicao", "width": "1%" },
                 { "data": "NumeroProcesso", "width": "20%" },
+                //{ "data": "TipoAcao", "width": "20%" },
                 { "data": "Cliente", "width": "20%" },
-                { "data": "Grupo", "width": "13%" },
-                { "data": "DescricaoSituacaoNpjAtual", "width": "15%" },
-                { "data": "DescricaoSituacaoProjudiAtual", "width": "15%" },
+                { "data": "Grupo", "width": "15%" },
+                { "data": "DescricaoSituacaoNpjAtual", "bSortable": false, "width": "15%" },
+                { "data": "DescricaoSituacaoProjudiAtual", "bSortable": false, "width": "15%" },
                 {
                     "bSortable": false,
                     "data": null,
@@ -916,7 +1136,6 @@
             ],
             "drawCallback": function (settings) {
                 var json = settings.json;
-
                 if (json.data.length > 0 && json.data[0].IdUsuarioExclusao == null) {
                     $('#comboSituacaoNpjAtual').val(json.data[0].IdSituacaoNpj);
                     $('#comboSituacaoProjudiAtual').val(json.data[0].IdSituacaoProjudi);
@@ -958,5 +1177,18 @@
             }
         });
 
+        var data = JSON.parse('@Html.Raw(@ViewBag.Filtros)');
+        if (data != null) {
+            if (data == 1)
+                $('#filtroConcluidos').prop('checked', true).change();
+            if (data == 15)
+                $('#processos15dias').prop('checked', true).change();
+            if (data == 30)
+                $('#processos30dias').prop('checked', true).change();
+
+            if (data != 0) {
+                $('#consultaPersonalizada').show();
+            }
+        }
     });
 </script>

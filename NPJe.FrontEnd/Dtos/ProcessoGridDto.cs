@@ -45,5 +45,9 @@ namespace NPJe.FrontEnd.Dtos
         public long IdUsuario { get; set; }
 
         public string Usuario { get; set; }
+
+        public string TipoAcao { get; set; }
+
+        public bool Status { get; set; }
     }
 }

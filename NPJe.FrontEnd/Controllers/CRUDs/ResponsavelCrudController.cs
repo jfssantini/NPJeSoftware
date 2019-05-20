@@ -2,6 +2,7 @@
 using NPJe.FrontEnd.Configs;
 using NPJe.FrontEnd.Dtos;
 using NPJe.FrontEnd.Repository.Queries;
+using NPJe.FrontEnd.Validations;
 using System.Web.Http;
 using System.Web.Http.Cors;
 
@@ -11,15 +12,19 @@ namespace NPJe.FrontEnd.Controllers.CRUDs
     public class ResponsavelCrudController : ApiController
     {
         [HttpGet]
-        public RetornoDto GetResponsavelDtoGrid(int draw, int start, int length, string search, string order, string dir)
+        public RetornoDto GetResponsavelDtoGrid(int draw, int start, int length, string search, string order, string dir, 
+            bool incluiExcluidos, long? idTipo = null)
         {
-            return new ResponsavelRepository().GetResponsavelDtoGrid(draw, start, length, search, order, dir);
+            return new ResponsavelRepository().GetResponsavelDtoGrid(draw, start, length, search, order, dir, incluiExcluidos, idTipo);
         }
 
         [HttpGet]
         public bool SaveResponsavel(string values)
         {
             var dto = JsonConvert.DeserializeObject<ResponsavelDto>(values);
+
+            new ResponsavelValidator().Validate(dto, false);
+
             if (dto.Id > 0)
                 return new ResponsavelRepository().EditResponsavel(dto);
             else
@@ -36,9 +41,8 @@ namespace NPJe.FrontEnd.Controllers.CRUDs
         public bool RemoveResponsavel(string values)
         {
             var dto = JsonConvert.DeserializeObject<ResponsavelDto>(values);
-
-            return new ResponsavelRepository().RemoveResponsavel(dto.Id);
+            new ResponsavelValidator().Validate(dto, true);
+            return new ResponsavelRepository().RemoveResponsavel(dto);
         }
-
     }
 }
