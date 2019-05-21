@@ -118,7 +118,7 @@ namespace NPJe.FrontEnd.Repository.Queries
                                UsuarioCriacao = p.UsuarioCriacao.UsuarioLogin,
                                DataHoraCriacao = p.DataHoraCriacao,
                                Concluido = p.Concluido,
-                               DataHoraAlteracao = p.DataHoraAlteracao
+                               DataHoraAlteracao = DateTime.Now
                            }).FirstOrDefault();
 
             return retorno;

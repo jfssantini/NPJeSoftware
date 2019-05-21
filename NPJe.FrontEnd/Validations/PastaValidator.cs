@@ -26,7 +26,7 @@ namespace NPJe.FrontEnd.Validations
 
         private void ValidateAtendimento(AtendimentoDto dto)
         {
-            if (!dto.Titulo.IsNullOrEmpty())
+            if (dto.Titulo.IsNullOrEmpty())
                 throw new ApplicationException("Atendimento: O campo 'Título' é obrigatório.");
         }
 

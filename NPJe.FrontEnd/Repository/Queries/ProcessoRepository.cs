@@ -209,7 +209,7 @@ namespace NPJe.FrontEnd.Repository.Queries
         {
             var retorno = Contexto.Processo.Add(new Processo()
             {
-                Distribuicao = Convert.ToDateTime(dto.Distribuicao),
+                Distribuicao = Convert.ToDateTime(dto.DescricaoDistribuicao),
                 NumeroProcesso = dto.NumeroProcesso,
                 IdPasta = dto.IdPasta,
                 IdPolo = dto.IdPolo,
@@ -227,7 +227,7 @@ namespace NPJe.FrontEnd.Repository.Queries
                 AnotacoesGerais = dto.AnotacoesGerais,
                 DataHoraCriacao = DateTime.Now,
                 IdUsuarioCriacao = SessionUser.IdUsuario,
-                DataHoraAlteracao = dto.DataHoraAlteracao
+                DataHoraAlteracao = DateTime.Now
             });
 
             Contexto.SaveChanges();
@@ -269,7 +269,7 @@ namespace NPJe.FrontEnd.Repository.Queries
             processo.Vara = dto.Vara;
             processo.Tribunal = dto.Tribunal;
             processo.AnotacoesGerais = dto.AnotacoesGerais;
-            processo.DataHoraAlteracao = dto.DataHoraAlteracao;
+            processo.DataHoraAlteracao = DateTime.Now;
 
             Contexto.Database.ExecuteSqlCommand($@"UPDATE dbo.atendimento 
                 SET Temporario = false, IdProcesso = {dto.Id}
