@@ -83,12 +83,12 @@ namespace NPJe.FrontEnd.Repository.Queries
             return retorno;
         }
 
-        public bool IsClienteRepetidoByCNPJ(string CNPJ)
+        public bool IsClienteRepetidoByCNPJ(string CNPJ, long id)
         {
             if (!CNPJ.IsNullOrEmpty())
             {
                 var responsavel = (from r in Contexto.Cliente
-                               .Where(x => x.CNPJ == CNPJ)
+                               .Where(x => x.CNPJ == CNPJ && x.Id != id)
                                    select r.Id).Count() > 0;
 
                 return responsavel;
@@ -96,12 +96,12 @@ namespace NPJe.FrontEnd.Repository.Queries
             return false;
         }
 
-        public bool IsClienteRepetidoByCPF(string CPF)
+        public bool IsClienteRepetidoByCPF(string CPF, long id)
         {
             if (!CPF.IsNullOrEmpty())
             {
                 var responsavel = (from r in Contexto.Cliente
-                               .Where(x => x.CPF == CPF)
+                               .Where(x => x.CPF == CPF && x.Id != id)
                                    select r.Id).Count() > 0;
 
                 return responsavel;

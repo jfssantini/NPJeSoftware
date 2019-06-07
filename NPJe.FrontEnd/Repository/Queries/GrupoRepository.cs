@@ -70,7 +70,7 @@ namespace NPJe.FrontEnd.Repository.Queries
             if (!ValidarUsuarioComGrupos(idGruposPermitidos) && filtroGrupo)
                 return new RetornoComboDto() { results = new List<GenericInfoComboDto>(), total = 0 };
 
-            var consulta = (from g in Contexto.Grupo select g);
+            var consulta = (from g in Contexto.Grupo where !g.IdUsuarioExclusao.HasValue select g);
 
             if (idGruposPermitidos.Any())
                 consulta = consulta.Where(g => idGruposPermitidos.Contains(g.Id));

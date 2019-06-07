@@ -187,14 +187,22 @@ namespace NPJe.FrontEnd.Repository.Queries
             }
 
             var processos = (from p in consulta
-                          select new { p.Id, p.Status, p.DataHoraAlteracao, p.DataHoraCriacao })
-                          .ToList();
+                          select new Processos {
+                              Id = p.Id,
+                              Status = p.Status,
+                              DataHoraAlteracao = p.DataHoraAlteracao,
+                              DataHoraCriacao = p.DataHoraCriacao
+                          }).ToList();
 
             result.QuantidadeProcessos = processos.Count();
             result.QuantidadeProcessosConcluidos = processos.Count(x => x.Status);
             result.QuantidadeProcessosParados15Dias = processos.Count(x => !x.Status && x.DataHoraAlteracao < DateTime.Now.AddDays(-15));
             result.QuantidadeProcessosParados30Dias = processos.Count(x => !x.Status && x.DataHoraAlteracao < DateTime.Now.AddDays(-30));
-            var processosPorMes = processos.GroupBy(x => x.DataHoraCriacao.Month).OrderBy(x => x).ToList();
+
+
+            var processosPorMes = processos.GroupBy(x => x.MesCriacao).ToList();
+
+            processosPorMes = processosPorMes.OrderBy(x => x.FirstOrDefault()?.MesCriacao ?? 0).ToList();
 
             for (int i = 0; i < 12; i++){
                 var atual = processosPorMes.Count > i ? processosPorMes[i] : null;
@@ -568,6 +576,24 @@ namespace NPJe.FrontEnd.Repository.Queries
                     break;
             }
             return retorno;
+        }
+    }
+
+    public class Processos : IComparable
+    {
+        public long Id { get; set; }
+
+        public bool Status { get; set; }
+
+        public DateTime? DataHoraAlteracao { get; set; }
+
+        public DateTime DataHoraCriacao { get; set; }
+
+        public int MesCriacao { get { return DataHoraCriacao.Month; } set { } }
+
+        public int CompareTo(object obj)
+        {
+            throw new NotImplementedException();
         }
     }
 }

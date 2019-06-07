@@ -37,10 +37,13 @@ namespace NPJe.FrontEnd.Validations
                 if (!dto.Telefone.IsNullOrEmpty() && dto.Celular.Length < 16)
                     throw new ApplicationException("Cliente: O campo 'Celular' deve ter 16 caracteres.");
 
-                if (new ClienteRepository().IsClienteRepetidoByCPF(dto.CPF))
+                if(dto.Telefone.IsNullOrEmpty() && dto.Celular.IsNullOrEmpty() && dto.Email.IsNullOrEmpty() && dto.InfoEndereco.IsNullOrEmpty())
+                    throw new ApplicationException("Cliente: O cliente precisa possuir alguma informação para contato.");
+
+                if (new ClienteRepository().IsClienteRepetidoByCPF(dto.CPF, dto.Id))
                     throw new ApplicationException("Cliente: Já existe um registro de cliente com o CPF informado.");
 
-                if (new ClienteRepository().IsClienteRepetidoByCNPJ(dto.CNPJ))
+                if (new ClienteRepository().IsClienteRepetidoByCNPJ(dto.CNPJ, dto.Id))
                     throw new ApplicationException("Cliente: Já existe um registro de cliente com o CNPJ informado.");
 
                 if (!dto.CNPJ.IsNullOrEmpty() && !dto.CPF.IsNullOrEmpty())

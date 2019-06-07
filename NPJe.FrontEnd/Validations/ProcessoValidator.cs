@@ -19,7 +19,7 @@ namespace NPJe.FrontEnd.Validations
 
         private void ValidateTipoAcao(TipoAcao entity)
         {
-            if (!entity.Descricao.IsNullOrEmpty())
+            if (entity.Descricao.IsNullOrEmpty())
                 throw new ApplicationException("Tipo de ação: O campo 'Descricao' é obrigatório.");
         }
 

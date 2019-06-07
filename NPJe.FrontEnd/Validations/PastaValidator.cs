@@ -20,7 +20,7 @@ namespace NPJe.FrontEnd.Validations
 
         private void ValidateAssunto(Assunto entity)
         {
-            if (!entity.Descricao.IsNullOrEmpty())
+            if (entity.Descricao.IsNullOrEmpty())
                 throw new ApplicationException("Assunto: O campo 'Descrição' é obrigatório.");
         }
 
