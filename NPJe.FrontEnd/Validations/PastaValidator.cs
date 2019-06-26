@@ -12,21 +12,21 @@ namespace NPJe.FrontEnd.Validations
             if (dto is PastaDto)
                 ValidatePasta(dto as PastaDto, delete);
             if (dto is AtendimentoDto)
-                ValidateAtendimento(dto as AtendimentoDto);
+                ValidateAtendimento(dto as AtendimentoDto, delete);
             if (dto is Assunto)
-                ValidateAssunto(dto as Assunto);
+                ValidateAssunto(dto as Assunto, delete);
 
         }
 
-        private void ValidateAssunto(Assunto entity)
+        private void ValidateAssunto(Assunto entity, bool delete)
         {
-            if (entity.Descricao.IsNullOrEmpty())
+            if (entity.Descricao.IsNullOrEmpty() && !delete)
                 throw new ApplicationException("Assunto: O campo 'Descrição' é obrigatório.");
         }
 
-        private void ValidateAtendimento(AtendimentoDto dto)
+        private void ValidateAtendimento(AtendimentoDto dto, bool delete)
         {
-            if (dto.Titulo.IsNullOrEmpty())
+            if (dto.Titulo.IsNullOrEmpty() && !delete)
                 throw new ApplicationException("Atendimento: O campo 'Título' é obrigatório.");
         }
 

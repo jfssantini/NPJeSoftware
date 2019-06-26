@@ -17,11 +17,16 @@ namespace NPJe.FrontEnd.Repository.Queries
         public RetornoDto GetAgendamentoDtoGrid(int draw, int start, int length, string search, string order, string dir,
             bool somenteAlunos, bool somenteDoUsuario, string dataAgendamento, long? idAluno)
         {
+
             var consulta = (from a in Contexto.Agendamento
                             select a);
 
             if (SessionUser.IdPapel == PapelUsuarioEnum.Aluno || somenteDoUsuario)
-                consulta = consulta.Where(x => x.IdUsuario == SessionUser.IdUsuario);
+            {
+                var grupos = GetListaGruposUsuario(null);
+                consulta = consulta.Where(x => x.IdUsuario == SessionUser.IdUsuario || 
+                grupos.Contains(x.Pasta.IdGrupo) || grupos.Contains(x.Processo.Pasta.IdGrupo));
+            }
             else
             {
                 if (somenteAlunos)
@@ -152,10 +157,15 @@ namespace NPJe.FrontEnd.Repository.Queries
 
         public List<GenericInfoComboDto> GetAgendamentosByIsuario()
         {
+
+            var grupos = GetListaGruposUsuario(null);
+
             var dataDeHoje = DateTime.Now.Date;
             var agendamentos = (from a in Contexto.Agendamento
                                where !a.Concluido && 
-                               a.IdUsuario == SessionUser.IdUsuario
+                               (a.IdUsuario == SessionUser.IdUsuario || 
+                               grupos.Contains(a.Pasta.IdGrupo) || 
+                               grupos.Contains(a.Processo.Pasta.IdGrupo))
                                && a.DataAgendamento == dataDeHoje
                                 select new GenericInfoComboDto() {
                                    id = a.Id,

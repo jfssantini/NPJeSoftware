@@ -22,7 +22,7 @@ namespace NPJe.FrontEnd.Validations
                 if (!dto.Email.IsNullOrEmpty() && !(new Regex(ValidEmailPattern, RegexOptions.IgnoreCase).IsMatch(dto.Email)))
                     throw new ApplicationException("Cliente: O campo 'Email' precisa ter um email no formato válido.");
 
-                if (dto.Sexo != 1 && dto.Sexo != 2)
+                if (dto.Sexo != 1 && dto.Sexo != 2 && dto.Sexo != 3)
                     throw new ApplicationException("Cliente: O campo 'Sexo' é obrigatório.");
 
                 if (!dto.CPF.IsNullOrEmpty() && dto.CPF.Length < 14)
@@ -34,10 +34,10 @@ namespace NPJe.FrontEnd.Validations
                 if (!dto.Telefone.IsNullOrEmpty() && dto.Telefone.Length < 14)
                     throw new ApplicationException("Cliente: O campo 'Telefone' deve ter 14 caracteres.");
 
-                if (!dto.Telefone.IsNullOrEmpty() && dto.Celular.Length < 16)
+                if (!dto.Celular.IsNullOrEmpty() && dto.Celular.Length < 16)
                     throw new ApplicationException("Cliente: O campo 'Celular' deve ter 16 caracteres.");
 
-                if(dto.Telefone.IsNullOrEmpty() && dto.Celular.IsNullOrEmpty() && dto.Email.IsNullOrEmpty() && dto.InfoEndereco.IsNullOrEmpty())
+                if(dto.InfoEndereco.IsNullOrEmpty() && dto.Celular.IsNullOrEmpty() && dto.Email.IsNullOrEmpty() && dto.InfoEndereco.IsNullOrEmpty())
                     throw new ApplicationException("Cliente: O cliente precisa possuir alguma informação para contato.");
 
                 if (new ClienteRepository().IsClienteRepetidoByCPF(dto.CPF, dto.Id))
