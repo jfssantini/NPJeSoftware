@@ -100,7 +100,8 @@ namespace NPJe.FrontEnd.Repository.Queries
                         DataAgendamento = a.DataAgendamento,
                         Horario = a.Horario,
                         Concluido = a.Concluido,
-                        Usuario = a.Usuario.UsuarioLogin
+                        Usuario = a.Usuario.UsuarioLogin,
+                        IdUsuario = a.IdUsuario
                     }).FirstOrDefault();
 
             retorno.DescricaoDataAgendamento = retorno.DataAgendamento.ToString("dd/MM/yyyy");
@@ -166,14 +167,21 @@ namespace NPJe.FrontEnd.Repository.Queries
                                (a.IdUsuario == SessionUser.IdUsuario || 
                                grupos.Contains(a.Pasta.IdGrupo) || 
                                grupos.Contains(a.Processo.Pasta.IdGrupo))
-                               && a.DataAgendamento == dataDeHoje
+                               && a.DataAgendamento <= dataDeHoje
                                 select new GenericInfoComboDto() {
                                    id = a.Id,
                                    text = a.Titulo,
-                                   complement = a.Horario
+                                   complement = a.Horario,
+                                   data = a.DataAgendamento
                                 })
                                .ToList();
-            agendamentos.ForEach(x => x.complement = x.complement.Substring(0, 5));
+
+            agendamentos.ForEach(x => 
+            {
+                x.complement = x.data.ToString("dd/MM/yyyy") + " às " + x.complement.Substring(0, 5) + " horas";
+                if (x.data < dataDeHoje)
+                    x.complement += " (Atrasado)";
+            });
             return agendamentos;
         }
 

@@ -12,7 +12,7 @@
         <small>Lista de agendamentos</small>
     </h1>
     <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-calendar"></i> Home</a></li>
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-calendar"></i> Home</a></li>
         <li class="active">Agendamentos</li>
     </ol>
 </section>
@@ -172,7 +172,7 @@
                                 <div class="col-sm-12">
                                     <div class="form-group">
                                         <label for="comboBoxPasta">Caso</label>
-                                        <select class="form-control" name="IdPasta" id="comboBoxPasta" required placeholder="Escolha o caso" style="height: 32px; width:100%"></select>
+                                        <select class="form-control" name="IdPasta" id="comboBoxPasta" placeholder="Escolha o caso" style="height: 32px; width:100%"></select>
                                     </div>
                                 </div>
 
@@ -291,7 +291,6 @@
             format: 'dd/mm/yyyy',
             keyboardNavigation: true,
             language: 'pt-BR',
-            startDate: new Date(),
             clearBtn: true
         }).on('hide', function (e) { e.stopPropagation(); });
         $('#filtroData').inputmask({ "alias": "dd/mm/yyyy" });
@@ -453,6 +452,12 @@
                             }
                         });
                         $('#comboBoxProcesso')[0].disabled = false;
+
+                        if (data.IdUsuario == @ViewBag.IdUsuario)
+                            $('#modalAdd #btnConfirm').show();
+                        else
+                            $('#modalAdd #btnConfirm').hide();
+                        
                         $('#modalAdd').modal('show');
                     });
                 });

@@ -13,6 +13,10 @@ namespace NPJe.FrontEnd.Controllers
             DefineViewDatas();
             if (Session["IdUsuario"] == null)
                 return RedirectToAction("Login", "Home");
+            else if (int.Parse(Session["IdPapel"].ToString()) == (int)PapelUsuarioEnum.Aluno)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             DefineNotifications();
             ViewBag.TipoResponsavel = EnumExtension.GetList<TipoResponsavelEnum>();
             return View("Index");

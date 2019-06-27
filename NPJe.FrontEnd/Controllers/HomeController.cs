@@ -105,6 +105,7 @@ namespace NPJe.FrontEnd.Controllers
         private void DefineViewDatas()
         {
             ViewData["Usuario"] = Session?["Usuario"] ?? "usuario";
+            ViewData["IdUsuario"] = Session?["IdUsuario"] ?? "0";
             ViewData["Papel"] = Session?["Papel"] ?? "papel";
             ViewData["IdPapel"] = Session["IdPapel"] ?? 0;
             ViewData["Status"] = Session?["Status"] ?? "offline";

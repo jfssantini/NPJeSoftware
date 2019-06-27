@@ -29,6 +29,9 @@ namespace NPJe.FrontEnd.Enums
         Habilitar = -8,
 
         [Description("REVOGADO")]
-        Revogado = -9
+        Revogado = -9,
+
+        [Description("CONCLUÍDO")]
+        Concluido = -10
     }
 }

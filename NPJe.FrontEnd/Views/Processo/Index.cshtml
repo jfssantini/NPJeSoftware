@@ -15,7 +15,7 @@
         <small>Lista de Processos</small>
     </h1>
     <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-list-alt"></i> Home</a></li>
+        <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-list-alt"></i> Home</a></li>
         <li class="active">Processos</li>
     </ol>
 </section>
@@ -1167,7 +1167,7 @@
                                     me.val(idSelecionado[me.context.name]);
                             }
                     });
-                    if (idSelecionado.IdUsuarioExclusao == null)
+                    if (idSelecionado.IdUsuarioExclusao == null  && idSelecionado.IdUsuarioAlteracao == @ViewBag.IdUsuario)
                         $('#modalAddAtendimento #btnConfirm').show();
                     else
                         $('#modalAddAtendimento #btnConfirm').hide();

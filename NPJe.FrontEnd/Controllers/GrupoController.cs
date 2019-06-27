@@ -14,7 +14,10 @@ namespace NPJe.FrontEnd.Controllers
             
             if (Session["IdUsuario"] == null)
                 return RedirectToAction("Login", "Home");
-
+            else if (int.Parse(Session["IdPapel"].ToString()) == (int)PapelUsuarioEnum.Aluno)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             DefineNotifications();
             ViewBag.Especialidades = EnumExtension.GetList<EspecialidadeEnum>();
             return View();

@@ -56,7 +56,8 @@ namespace NPJe.FrontEnd.Repository.Queries
             if (processos15dias)
             {
                 var dataLimite = DateTime.Now.AddDays(-15);
-                consulta = consulta.Where(x => !x.Status && x.DataHoraAlteracao < dataLimite);
+                var dataLimite2 = DateTime.Now.AddDays(-29);
+                consulta = consulta.Where(x => !x.Status && x.DataHoraAlteracao < dataLimite && !(x.DataHoraAlteracao < dataLimite2));
             }
 
             if (processos30dias)
@@ -196,7 +197,7 @@ namespace NPJe.FrontEnd.Repository.Queries
 
             result.QuantidadeProcessos = processos.Count();
             result.QuantidadeProcessosConcluidos = processos.Count(x => x.Status);
-            result.QuantidadeProcessosParados15Dias = processos.Count(x => !x.Status && x.DataHoraAlteracao < DateTime.Now.AddDays(-15));
+            result.QuantidadeProcessosParados15Dias = processos.Count(x => !x.Status && x.DataHoraAlteracao < DateTime.Now.AddDays(-15) && !(x.DataHoraAlteracao < DateTime.Now.AddDays(-29)));
             result.QuantidadeProcessosParados30Dias = processos.Count(x => !x.Status && x.DataHoraAlteracao < DateTime.Now.AddDays(-30));
 
 
@@ -205,7 +206,8 @@ namespace NPJe.FrontEnd.Repository.Queries
             processosPorMes = processosPorMes.OrderBy(x => x.FirstOrDefault()?.MesCriacao ?? 0).ToList();
 
             for (int i = 0; i < 12; i++){
-                var atual = processosPorMes.Count > i ? processosPorMes[i] : null;
+                //var atual = processosPorMes.Count > i ? processosPorMes[i] : null;
+                var atual = processosPorMes.Any() ? processosPorMes.FirstOrDefault(y => y.All(z => z.MesCriacao == (i + 1))) : null;
                 result.QuantidadeAbertaMes.Add(atual?.Count() ?? 0);
                 result.QuantidadeConcluidaMes.Add(atual?.Count(y => y.Status) ?? 0);
             }

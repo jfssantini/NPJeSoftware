@@ -26,6 +26,8 @@ namespace NPJe.FrontEnd.Dtos
 
         public bool Concluido { get; set; }
 
+        public long? IdUsuario { get; set; }
+
         public string Usuario { get; set; }
     }
 }

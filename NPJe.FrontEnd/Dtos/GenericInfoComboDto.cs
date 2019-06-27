@@ -1,4 +1,6 @@
-﻿namespace NPJe.FrontEnd.Dtos
+﻿using System;
+
+namespace NPJe.FrontEnd.Dtos
 {
     public class GenericInfoComboDto
     {
@@ -15,5 +17,7 @@
         public string text { get; set; }
 
         public string complement { get; set; }
+
+        public DateTime data { get; set; }
     }
 }
